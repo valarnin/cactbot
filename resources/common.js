@@ -61,6 +61,9 @@ let Util = {
   jobEnumToJob: function(id) {
     return kJobEnumToName[id];
   },
+  jobToJobEnum: function(id) {
+    return Object.keys(kJobEnumToName).filter((k) => kJobEnumToName[k] === Job).pop();
+  },
   jobToRole: function(job) {
     let role;
     if (job.search(/^(WAR|DRK|PLD|GNB|MRD|GLA)$/) >= 0) {
