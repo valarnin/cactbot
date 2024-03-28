@@ -1127,6 +1127,7 @@ const triggerSet: TriggerSet<Data> = {
           return false;
         return true;
       },
+      delaySeconds: 0.2,
       infoText: (data, _, outputs) => {
         const lastMove = data.lastTitanMove;
         if (lastMove === undefined) {
@@ -1147,6 +1148,34 @@ const triggerSet: TriggerSet<Data> = {
           2: outputs.dirS!(),
           3: outputs.dirW!(),
         };
+
+        const xyToHdg = (x: number, y: number, centerX: number, centerY: number): number => {
+          x = x - centerX;
+          y = y - centerY;
+          return Math.atan2(x, y);
+        };
+
+        type Dir = 'N' | 'E' | 'S' | 'W';
+        type JumpCoords= { dir: Dir; x: number; y: number };
+        const jumpCoords: JumpCoords[] = [
+            { dir: 'W', x: 86.0, y: 100.0 },
+            { dir: 'E', x: 114.0, y: 100.0 },
+            { dir: 'N', x: 100.0, y: 86.0 },
+            { dir: 'S', x: 100.0, y: 114.0 },
+        ];
+
+        const titanX = parseFloat(lastMove.x); // from ActorMove
+        const titanY = parseFloat(lastMove.y); // from ActorMove
+        const titanHdg = parseFloat(lastMove.heading); // from ActorMove
+
+        let jumpDir: Dir | '??' = '??';
+        for (const site of jumpCoords) {
+           const hdgToTitan = xyToHdg(titanX, titanY, site.x, site.y);
+           const combo = Math.abs(titanHdg - hdgToTitan);
+           if (combo >= 3 && combo <= 3.28) // should be = Math.PI, but safety margin?
+             jumpDir = site.dir;
+        }
+        console.log(`Titan jumping ${jumpDir}, ${dirs[cardinal] ?? ''}`);
         return dirs[cardinal];
       },
       outputStrings: {
