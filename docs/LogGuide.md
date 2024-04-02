@@ -228,6 +228,10 @@ This guide was last updated for:
     - [Structure](#structure-45)
     - [Regexes](#regexes-45)
     - [Examples](#examples-45)
+  - [Line 274 (0x112): ActorControlSelfExtra](#line-274-0x112-actorcontrolselfextra)
+    - [Structure](#structure-46)
+    - [Regexes](#regexes-46)
+    - [Examples](#examples-46)
 <!-- AUTO-GENERATED-CONTENT:END -->
 
 ## Data Flow
@@ -2587,10 +2591,10 @@ Parsed Log Line Structure:
 
 ```log
 Network Log Line Regex:
-^(?<type>261)\|(?<timestamp>[^|]*)\|(?<change>[^|]*)\|(?<id>[^|]*)\|(?:AggressionStatus\|(?<pairAggressionStatus>[^|]*)\|)?(?:BNpcID\|(?<pairBNpcID>[^|]*)\|)?(?:BNpcNameID\|(?<pairBNpcNameID>[^|]*)\|)?(?:CastBuffID\|(?<pairCastBuffID>[^|]*)\|)?(?:CastDurationCurrent\|(?<pairCastDurationCurrent>[^|]*)\|)?(?:CastDurationMax\|(?<pairCastDurationMax>[^|]*)\|)?(?:CastTargetID\|(?<pairCastTargetID>[^|]*)\|)?(?:CurrentCP\|(?<pairCurrentCP>[^|]*)\|)?(?:CurrentGP\|(?<pairCurrentGP>[^|]*)\|)?(?:CurrentHP\|(?<pairCurrentHP>[^|]*)\|)?(?:CurrentMP\|(?<pairCurrentMP>[^|]*)\|)?(?:CurrentWorldID\|(?<pairCurrentWorldID>[^|]*)\|)?(?:Distance\|(?<pairDistance>[^|]*)\|)?(?:EffectiveDistance\|(?<pairEffectiveDistance>[^|]*)\|)?(?:Heading\|(?<pairHeading>[^|]*)\|)?(?:ID\|(?<pairID>[^|]*)\|)?(?:IsCasting1\|(?<pairIsCasting1>[^|]*)\|)?(?:IsCasting2\|(?<pairIsCasting2>[^|]*)\|)?(?:IsTargetable\|(?<pairIsTargetable>[^|]*)\|)?(?:Job\|(?<pairJob>[^|]*)\|)?(?:Level\|(?<pairLevel>[^|]*)\|)?(?:MaxCP\|(?<pairMaxCP>[^|]*)\|)?(?:MaxGP\|(?<pairMaxGP>[^|]*)\|)?(?:MaxHP\|(?<pairMaxHP>[^|]*)\|)?(?:MaxMP\|(?<pairMaxMP>[^|]*)\|)?(?:ModelStatus\|(?<pairModelStatus>[^|]*)\|)?(?:MonsterType\|(?<pairMonsterType>[^|]*)\|)?(?:Name\|(?<pairName>[^|]*)\|)?(?:NPCTargetID\|(?<pairNPCTargetID>[^|]*)\|)?(?:OwnerID\|(?<pairOwnerID>[^|]*)\|)?(?:PartyType\|(?<pairPartyType>[^|]*)\|)?(?:PCTargetID\|(?<pairPCTargetID>[^|]*)\|)?(?:PosX\|(?<pairPosX>[^|]*)\|)?(?:PosY\|(?<pairPosY>[^|]*)\|)?(?:PosZ\|(?<pairPosZ>[^|]*)\|)?(?:Radius\|(?<pairRadius>[^|]*)\|)?(?:Status\|(?<pairStatus>[^|]*)\|)?(?:TargetID\|(?<pairTargetID>[^|]*)\|)?(?:TransformationId\|(?<pairTransformationId>[^|]*)\|)?(?:Type\|(?<pairType>[^|]*)\|)?(?:WeaponId\|(?<pairWeaponId>[^|]*)\|)?(?:WorldID\|(?<pairWorldID>[^|]*)\|)?(?:WorldName\|(?<pairWorldName>[^|]*)\|)?
+^(?<type>261)\|(?<timestamp>[^|]*)\|(?<change>[^|]*)\|(?<id>[^|]*)\|(?:AggressionStatus\|(?<pairAggressionStatus>[^|]*)\|)?(?:BNpcID\|(?<pairBNpcID>[^|]*)\|)?(?:BNpcNameID\|(?<pairBNpcNameID>[^|]*)\|)?(?:CastBuffID\|(?<pairCastBuffID>[^|]*)\|)?(?:CastDurationCurrent\|(?<pairCastDurationCurrent>[^|]*)\|)?(?:CastDurationMax\|(?<pairCastDurationMax>[^|]*)\|)?(?:CastGroundTargetX\|(?<pairCastGroundTargetX>[^|]*)\|)?(?:CastGroundTargetY\|(?<pairCastGroundTargetY>[^|]*)\|)?(?:CastGroundTargetZ\|(?<pairCastGroundTargetZ>[^|]*)\|)?(?:CastTargetID\|(?<pairCastTargetID>[^|]*)\|)?(?:CurrentCP\|(?<pairCurrentCP>[^|]*)\|)?(?:CurrentGP\|(?<pairCurrentGP>[^|]*)\|)?(?:CurrentHP\|(?<pairCurrentHP>[^|]*)\|)?(?:CurrentMP\|(?<pairCurrentMP>[^|]*)\|)?(?:CurrentWorldID\|(?<pairCurrentWorldID>[^|]*)\|)?(?:Distance\|(?<pairDistance>[^|]*)\|)?(?:EffectiveDistance\|(?<pairEffectiveDistance>[^|]*)\|)?(?:Heading\|(?<pairHeading>[^|]*)\|)?(?:ID\|(?<pairID>[^|]*)\|)?(?:IsCasting1\|(?<pairIsCasting1>[^|]*)\|)?(?:IsCasting2\|(?<pairIsCasting2>[^|]*)\|)?(?:IsTargetable\|(?<pairIsTargetable>[^|]*)\|)?(?:Job\|(?<pairJob>[^|]*)\|)?(?:Level\|(?<pairLevel>[^|]*)\|)?(?:MaxCP\|(?<pairMaxCP>[^|]*)\|)?(?:MaxGP\|(?<pairMaxGP>[^|]*)\|)?(?:MaxHP\|(?<pairMaxHP>[^|]*)\|)?(?:MaxMP\|(?<pairMaxMP>[^|]*)\|)?(?:ModelStatus\|(?<pairModelStatus>[^|]*)\|)?(?:MonsterType\|(?<pairMonsterType>[^|]*)\|)?(?:Name\|(?<pairName>[^|]*)\|)?(?:NPCTargetID\|(?<pairNPCTargetID>[^|]*)\|)?(?:OwnerID\|(?<pairOwnerID>[^|]*)\|)?(?:PartyType\|(?<pairPartyType>[^|]*)\|)?(?:PCTargetID\|(?<pairPCTargetID>[^|]*)\|)?(?:PosX\|(?<pairPosX>[^|]*)\|)?(?:PosY\|(?<pairPosY>[^|]*)\|)?(?:PosZ\|(?<pairPosZ>[^|]*)\|)?(?:Radius\|(?<pairRadius>[^|]*)\|)?(?:Status\|(?<pairStatus>[^|]*)\|)?(?:TargetID\|(?<pairTargetID>[^|]*)\|)?(?:TransformationId\|(?<pairTransformationId>[^|]*)\|)?(?:Type\|(?<pairType>[^|]*)\|)?(?:WeaponId\|(?<pairWeaponId>[^|]*)\|)?(?:WorldID\|(?<pairWorldID>[^|]*)\|)?(?:WorldName\|(?<pairWorldName>[^|]*)\|)?
 
 Parsed Log Line Regex:
-(?<timestamp>^.{14}) 261 (?<type>105):(?<change>[^:]*):(?<id>[^:]*):(?:AggressionStatus(?:$|:)(?<pairAggressionStatus>[^:]*)(?:$|:))?(?:BNpcID(?:$|:)(?<pairBNpcID>[^:]*)(?:$|:))?(?:BNpcNameID(?:$|:)(?<pairBNpcNameID>[^:]*)(?:$|:))?(?:CastBuffID(?:$|:)(?<pairCastBuffID>[^:]*)(?:$|:))?(?:CastDurationCurrent(?:$|:)(?<pairCastDurationCurrent>[^:]*)(?:$|:))?(?:CastDurationMax(?:$|:)(?<pairCastDurationMax>[^:]*)(?:$|:))?(?:CastTargetID(?:$|:)(?<pairCastTargetID>[^:]*)(?:$|:))?(?:CurrentCP(?:$|:)(?<pairCurrentCP>[^:]*)(?:$|:))?(?:CurrentGP(?:$|:)(?<pairCurrentGP>[^:]*)(?:$|:))?(?:CurrentHP(?:$|:)(?<pairCurrentHP>[^:]*)(?:$|:))?(?:CurrentMP(?:$|:)(?<pairCurrentMP>[^:]*)(?:$|:))?(?:CurrentWorldID(?:$|:)(?<pairCurrentWorldID>[^:]*)(?:$|:))?(?:Distance(?:$|:)(?<pairDistance>[^:]*)(?:$|:))?(?:EffectiveDistance(?:$|:)(?<pairEffectiveDistance>[^:]*)(?:$|:))?(?:Heading(?:$|:)(?<pairHeading>[^:]*)(?:$|:))?(?:ID(?:$|:)(?<pairID>[^:]*)(?:$|:))?(?:IsCasting1(?:$|:)(?<pairIsCasting1>[^:]*)(?:$|:))?(?:IsCasting2(?:$|:)(?<pairIsCasting2>[^:]*)(?:$|:))?(?:IsTargetable(?:$|:)(?<pairIsTargetable>[^:]*)(?:$|:))?(?:Job(?:$|:)(?<pairJob>[^:]*)(?:$|:))?(?:Level(?:$|:)(?<pairLevel>[^:]*)(?:$|:))?(?:MaxCP(?:$|:)(?<pairMaxCP>[^:]*)(?:$|:))?(?:MaxGP(?:$|:)(?<pairMaxGP>[^:]*)(?:$|:))?(?:MaxHP(?:$|:)(?<pairMaxHP>[^:]*)(?:$|:))?(?:MaxMP(?:$|:)(?<pairMaxMP>[^:]*)(?:$|:))?(?:ModelStatus(?:$|:)(?<pairModelStatus>[^:]*)(?:$|:))?(?:MonsterType(?:$|:)(?<pairMonsterType>[^:]*)(?:$|:))?(?:Name(?:$|:)(?<pairName>[^:]*)(?:$|:))?(?:NPCTargetID(?:$|:)(?<pairNPCTargetID>[^:]*)(?:$|:))?(?:OwnerID(?:$|:)(?<pairOwnerID>[^:]*)(?:$|:))?(?:PartyType(?:$|:)(?<pairPartyType>[^:]*)(?:$|:))?(?:PCTargetID(?:$|:)(?<pairPCTargetID>[^:]*)(?:$|:))?(?:PosX(?:$|:)(?<pairPosX>[^:]*)(?:$|:))?(?:PosY(?:$|:)(?<pairPosY>[^:]*)(?:$|:))?(?:PosZ(?:$|:)(?<pairPosZ>[^:]*)(?:$|:))?(?:Radius(?:$|:)(?<pairRadius>[^:]*)(?:$|:))?(?:Status(?:$|:)(?<pairStatus>[^:]*)(?:$|:))?(?:TargetID(?:$|:)(?<pairTargetID>[^:]*)(?:$|:))?(?:TransformationId(?:$|:)(?<pairTransformationId>[^:]*)(?:$|:))?(?:Type(?:$|:)(?<pairType>[^:]*)(?:$|:))?(?:WeaponId(?:$|:)(?<pairWeaponId>[^:]*)(?:$|:))?(?:WorldID(?:$|:)(?<pairWorldID>[^:]*)(?:$|:))?(?:WorldName(?:$|:)(?<pairWorldName>[^:]*)(?:$|:))?(?:$|:)
+(?<timestamp>^.{14}) 261 (?<type>105):(?<change>[^:]*):(?<id>[^:]*):(?:AggressionStatus(?:$|:)(?<pairAggressionStatus>[^:]*)(?:$|:))?(?:BNpcID(?:$|:)(?<pairBNpcID>[^:]*)(?:$|:))?(?:BNpcNameID(?:$|:)(?<pairBNpcNameID>[^:]*)(?:$|:))?(?:CastBuffID(?:$|:)(?<pairCastBuffID>[^:]*)(?:$|:))?(?:CastDurationCurrent(?:$|:)(?<pairCastDurationCurrent>[^:]*)(?:$|:))?(?:CastDurationMax(?:$|:)(?<pairCastDurationMax>[^:]*)(?:$|:))?(?:CastGroundTargetX(?:$|:)(?<pairCastGroundTargetX>[^:]*)(?:$|:))?(?:CastGroundTargetY(?:$|:)(?<pairCastGroundTargetY>[^:]*)(?:$|:))?(?:CastGroundTargetZ(?:$|:)(?<pairCastGroundTargetZ>[^:]*)(?:$|:))?(?:CastTargetID(?:$|:)(?<pairCastTargetID>[^:]*)(?:$|:))?(?:CurrentCP(?:$|:)(?<pairCurrentCP>[^:]*)(?:$|:))?(?:CurrentGP(?:$|:)(?<pairCurrentGP>[^:]*)(?:$|:))?(?:CurrentHP(?:$|:)(?<pairCurrentHP>[^:]*)(?:$|:))?(?:CurrentMP(?:$|:)(?<pairCurrentMP>[^:]*)(?:$|:))?(?:CurrentWorldID(?:$|:)(?<pairCurrentWorldID>[^:]*)(?:$|:))?(?:Distance(?:$|:)(?<pairDistance>[^:]*)(?:$|:))?(?:EffectiveDistance(?:$|:)(?<pairEffectiveDistance>[^:]*)(?:$|:))?(?:Heading(?:$|:)(?<pairHeading>[^:]*)(?:$|:))?(?:ID(?:$|:)(?<pairID>[^:]*)(?:$|:))?(?:IsCasting1(?:$|:)(?<pairIsCasting1>[^:]*)(?:$|:))?(?:IsCasting2(?:$|:)(?<pairIsCasting2>[^:]*)(?:$|:))?(?:IsTargetable(?:$|:)(?<pairIsTargetable>[^:]*)(?:$|:))?(?:Job(?:$|:)(?<pairJob>[^:]*)(?:$|:))?(?:Level(?:$|:)(?<pairLevel>[^:]*)(?:$|:))?(?:MaxCP(?:$|:)(?<pairMaxCP>[^:]*)(?:$|:))?(?:MaxGP(?:$|:)(?<pairMaxGP>[^:]*)(?:$|:))?(?:MaxHP(?:$|:)(?<pairMaxHP>[^:]*)(?:$|:))?(?:MaxMP(?:$|:)(?<pairMaxMP>[^:]*)(?:$|:))?(?:ModelStatus(?:$|:)(?<pairModelStatus>[^:]*)(?:$|:))?(?:MonsterType(?:$|:)(?<pairMonsterType>[^:]*)(?:$|:))?(?:Name(?:$|:)(?<pairName>[^:]*)(?:$|:))?(?:NPCTargetID(?:$|:)(?<pairNPCTargetID>[^:]*)(?:$|:))?(?:OwnerID(?:$|:)(?<pairOwnerID>[^:]*)(?:$|:))?(?:PartyType(?:$|:)(?<pairPartyType>[^:]*)(?:$|:))?(?:PCTargetID(?:$|:)(?<pairPCTargetID>[^:]*)(?:$|:))?(?:PosX(?:$|:)(?<pairPosX>[^:]*)(?:$|:))?(?:PosY(?:$|:)(?<pairPosY>[^:]*)(?:$|:))?(?:PosZ(?:$|:)(?<pairPosZ>[^:]*)(?:$|:))?(?:Radius(?:$|:)(?<pairRadius>[^:]*)(?:$|:))?(?:Status(?:$|:)(?<pairStatus>[^:]*)(?:$|:))?(?:TargetID(?:$|:)(?<pairTargetID>[^:]*)(?:$|:))?(?:TransformationId(?:$|:)(?<pairTransformationId>[^:]*)(?:$|:))?(?:Type(?:$|:)(?<pairType>[^:]*)(?:$|:))?(?:WeaponId(?:$|:)(?<pairWeaponId>[^:]*)(?:$|:))?(?:WorldID(?:$|:)(?<pairWorldID>[^:]*)(?:$|:))?(?:WorldName(?:$|:)(?<pairWorldName>[^:]*)(?:$|:))?(?:$|:)
 ```
 
 #### Examples
@@ -3270,3 +3274,70 @@ Parsed Log Line Examples:
 ```
 
 <!-- AUTO-GENERATED-CONTENT:END (logLines:type=ActorControlExtra&lang=en-US) -->
+
+<a name="line274"></a>
+
+### Line 274 (0x112): ActorControlSelfExtra
+
+This line contains certain data from `ActorControlSelf` packets not otherwise made available
+through other log lines.
+
+`ActorControlSelfExtra` lines include a numerical `category` field,
+which corresponds to the type of actor control being sent from the server.
+
+`param1` through `param6` are attributes whose meaning vary
+depending on the actor control category.
+
+The list of categories for which log lines are emitted is necessarily restrictive,
+given the volume of data, although more may be added in the future:
+
+| Category Name           | `category`   |
+| ----------------------- | ------------ |
+| DisplayLogMessage       | 0x020F (527) |
+| DisplayLogMessageParams | 0x0210 (528) |
+
+- `DisplayLogMessage` - used to display a log message in the chat window.
+  - `param1`, like the `id` field in
+    [SystemLogMessage](#line-41-0x29-systemlogmessage), corresponds to the
+    [LogMessage table](https://github.com/xivapi/ffxiv-datamining/blob/master/csv/LogMessage.csv).
+  - Remaining parameters are directly read by the LogMessage entry.
+- `DisplayLogMessageParams` - used to display a log message in the chat window.
+  - Very similar to `DisplayLogMessage`, except that `param2` appears to always be an actor ID.
+
+<!-- AUTO-GENERATED-CONTENT:START (logLines:type=ActorControlSelfExtra&lang=en-US) -->
+
+#### Structure
+
+```log
+Network Log Line Structure:
+274|[timestamp]|[id]|[category]|[param1]|[param2]|[param3]|[param4]|[param5]|[param6]
+
+Parsed Log Line Structure:
+[timestamp] 274 112:[id]:[category]:[param1]:[param2]:[param3]:[param4]:[param5]:[param6]
+```
+
+#### Regexes
+
+```log
+Network Log Line Regex:
+^(?<type>274)\|(?<timestamp>[^|]*)\|(?<id>[^|]*)\|(?<category>[^|]*)\|(?<param1>[^|]*)\|(?<param2>[^|]*)\|(?<param3>[^|]*)\|(?<param4>[^|]*)\|(?<param5>[^|]*)\|(?<param6>[^|]*)\|
+
+Parsed Log Line Regex:
+(?<timestamp>^.{14}) 274 (?<type>112):(?<id>[^:]*):(?<category>[^:]*):(?<param1>[^:]*):(?<param2>[^:]*):(?<param3>[^:]*):(?<param4>[^:]*):(?<param5>[^:]*):(?<param6>[^:]*)(?:$|:)
+```
+
+#### Examples
+
+```log
+Network Log Line Examples:
+274|2024-01-10T19:28:37.5000000-05:00|10001234|020F|04D0|0|93E0|0|0|0|d274429622d0c27e
+274|2024-02-15T19:35:41.9950000-05:00|10001234|020F|236D|0|669|0|0|0|d274429622d0c27e
+274|2024-03-21T20:45:41.3680000-04:00|10001234|0210|129D|10001234|F|0|0|0|d274429622d0c27e
+
+Parsed Log Line Examples:
+[19:28:37.500] 274 112:10001234:020F:04D0:0:93E0:0:0:0
+[19:35:41.995] 274 112:10001234:020F:236D:0:669:0:0:0
+[20:45:41.368] 274 112:10001234:0210:129D:10001234:F:0:0:0
+```
+
+<!-- AUTO-GENERATED-CONTENT:END (logLines:type=ActorControlSelfExtra&lang=en-US) -->
