@@ -133,6 +133,8 @@ hideall "--sync--"
 430.5 "--untargetable--"
 435.5 "Megaflare Enrage" Ability { id: "26BA", source: "Nael deus Darnus" }
 
+# Detect Nael going untargetable for phase change
+494.7 "--sync--" NameToggle { name: "Nael deus Darnus", toggle: '00' } window 250,0
 
 ##### BAHAMUT #####
 500.0 "Seventh Umbral Era" Ability { id: "26D1", source: "Bahamut Prime" } window 500,0
