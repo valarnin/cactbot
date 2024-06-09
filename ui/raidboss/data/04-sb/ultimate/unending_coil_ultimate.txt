@@ -61,7 +61,7 @@ hideall "--sync--"
 210.7 "Plummet" #Ability { id: "26A8", source: "Twintania" }
 
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
-220.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 55,0
+220.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 105,0
 
 ##### NAEL #####
 227.3 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" } window 200,2
