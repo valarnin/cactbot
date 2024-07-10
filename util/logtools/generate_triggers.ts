@@ -7,12 +7,21 @@ import inquirer from 'inquirer';
 import NetRegexes from '../../resources/netregexes';
 import ZoneId from '../../resources/zone_id';
 import { CactbotRegExpExecArray } from '../../types/net_trigger';
+import CombatantTracker from '../../ui/raidboss/emulator/data/CombatantTracker';
+import LogRepository from '../../ui/raidboss/emulator/data/network_log_converter/LogRepository';
+import NetworkLogConverter from '../../ui/raidboss/emulator/data/NetworkLogConverter';
 
 import { EncounterCollector, ignoredCombatants } from './encounter_tools';
 
 // How long (in ms) for a line to be offset based on encounter start
 // to be considered the same instance across encounters
 const timeOffsetAllowance = 2000;
+
+// How much distance is considered for position comparison
+const positionDistanceAllowance = Number.EPSILON;
+
+// How much of an angle in radians is considered for position comparison
+const positionHeadingAllowance = 1 * (Math.PI / 180);
 
 const triggerSuggestOptions = [
   'AoE',
@@ -58,6 +67,19 @@ type XIVAPILockonResponse = {
   }[];
 };
 
+type XIVAPINpcYellResponse = {
+  schema: string;
+  rows: {
+    row_id: number;
+    fields: {
+      Text: string;
+    };
+  }[];
+};
+
+// These return types are identical
+type XIVAPIBattleTalk2Response = XIVAPINpcYellResponse;
+
 type TriggerSuggestTypes = typeof triggerSuggestOptions[number];
 
 type GenerateTriggersArgs = {
@@ -71,7 +93,7 @@ type GenerateTriggersArgs = {
   'track_npcyell': boolean | null;
   'track_actorsetpos': boolean | null;
   'first_headmarker_id': string | null;
-  'generate_notes': boolean | null;
+  'output_file': string | null;
 };
 
 class ExtendedArgsRequired extends Namespace implements GenerateTriggersArgs {
@@ -85,7 +107,7 @@ class ExtendedArgsRequired extends Namespace implements GenerateTriggersArgs {
   'track_npcyell': boolean | null;
   'track_actorsetpos': boolean | null;
   'first_headmarker_id': string | null;
-  'generate_notes': boolean | null;
+  'output_file': string | null;
 }
 
 // TODO: Should we track 'NetworkEffectResult' here as well? There's no `NetRegexes` matcher for it,
@@ -107,6 +129,7 @@ type ActorSetPosInfo = CactbotRegExpExecArray<'ActorSetPos'>;
 type TriggerInfo = {
   start: string;
   duration: number;
+  combatantTracker: CombatantTracker;
   abilities: { [id: string]: AbilityInfo[] };
   headMarkers: { [id: string]: HeadMarkerInfo[] };
   mapEffects?: { [location: string]: MapEffectInfo[] };
@@ -135,6 +158,69 @@ type MapEffectMapInfo = {
   }[];
 };
 
+type NpcYellMapInfo = {
+  byOffset: {
+    offset: number;
+    entries: {
+      yellId: string;
+      npcNameId: string;
+    }[];
+  }[];
+};
+
+type BattleTalk2MapInfo = {
+  byOffset: {
+    offset: number;
+    entries: {
+      textId: string;
+      npcNameId: string;
+    }[];
+  }[];
+};
+
+class Position {
+  public x: number;
+  public y: number;
+  public z: number;
+  public heading: number;
+  constructor(x?: string, y?: string, z?: string, heading?: string) {
+    this.x = parseFloat(x ?? '');
+    this.y = parseFloat(y ?? '');
+    this.z = parseFloat(z ?? '');
+    this.heading = parseFloat(heading ?? '');
+  }
+  public equals(other: Position) {
+    if (Math.abs(this.x - other.x) > positionDistanceAllowance)
+      return false;
+    if (Math.abs(this.y - other.y) > positionDistanceAllowance)
+      return false;
+    if (Math.abs(this.z - other.z) > positionDistanceAllowance)
+      return false;
+    if (Math.abs(this.heading - other.heading) > positionHeadingAllowance)
+      return false;
+    return true;
+  }
+}
+
+type ActorSetPosMapInfo = {
+  byOffset: {
+    offset: number;
+    entries: {
+      actorId: string;
+      actorName: string;
+      pos: Position;
+    }[];
+  }[];
+  byPosition: {
+    pos: Position;
+    entries: {
+      actorId: string;
+      actorName: string;
+      offset: number;
+    }[];
+  }[];
+};
+
 type HeadMarkerMapInfo = {
   byOffset: {
     offset: number;
@@ -151,66 +237,66 @@ class GenerateTriggersArgParse {
   requiredGroup = this.parser.addMutuallyExclusiveGroup();
 }
 
-const timelineParse = new GenerateTriggersArgParse();
+const generateTriggersParse = new GenerateTriggersArgParse();
 
-timelineParse.parser.addArgument(['--files', '-f'], {
+generateTriggersParse.parser.addArgument(['--files', '-f'], {
   nargs: '+',
   help: 'Files to scan for zones and encounters.',
 });
 
-timelineParse.parser.addArgument(['--zone_id', '-z'], {
+generateTriggersParse.parser.addArgument(['--zone_id', '-z'], {
   nargs: '?',
   help: 'The zone ID, by name, that should be used. e.g. "ContainmentBayS1T7"',
 });
 
-timelineParse.parser.addArgument(['--trigger_id_prefix', '-tp'], {
+generateTriggersParse.parser.addArgument(['--trigger_id_prefix', '-tp'], {
   nargs: '?',
   help: 'The prefix to use for auto-generated triggers, e.g. "Sephirot"',
 });
 
-timelineParse.parser.addArgument(['--ignore_id', '-ii'], {
+generateTriggersParse.parser.addArgument(['--ignore_id', '-ii'], {
   nargs: '+',
   help: 'Ability IDs to ignore, e.g. 27EF',
 });
 
-timelineParse.parser.addArgument(['--only_combatants', '-o'], {
+generateTriggersParse.parser.addArgument(['--only_combatants', '-o'], {
   nargs: '+',
   help: 'Only include actions from combatants from this list, e.g. "Sephirot"',
 });
 
-timelineParse.parser.addArgument(['--track_mapeffect', '-tm'], {
+generateTriggersParse.parser.addArgument(['--track_mapeffect', '-tm'], {
   nargs: '?',
   help: 'Track "MapEffect" lines and generate a mapping table',
 });
 
-timelineParse.parser.addArgument(['--track_battletalk2', '-tb'], {
+generateTriggersParse.parser.addArgument(['--track_battletalk2', '-tb'], {
   nargs: '?',
   help: 'Track "BattleTalk2" lines and generate a mapping table',
 });
 
-timelineParse.parser.addArgument(['--track_npcyell', '-tn'], {
+generateTriggersParse.parser.addArgument(['--track_npcyell', '-tn'], {
   nargs: '?',
   help: 'Track "NpcYell" lines and generate a mapping table',
 });
 
-timelineParse.parser.addArgument(['--track_actorsetpos', '-ta'], {
+generateTriggersParse.parser.addArgument(['--track_actorsetpos', '-ta'], {
   nargs: '?',
   help: 'Track "ActorSetPos" lines and generate a mapping table',
 });
 
-timelineParse.parser.addArgument(['--first_headmarker_id', '-hm'], {
+generateTriggersParse.parser.addArgument(['--first_headmarker_id', '-hm'], {
   nargs: '?',
   help: 'Specify the first headmarker\'s VFX for randomized headmarkers',
 });
 
-timelineParse.parser.addArgument(['--generate_notes', '-gn'], {
+generateTriggersParse.parser.addArgument(['--output_file', '-of'], {
   nargs: '?',
-  help: 'Generate extended notes and statistics',
+  help: 'Specify an output file, instead of outputing to console',
 });
 
 const printHelpAndExit = (errString: string): void => {
   console.error(errString);
-  timelineParse.parser.printHelp();
+  generateTriggersParse.parser.printHelp();
   process.exit(-1);
 };
 
@@ -296,14 +382,13 @@ const ignoreAbilityEntry = (
 
   // Ignore abilities from NPC allies.
   // If a no-name combatant, we will ignore only if its also an unnamed ability, as
-  // a named ability has more potential for being relevant to timeline/trigger creation.
+  // a named ability has more potential for being relevant to trigger creation.
   if (ignoredCombatants.includes(combatant) && combatant !== '')
     return true;
   if (combatant === '') {
     if (
       abilityName === undefined ||
-      abilityName === '' ||
-      abilityName?.toLowerCase().includes('--sync--')
+      abilityName === ''
     )
       return true;
   }
@@ -338,9 +423,16 @@ const makeTriggerInfoFromCollector = (collector: EncounterCollector, args: Exten
 
     const startTimestamp = fight.startLine?.split('|')[1] ?? '';
     const endTimestamp = fight.logLines?.slice(-1)[0] ?? '';
+
+    const repo = new LogRepository();
+    const logConverter = new NetworkLogConverter();
+    const lineEvents = logConverter.convertLines(fight.logLines ?? [], repo);
+    const combatantTracker = new CombatantTracker(lineEvents, 'en');
+
     const fightInfo: TriggerInfo = {
       start: fight.startLine?.split('|')[1] ?? '',
       duration: new Date(endTimestamp).getTime() - new Date(startTimestamp).getTime(),
+      combatantTracker: combatantTracker,
       abilities: {},
       headMarkers: {},
     };
@@ -438,7 +530,7 @@ const makeTriggerInfoFromCollector = (collector: EncounterCollector, args: Exten
         const battleTalk2 = battleTalk2Matcher.exec(line);
         if (battleTalk2 !== null) {
           haveLineMatch = true;
-          const id = battleTalk2.groups?.id ?? '';
+          const id = battleTalk2.groups?.instanceContentTextId ?? '';
           if (fightInfo.battleTalk2s === undefined)
             continue;
           (fightInfo.battleTalk2s[id] ??= []).push(battleTalk2);
@@ -450,7 +542,7 @@ const makeTriggerInfoFromCollector = (collector: EncounterCollector, args: Exten
         const npcYell = npcYellMatcher.exec(line);
         if (npcYell !== null) {
           haveLineMatch = true;
-          const id = npcYell.groups?.id ?? '';
+          const id = npcYell.groups?.npcYellId ?? '';
           if (fightInfo.npcYells === undefined)
             continue;
           (fightInfo.npcYells[id] ??= []).push(npcYell);
@@ -465,6 +557,17 @@ const makeTriggerInfoFromCollector = (collector: EncounterCollector, args: Exten
           const id = actorSetPos.groups?.id ?? '';
           if (fightInfo.actorSetPoses === undefined)
             continue;
+          if (id.startsWith('1'))
+            continue;
+          const combatant = combatantTracker.combatants[id];
+          if (combatant === undefined)
+            continue;
+          const combatantName = combatant.firstState.Name ?? '!!!';
+          // `ignoredCombatants` includes `''`, but we don't want to skip blank names for this.
+          if (ignoredCombatants.includes(combatantName))
+            continue;
+          if (args.only_combatants && !args.only_combatants?.includes(combatantName))
+            continue;
           (fightInfo.actorSetPoses[id] ??= []).push(actorSetPos);
           continue;
         }
@@ -478,95 +581,339 @@ const makeTriggerInfoFromCollector = (collector: EncounterCollector, args: Exten
   return triggerInfo;
 };
 
-const generateFileFromTriggerInfo = async (triggerInfo: TriggerInfo[], args: ExtendedArgs) => {
-  let preText = '';
+const generateMapEffectTableFromTriggerInfo = (triggerInfo: TriggerInfo[]) => {
+  let mapEffectTable = '';
+  // Calculate instances
+  const mapEffectMap: MapEffectMapInfo = {
+    byOffset: [],
+  };
 
-  // Handle pre-TriggerSet text
-
-  if (args.track_mapeffect) {
-    // Calculate instances
-    const mapEffectMap: MapEffectMapInfo = {
-      byOffset: [],
-    };
-
-    for (const fight of triggerInfo) {
-      for (const [location, instances] of Object.entries(fight.mapEffects ?? [])) {
-        for (const instance of instances) {
-          const instanceOffset = new Date(instance.groups?.timestamp ?? '').getTime() -
-            new Date(fight.start).getTime();
-          let byOffsetEntry = mapEffectMap.byOffset
-            .find((entry) => Math.abs(entry.offset - instanceOffset) < timeOffsetAllowance);
-          if (byOffsetEntry === undefined) {
-            byOffsetEntry = {
-              entries: [],
-              offset: instanceOffset,
-            };
-            mapEffectMap.byOffset.push(byOffsetEntry);
-          }
-
-          byOffsetEntry.entries.push({ flags: instance.groups?.flags ?? '', location: location });
+  for (const fight of triggerInfo) {
+    for (const [location, instances] of Object.entries(fight.mapEffects ?? [])) {
+      for (const instance of instances) {
+        const instanceOffset = new Date(instance.groups?.timestamp ?? '').getTime() -
+          new Date(fight.start).getTime();
+        let byOffsetEntry = mapEffectMap.byOffset
+          .find((entry) => Math.abs(entry.offset - instanceOffset) < timeOffsetAllowance);
+        if (byOffsetEntry === undefined) {
+          byOffsetEntry = {
+            entries: [],
+            offset: instanceOffset,
+          };
+          mapEffectMap.byOffset.push(byOffsetEntry);
         }
+
+        byOffsetEntry.entries.push({ flags: instance.groups?.flags ?? '', location: location });
       }
     }
+  }
 
-    if (mapEffectMap.byOffset.length > 0) {
-      preText += `
+  if (mapEffectMap.byOffset.length > 0) {
+    mapEffectTable += `
 
 const mapEffectData = {`;
 
-      const allLocations = [
+    const allLocations = [
+      ...new Set(
+        mapEffectMap.byOffset.flatMap((entry) =>
+          entry.entries.map((subEntry) => subEntry.location)
+        ),
+      ),
+    ].sort();
+
+    for (const location of allLocations) {
+      const allOffsets = [
         ...new Set(
-          mapEffectMap.byOffset.flatMap((entry) =>
-            entry.entries.map((subEntry) => subEntry.location)
-          ),
+          mapEffectMap.byOffset
+            .filter((entry) => entry.entries.find((subEntry) => subEntry.location === location))
+            .map((entry) => entry.offset),
         ),
       ].sort();
-
-      for (const location of allLocations) {
-        const allOffsets = [
-          ...new Set(
-            mapEffectMap.byOffset
-              .filter((entry) => entry.entries.find((subEntry) => subEntry.location === location))
-              .map((entry) => entry.offset),
-          ),
-        ].sort();
-        const allFlags = [
-          ...new Set(
-            mapEffectMap.byOffset
-              .filter((entry) => entry.entries.find((subEntry) => subEntry.location === location))
-              .flatMap((entry) => entry.entries.map((subEntry) => subEntry.flags)),
-          ),
-        ].sort();
-        preText += `
+      const allFlags = [
+        ...new Set(
+          mapEffectMap.byOffset
+            .filter((entry) => entry.entries.find((subEntry) => subEntry.location === location))
+            .flatMap((entry) => entry.entries.map((subEntry) => subEntry.flags)),
+        ),
+      ].sort();
+      mapEffectTable += `
   // Offsets: ${allOffsets.join()}
   '${location}': {
     'location': '${location}',`;
 
-        for (let i = 0; i < allFlags.length; ++i) {
-          const flags = allFlags[i] ?? '';
-          const flagOffsets = [
-            ...new Set(
-              mapEffectMap.byOffset
-                .filter((entry) => entry.entries.find((subEntry) => subEntry.flags === flags))
-                .map((entry) => entry.offset),
-            ),
-          ].sort();
-          const flagsKey = flags.match(/^0*?800040*?$/) ? `'clear${i}'` : `'flags${i}'`;
-          preText += `
+      for (let i = 0; i < allFlags.length; ++i) {
+        const flags = allFlags[i] ?? '';
+        const flagOffsets = [
+          ...new Set(
+            mapEffectMap.byOffset
+              .filter((entry) => entry.entries.find((subEntry) => subEntry.flags === flags))
+              .map((entry) => entry.offset),
+          ),
+        ].sort();
+        const flagsKey = flags.match(/^0*?800040*?$/) ? `'clear${i}'` : `'flags${i}'`;
+        mapEffectTable += `
     // Offsets: ${flagOffsets.join()}
     ${flagsKey}: '${flags}',`;
-        }
-
-        preText += `
-  },
-`;
       }
 
-      preText += `} as const;
+      mapEffectTable += `
+  },
 `;
+    }
+
+    mapEffectTable += `} as const;
+`;
+  }
+  return mapEffectTable;
+};
+
+const generateNpcYellTableFromTriggerInfo = async (triggerInfo: TriggerInfo[]) => {
+  let npcYellTable = '';
+  // Calculate instances
+  const npcYellMap: NpcYellMapInfo = {
+    byOffset: [],
+  };
+
+  for (const fight of triggerInfo) {
+    for (const [yellId, instances] of Object.entries(fight.npcYells ?? [])) {
+      for (const instance of instances) {
+        const instanceOffset = new Date(instance.groups?.timestamp ?? '').getTime() -
+          new Date(fight.start).getTime();
+        let byOffsetEntry = npcYellMap.byOffset
+          .find((entry) => Math.abs(entry.offset - instanceOffset) < timeOffsetAllowance);
+        if (byOffsetEntry === undefined) {
+          byOffsetEntry = {
+            entries: [],
+            offset: instanceOffset,
+          };
+          npcYellMap.byOffset.push(byOffsetEntry);
+        }
+
+        byOffsetEntry.entries.push({
+          yellId: yellId ?? '',
+          npcNameId: instance.groups?.npcNameId ?? 'MISSING NPC NAME ID',
+        });
+      }
     }
   }
 
+  if (npcYellMap.byOffset.length > 0) {
+    npcYellTable += `
+
+const npcYellData = {`;
+
+    const allYellIds = [
+      ...new Set(
+        npcYellMap.byOffset.flatMap((offset) => offset.entries.map((entry) => entry.yellId)),
+      ),
+    ].sort();
+
+    const xivapiNpcYells: XIVAPINpcYellResponse | undefined = await (await fetch(
+      `https://beta.xivapi.com/api/1/sheet/NpcYell?rows=${
+        allYellIds.map((yell) => parseInt(yell, 16).toString()).join(',')
+      }&fields=Text`,
+    )).json() as XIVAPINpcYellResponse;
+
+    for (const yellId of allYellIds) {
+      const allOffsets = [
+        ...new Set(
+          npcYellMap.byOffset
+            .filter((entry) => entry.entries.find((subEntry) => subEntry.yellId === yellId))
+            .map((entry) => entry.offset),
+        ),
+      ].sort();
+      const allNpcIds = [
+        ...new Set(
+          npcYellMap.byOffset
+            .flatMap((entry) => entry.entries.filter((subEntry) => subEntry.yellId === yellId))
+            .map((entry) => entry.npcNameId),
+        ),
+      ].sort();
+      npcYellTable += `
+  // Offsets: ${allOffsets.join()}
+  '${yellId}': {
+    'yellId': '${yellId}',
+    'text': ${
+        JSON.stringify(
+          xivapiNpcYells.rows.find((row) => row.row_id === parseInt(yellId, 16))?.fields.Text ??
+            'MISSING TEXT',
+        )
+      },
+    'npcIds': ${JSON.stringify(allNpcIds)},
+  },`;
+    }
+
+    npcYellTable += `
+} as const;
+`;
+  }
+  return npcYellTable;
+};
+
+const generateBattleTalk2TableFromTriggerInfo = async (triggerInfo: TriggerInfo[]) => {
+  let battleTalk2Table = '';
+  // Calculate instances
+  const battleTalk2Map: BattleTalk2MapInfo = {
+    byOffset: [],
+  };
+
+  for (const fight of triggerInfo) {
+    for (const [textId, instances] of Object.entries(fight.battleTalk2s ?? [])) {
+      for (const instance of instances) {
+        const instanceOffset = new Date(instance.groups?.timestamp ?? '').getTime() -
+          new Date(fight.start).getTime();
+        let byOffsetEntry = battleTalk2Map.byOffset
+          .find((entry) => Math.abs(entry.offset - instanceOffset) < timeOffsetAllowance);
+        if (byOffsetEntry === undefined) {
+          byOffsetEntry = {
+            entries: [],
+            offset: instanceOffset,
+          };
+          battleTalk2Map.byOffset.push(byOffsetEntry);
+        }
+
+        byOffsetEntry.entries.push({
+          textId: textId ?? '',
+          npcNameId: instance.groups?.npcNameId ?? 'MISSING NPC NAME ID',
+        });
+      }
+    }
+  }
+
+  if (battleTalk2Map.byOffset.length > 0) {
+    battleTalk2Table += `
+
+const battleTalk2Data = {`;
+
+    const allTextIds = [
+      ...new Set(
+        battleTalk2Map.byOffset.flatMap((offset) => offset.entries.map((entry) => entry.textId)),
+      ),
+    ].sort();
+
+    const xivapiBattleTalk2s: XIVAPIBattleTalk2Response | undefined = await (await fetch(
+      `https://beta.xivapi.com/api/1/sheet/InstanceContentTextData?rows=${
+        allTextIds.map((textId) => parseInt(textId, 16).toString()).join(',')
+      }&fields=Text`,
+    )).json() as XIVAPIBattleTalk2Response;
+
+    for (const textId of allTextIds) {
+      const allOffsets = [
+        ...new Set(
+          battleTalk2Map.byOffset
+            .filter((entry) => entry.entries.find((subEntry) => subEntry.textId === textId))
+            .map((entry) => entry.offset),
+        ),
+      ].sort();
+      const allNpcIds = [
+        ...new Set(
+          battleTalk2Map.byOffset
+            .flatMap((entry) => entry.entries.filter((subEntry) => subEntry.textId === textId))
+            .map((entry) => entry.npcNameId),
+        ),
+      ].sort();
+      battleTalk2Table += `
+  // Offsets: ${allOffsets.join()}
+  '${textId}': {
+    'textId': '${textId}',
+    'text': ${
+        JSON.stringify(
+          xivapiBattleTalk2s.rows.find((row) => row.row_id === parseInt(textId, 16))?.fields.Text ??
+            'MISSING TEXT',
+        )
+      },
+    'npcIds': ${JSON.stringify(allNpcIds)},
+  },`;
+    }
+
+    battleTalk2Table += `
+} as const;
+`;
+  }
+  return battleTalk2Table;
+};
+
+const generateActorSetPosTableFromTriggerInfo = (triggerInfo: TriggerInfo[]) => {
+  let actorSetPosTable = '';
+  // Calculate instances
+  const actorSetPosMap: ActorSetPosMapInfo = {
+    byOffset: [],
+    byPosition: [],
+  };
+
+  for (const fight of triggerInfo) {
+    for (const [, instances] of Object.entries(fight.actorSetPoses ?? [])) {
+      for (const instance of instances) {
+        const instanceOffset = new Date(instance.groups?.timestamp ?? '').getTime() -
+          new Date(fight.start).getTime();
+        const instancePosition = new Position(
+          instance.groups?.x,
+          instance.groups?.y,
+          instance.groups?.z,
+          instance.groups?.heading,
+        );
+        let byOffsetEntry = actorSetPosMap.byOffset
+          .find((entry) => Math.abs(entry.offset - instanceOffset) < timeOffsetAllowance);
+        if (byOffsetEntry === undefined) {
+          byOffsetEntry = {
+            entries: [],
+            offset: instanceOffset,
+          };
+          actorSetPosMap.byOffset.push(byOffsetEntry);
+        }
+        let byPositionEntry = actorSetPosMap.byPosition
+          .find((entry) => entry.pos.equals(instancePosition));
+        if (byPositionEntry === undefined) {
+          byPositionEntry = {
+            pos: instancePosition,
+            entries: [],
+          };
+          actorSetPosMap.byPosition.push(byPositionEntry);
+        }
+
+        const actorId = instance.groups?.id ?? 'MISSING ID';
+        const actorName = fight.combatantTracker.combatants[actorId]?.firstState.Name ??
+          'MISSING NAME';
+
+        byOffsetEntry.entries.push({
+          actorId: actorId,
+          actorName: actorName,
+          pos: instancePosition,
+        });
+
+        byPositionEntry.entries.push({
+          actorId: actorId,
+          actorName: actorName,
+          offset: instanceOffset,
+        });
+      }
+    }
+  }
+
+  // TODO: `actorSetPosMap` is still really big.
+  // Maybe filter out positions where an ability was never used?
+
+  if (actorSetPosMap.byOffset.length > 0) {
+    actorSetPosTable += `
+
+const actorSetPosOffsetMap = ${JSON.stringify(actorSetPosMap.byOffset, undefined, 2)} as const;
+`;
+  }
+
+  if (actorSetPosMap.byPosition.length > 0) {
+    actorSetPosTable += `
+
+const actorSetPosPositionMap = ${JSON.stringify(actorSetPosMap.byPosition, undefined, 2)} as const;
+`;
+  }
+  return actorSetPosTable;
+};
+
+const generateHeadMarkerTableFromTriggerInfo = async (
+  triggerInfo: TriggerInfo[],
+  args: ExtendedArgs,
+) => {
+  let headMarkerTable = '';
   const headMarkerMap: HeadMarkerMapInfo = {
     byOffset: [],
   };
@@ -603,7 +950,7 @@ const mapEffectData = {`;
   }
 
   if (headMarkerMap.byOffset.length > 0) {
-    preText += `
+    headMarkerTable += `
 
 const headMarkerData = {
 `;
@@ -629,7 +976,7 @@ const headMarkerData = {
             .map((entry) => entry.offset),
         ),
       ].sort();
-      preText += `  // Offsets: ${allOffsets.join()}
+      headMarkerTable += `  // Offsets: ${allOffsets.join()}
   // Vfx Path: ${
         xivapiHeadMarkerInfo?.rows.find((row) => row.row_id === parseInt(headmarker, 16))?.fields
           .Unknown0 ?? 'Unknown'
@@ -638,10 +985,16 @@ const headMarkerData = {
 `;
     }
 
-    preText += `} as const;
+    headMarkerTable += `} as const;
 `;
   }
+  return headMarkerTable;
+};
 
+const generateTriggersTextFromTriggerInfo = async (
+  triggerInfo: TriggerInfo[],
+  args: ExtendedArgs,
+) => {
   let triggersText = '';
 
   const longestFight = triggerInfo.sort((left, right) => left.duration - right.duration)[0];
@@ -943,9 +1296,40 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
         break;
     }
   }
+  return triggersText;
+};
+
+const generateFileFromTriggerInfo = async (triggerInfo: TriggerInfo[], args: ExtendedArgs) => {
+  let preText = '';
+
+  // Handle pre-TriggerSet text
+
+  if (args.track_mapeffect) {
+    preText += generateMapEffectTableFromTriggerInfo(triggerInfo);
+  }
+
+  if (args.track_npcyell) {
+    preText += await generateNpcYellTableFromTriggerInfo(triggerInfo);
+  }
+
+  if (args.track_battletalk2) {
+    preText += await generateBattleTalk2TableFromTriggerInfo(triggerInfo);
+  }
+
+  if (args.track_actorsetpos) {
+    preText += generateActorSetPosTableFromTriggerInfo(triggerInfo);
+  }
+
+  preText += await generateHeadMarkerTableFromTriggerInfo(triggerInfo, args);
+
+  const triggersText = await generateTriggersTextFromTriggerInfo(triggerInfo, args);
+
+  const processArgs = process.argv.map((arg) => arg.includes(' ') ? JSON.stringify(arg) : arg).join(
+    ' ',
+  );
 
   return `// Auto-generated with:
-// ${process.argv.join(' ')}
+// ${processArgs}
 import { Responses } from '../../../../../resources/responses';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
@@ -966,7 +1350,7 @@ export default triggerSet;
 
 const generateTriggers = async () => {
   const args: ExtendedArgs = new ExtendedArgsRequired({});
-  timelineParse.parser.parseArgs(undefined, args);
+  generateTriggersParse.parser.parseArgs(undefined, args);
   validateArgs(args);
 
   let triggersFile = '';
@@ -977,8 +1361,12 @@ const generateTriggers = async () => {
     triggersFile = await generateFileFromTriggerInfo(triggerInfo, args);
   }
 
-  // Use process.stdout.write to avoid truncation from console.log
-  process.stdout.write(triggersFile);
+  if (typeof args.output_file === 'string') {
+    fs.writeFileSync(args.output_file, triggersFile, { flag: 'wx' });
+  } else {
+    // Use process.stdout.write to avoid truncation from console.log
+    process.stdout.write(triggersFile);
+  }
 
   process.exit(0);
 };
