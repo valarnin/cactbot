@@ -30,10 +30,10 @@ const hexSort = (left: string | number, right: string | number) => {
 const timeOffsetAllowance = 2000;
 
 // How much distance is considered for position comparison
-const positionDistanceAllowance = Number.EPSILON;
+const positionDistanceAllowance = 0.05;
 
 // How much of an angle in radians is considered for position comparison
-const positionHeadingAllowance = 1 * (Math.PI / 180);
+const positionHeadingAllowance = 4.5 * (Math.PI / 180);
 
 const triggerSuggestOptions = [
   'AoE',
@@ -201,14 +201,14 @@ class Position {
     this.z = parseFloat(z ?? '');
     this.heading = parseFloat(heading ?? '');
   }
-  public equals(other: Position) {
+  public equals(other: Position, considerHeading = true) {
     if (Math.abs(this.x - other.x) > positionDistanceAllowance)
       return false;
     if (Math.abs(this.y - other.y) > positionDistanceAllowance)
       return false;
     if (Math.abs(this.z - other.z) > positionDistanceAllowance)
       return false;
-    if (Math.abs(this.heading - other.heading) > positionHeadingAllowance)
+    if (considerHeading && Math.abs(this.heading - other.heading) > positionHeadingAllowance)
       return false;
     return true;
   }
@@ -217,19 +217,13 @@ class Position {
 type ActorSetPosMapInfo = {
   byOffset: {
     offset: number;
-    entries: {
-      actorId: string;
-      actorName: string;
-      pos: Position;
-    }[];
+    actorNames: string[];
+    positions: Position[];
   }[];
   byPosition: {
     pos: Position;
-    entries: {
-      actorId: string;
-      actorName: string;
-      offset: number;
-    }[];
+    actorNames: string[];
+    offsets: number[];
   }[];
 };
 
@@ -847,6 +841,23 @@ const battleTalk2Data = {`;
 
 const generateActorSetPosTableFromTriggerInfo = (triggerInfo: TriggerInfo[]) => {
   let actorSetPosTable = '';
+
+  const abilitiesUsedAt: Position[] = [];
+  for (const fight of triggerInfo) {
+    for (const [, instances] of Object.entries(fight.abilities)) {
+      for (const instance of instances) {
+        const position = new Position(
+          instance.groups?.x,
+          instance.groups?.y,
+          instance.groups?.z,
+          instance.groups?.heading,
+        );
+        if (abilitiesUsedAt.find((entry) => entry.equals(position)) === undefined)
+          abilitiesUsedAt.push(position);
+      }
+    }
+  }
+
   // Calculate instances
   const actorSetPosMap: ActorSetPosMapInfo = {
     byOffset: [],
@@ -864,11 +875,17 @@ const generateActorSetPosTableFromTriggerInfo = (triggerInfo: TriggerInfo[]) => 
           instance.groups?.z,
           instance.groups?.heading,
         );
+
+        // If there's never an ability used here, skip this ActorSetPos entry
+        if (abilitiesUsedAt.find((entry) => entry.equals(instancePosition, false)) === undefined)
+          continue;
+
         let byOffsetEntry = actorSetPosMap.byOffset
           .find((entry) => Math.abs(entry.offset - instanceOffset) < timeOffsetAllowance);
         if (byOffsetEntry === undefined) {
           byOffsetEntry = {
-            entries: [],
+            actorNames: [],
+            positions: [],
             offset: instanceOffset,
           };
           actorSetPosMap.byOffset.push(byOffsetEntry);
@@ -878,40 +895,37 @@ const generateActorSetPosTableFromTriggerInfo = (triggerInfo: TriggerInfo[]) => 
         if (byPositionEntry === undefined) {
           byPositionEntry = {
             pos: instancePosition,
-            entries: [],
+            actorNames: [],
+            offsets: [],
           };
           actorSetPosMap.byPosition.push(byPositionEntry);
         }
 
-        const actorId = instance.groups?.id ?? 'MISSING ID';
-        const actorName = fight.combatantTracker.combatants[actorId]?.firstState.Name ??
+        const actorIdz = instance.groups?.id ?? 'MISSING ID';
+        const actorName = fight.combatantTracker.combatants[actorIdz]?.firstState.Name ??
           'MISSING NAME';
 
-        byOffsetEntry.entries.push({
-          actorId: actorId,
-          actorName: actorName,
-          pos: instancePosition,
-        });
+        if (!byOffsetEntry.actorNames.includes(actorName))
+          byOffsetEntry.actorNames.push(actorName);
 
-        byPositionEntry.entries.push({
-          actorId: actorId,
-          actorName: actorName,
-          offset: instanceOffset,
-        });
+        if (byOffsetEntry.positions.find((entry) => entry.equals(instancePosition)) === undefined)
+          byOffsetEntry.positions.push(instancePosition);
+
+        if (!byPositionEntry.actorNames.includes(actorName))
+          byPositionEntry.actorNames.push(actorName);
+
+        if (
+          !byPositionEntry.offsets.find((entry) =>
+            Math.abs(entry - instanceOffset) < timeOffsetAllowance
+          )
+        )
+          byPositionEntry.offsets.push(instanceOffset);
       }
     }
   }
 
-  // TODO: `actorSetPosMap` is still really big.
-  // Maybe filter out positions where an ability was never used?
-
-  if (actorSetPosMap.byOffset.length > 0) {
-    actorSetPosTable += `
-
-const actorSetPosOffsetMap = ${JSON.stringify(actorSetPosMap.byOffset, undefined, 2)} as const;
-`;
-  }
-
+  // TODO: `actorSetPosMap` is still a little too big.
+  // We can probably filter more instances out, or compress the data somehow.
   if (actorSetPosMap.byPosition.length > 0) {
     actorSetPosTable += `
 
