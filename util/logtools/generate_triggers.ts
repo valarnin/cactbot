@@ -13,6 +13,18 @@ import NetworkLogConverter from '../../ui/raidboss/emulator/data/NetworkLogConve
 
 import { EncounterCollector, ignoredCombatants } from './encounter_tools';
 
+const numberSort = (left: string | number, right: string | number) => {
+  const leftNum = typeof left === 'number' ? left : parseInt(left);
+  const rightNum = typeof right === 'number' ? right : parseInt(right);
+  return leftNum - rightNum;
+};
+
+const hexSort = (left: string | number, right: string | number) => {
+  const leftNum = typeof left === 'number' ? left : parseInt(left, 16);
+  const rightNum = typeof right === 'number' ? right : parseInt(right, 16);
+  return leftNum - rightNum;
+};
+
 // How long (in ms) for a line to be offset based on encounter start
 // to be considered the same instance across encounters
 const timeOffsetAllowance = 2000;
@@ -619,7 +631,7 @@ const mapEffectData = {`;
           entry.entries.map((subEntry) => subEntry.location)
         ),
       ),
-    ].sort();
+    ].sort(hexSort);
 
     for (const location of allLocations) {
       const allOffsets = [
@@ -628,14 +640,14 @@ const mapEffectData = {`;
             .filter((entry) => entry.entries.find((subEntry) => subEntry.location === location))
             .map((entry) => entry.offset),
         ),
-      ].sort();
+      ].sort(numberSort);
       const allFlags = [
         ...new Set(
           mapEffectMap.byOffset
             .filter((entry) => entry.entries.find((subEntry) => subEntry.location === location))
             .flatMap((entry) => entry.entries.map((subEntry) => subEntry.flags)),
         ),
-      ].sort();
+      ].sort(hexSort);
       mapEffectTable += `
   // Offsets: ${allOffsets.join()}
   '${location}': {
@@ -649,7 +661,7 @@ const mapEffectData = {`;
               .filter((entry) => entry.entries.find((subEntry) => subEntry.flags === flags))
               .map((entry) => entry.offset),
           ),
-        ].sort();
+        ].sort(numberSort);
         const flagsKey = flags.match(/^0*?800040*?$/) ? `'clear${i}'` : `'flags${i}'`;
         mapEffectTable += `
     // Offsets: ${flagOffsets.join()}
@@ -706,7 +718,7 @@ const npcYellData = {`;
       ...new Set(
         npcYellMap.byOffset.flatMap((offset) => offset.entries.map((entry) => entry.yellId)),
       ),
-    ].sort();
+    ].sort(hexSort);
 
     const xivapiNpcYells: XIVAPINpcYellResponse | undefined = await (await fetch(
       `https://beta.xivapi.com/api/1/sheet/NpcYell?rows=${
@@ -721,14 +733,14 @@ const npcYellData = {`;
             .filter((entry) => entry.entries.find((subEntry) => subEntry.yellId === yellId))
             .map((entry) => entry.offset),
         ),
-      ].sort();
+      ].sort(numberSort);
       const allNpcIds = [
         ...new Set(
           npcYellMap.byOffset
             .flatMap((entry) => entry.entries.filter((subEntry) => subEntry.yellId === yellId))
             .map((entry) => entry.npcNameId),
         ),
-      ].sort();
+      ].sort(hexSort);
       npcYellTable += `
   // Offsets: ${allOffsets.join()}
   '${yellId}': {
@@ -789,7 +801,7 @@ const battleTalk2Data = {`;
       ...new Set(
         battleTalk2Map.byOffset.flatMap((offset) => offset.entries.map((entry) => entry.textId)),
       ),
-    ].sort();
+    ].sort(hexSort);
 
     const xivapiBattleTalk2s: XIVAPIBattleTalk2Response | undefined = await (await fetch(
       `https://beta.xivapi.com/api/1/sheet/InstanceContentTextData?rows=${
@@ -804,14 +816,14 @@ const battleTalk2Data = {`;
             .filter((entry) => entry.entries.find((subEntry) => subEntry.textId === textId))
             .map((entry) => entry.offset),
         ),
-      ].sort();
+      ].sort(numberSort);
       const allNpcIds = [
         ...new Set(
           battleTalk2Map.byOffset
             .flatMap((entry) => entry.entries.filter((subEntry) => subEntry.textId === textId))
             .map((entry) => entry.npcNameId),
         ),
-      ].sort();
+      ].sort(hexSort);
       battleTalk2Table += `
   // Offsets: ${allOffsets.join()}
   '${textId}': {
@@ -959,7 +971,7 @@ const headMarkerData = {
       ...new Set(
         headMarkerMap.byOffset.flatMap((entry) => entry.vfx),
       ),
-    ].sort();
+    ].sort(hexSort);
 
     const xivapiHeadMarkerInfo: XIVAPILockonResponse | undefined = await (await fetch(
       `https://beta.xivapi.com/api/1/sheet/Lockon?rows=${
@@ -975,7 +987,7 @@ const headMarkerData = {
             .filter((entry) => entry.vfx.find((subEntry) => subEntry === headmarker))
             .map((entry) => entry.offset),
         ),
-      ].sort();
+      ].sort(numberSort);
       headMarkerTable += `  // Offsets: ${allOffsets.join()}
   // Vfx Path: ${
         xivapiHeadMarkerInfo?.rows.find((row) => row.row_id === parseInt(headmarker, 16))?.fields
@@ -1166,9 +1178,9 @@ Sources: ${
             )),
           ].sort().join(', ')
         },
-Line Types: ${abilityLineTypes.sort().join(', ')},
+Line Types: ${abilityLineTypes.sort(numberSort).join(', ')},
 Line Count: ${instances.length},
-Offsets: ${mapInfo.offsets.sort().join(', ')},
+Offsets: ${mapInfo.offsets.sort(numberSort).join(', ')},
 CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
 `,
         choices: triggerSuggestOptions.map((e) => {
