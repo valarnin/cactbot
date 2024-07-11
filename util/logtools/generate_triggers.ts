@@ -1207,13 +1207,17 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
       },
     ]);
 
+    const allIdsString = mapInfo.ids.length > 1
+      ? `['${mapInfo.ids.join('\', \'').toUpperCase()}']`
+      : `'${mapInfo.ids[0]?.toUpperCase() ?? ''}'`;
+
     switch (result.action) {
       case 'AoE':
         triggersText += `
     {
       id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
       type: 'StartsUsing',
-      netRegex: { id: '${mapInfo.ids.join('|').toUpperCase()}', source: '${
+      netRegex: { id: ${allIdsString}, source: '${
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       response: Responses.aoe(),
@@ -1224,7 +1228,7 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
     {
       id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
       type: 'StartsUsing',
-      netRegex: { id: '${mapInfo.ids.join('|').toUpperCase()}', source: '${
+      netRegex: { id: ${allIdsString}, source: '${
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       response: Responses.getUnder(),
@@ -1237,7 +1241,7 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
     {
       id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
       type: 'StartsUsing',
-      netRegex: { id: '${mapInfo.ids.join('|').toUpperCase()}', source: '${
+      netRegex: { id: ${allIdsString}, source: '${
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       infoText: (_data, _matches, output) => output.intercards!(),
@@ -1258,7 +1262,7 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
     {
       id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
       type: 'StartsUsing',
-      netRegex: { id: '${mapInfo.ids.join('|').toUpperCase()}', source: '${
+      netRegex: { id: ${allIdsString}, source: '${
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       response: Responses.getOut(),
@@ -1269,7 +1273,7 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
     {
       id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
       type: 'StartsUsing',
-      netRegex: { id: '${mapInfo.ids.join('|').toUpperCase()}', source: '${
+      netRegex: { id: ${allIdsString}, source: '${
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       response: Responses.awayFromFront(),
@@ -1280,7 +1284,7 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
     {
       id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
       type: 'StartsUsing',
-      netRegex: { id: '${mapInfo.ids.join('|').toUpperCase()}', source: '${
+      netRegex: { id: ${allIdsString}, source: '${
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       response: Responses.tankBuster(),
@@ -1291,7 +1295,7 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
     {
       id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
       type: 'StartsUsing',
-      netRegex: { id: '${mapInfo.ids.join('|').toUpperCase()}', source: '${
+      netRegex: { id: ${allIdsString}, source: '${
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       infoText: (_data, _matches, output) => output.text!(),
