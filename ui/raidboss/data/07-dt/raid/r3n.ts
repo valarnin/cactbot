@@ -1,4 +1,4 @@
-import outputs from '../../../../../resources/outputs';
+import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
@@ -80,7 +80,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '93D0', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
-        text: outputs.clockwise,
+        text: Outputs.clockwise,
       },
     },
     {
@@ -89,7 +89,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '93D1', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
-        text: outputs.counterclockwise,
+        text: Outputs.counterclockwise,
       },
     },
     {
@@ -153,7 +153,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '9B42', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
-        text: outputs.clockwise,
+        text: Outputs.clockwise,
       },
     },
     {
@@ -162,7 +162,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '9B43', source: 'Brute Bomber', capture: false },
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
-        text: outputs.counterclockwise,
+        text: Outputs.counterclockwise,
       },
     },
   ],
