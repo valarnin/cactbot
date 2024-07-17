@@ -107,6 +107,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R3N Lariat Combo East to West',
       type: 'StartsUsing',
       netRegex: { id: '9ADC', source: 'Brute Bomber', capture: false },
+      durationSeconds: 15,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -118,6 +119,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R3N Lariat Combo East to East',
       type: 'StartsUsing',
       netRegex: { id: '9ADD', source: 'Brute Bomber', capture: false },
+      durationSeconds: 15,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -129,6 +131,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R3N Lariat Combo West to East',
       type: 'StartsUsing',
       netRegex: { id: '9ADE', source: 'Brute Bomber', capture: false },
+      durationSeconds: 15,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -140,6 +143,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R3N Lariat Combo West to West',
       type: 'StartsUsing',
       netRegex: { id: '9ADF', source: 'Brute Bomber', capture: false },
+      durationSeconds: 15,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
