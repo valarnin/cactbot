@@ -51,6 +51,18 @@ const triggerSuggestOptions = [
   'Skip',
 ] as const;
 
+const headmarkerTriggerSuggestOptions = [
+  'Tankbuster',
+  'Stack',
+  'Party Stacks',
+  'Spread',
+  'Knockback',
+  'Custom',
+  'Skip',
+] as const;
+
+type HeadmarkerTriggerSuggestTypes = typeof headmarkerTriggerSuggestOptions[number];
+
 type XIVAPIAbilityResponse = {
   schema: string;
   rows: {
@@ -942,8 +954,9 @@ const actorSetPosPositionMap = ${JSON.stringify(actorSetPosMap.byPosition, undef
 const generateHeadMarkerTableFromTriggerInfo = async (
   triggerInfo: TriggerInfo[],
   args: ExtendedArgs,
-) => {
+): Promise<[string, string]> => {
   let headMarkerTable = '';
+  let headMarkerTriggers = '';
   const headMarkerMap: HeadMarkerMapInfo = {
     byOffset: [],
   };
@@ -1006,19 +1019,143 @@ const headMarkerData = {
             .map((entry) => entry.offset),
         ),
       ].sort(numberSort);
+      const vfxPath = xivapiHeadMarkerInfo?.rows.find((row) =>
+        row.row_id === parseInt(headmarker, 16)
+      )?.fields
+        .Unknown0 ?? 'Unknown';
       headMarkerTable += `  // Offsets: ${allOffsets.join()}
-  // Vfx Path: ${
-        xivapiHeadMarkerInfo?.rows.find((row) => row.row_id === parseInt(headmarker, 16))?.fields
-          .Unknown0 ?? 'Unknown'
-      }
+  // Vfx Path: ${vfxPath}
   '${headmarker}': '${headmarker}',
 `;
+
+      let suggestedOperation: HeadmarkerTriggerSuggestTypes = 'Skip';
+
+      const instances = triggerInfo.flatMap((fight) => fight.headMarkers[headmarker] ?? []);
+
+      const onAPlayer = instances.find((instance) =>
+        (instance.groups?.targetId ?? '').startsWith('1')
+      ) !== undefined;
+
+      switch (vfxPath) {
+        case 'com_share1f':
+        case 'com_share3t':
+        case 'com_share3_7s0p':
+        case 'loc05sp_05a_se_p':
+          suggestedOperation = 'Stack';
+          break;
+        case 'tank_lockon02k1':
+        case 'm0676trg_tw_d0t1p':
+        case 'tank_laser_lockon01p':
+          suggestedOperation = 'Tankbuster';
+          break;
+        case 'target_ae_s7k1':
+        case 'm0906_tgae_s701k2':
+          suggestedOperation = 'Spread';
+          break;
+        case 'm0906_share4_7s0k2':
+          suggestedOperation = 'Party Stacks';
+          break;
+      }
+
+      const result = await inquirer.prompt<{ action: HeadmarkerTriggerSuggestTypes | null }>([
+        {
+          type: 'list',
+          name: 'action',
+          message: `Headmarker Information:
+ID: ${headmarker},
+VFX: ${vfxPath},
+On Player: ${onAPlayer ? 'Yes' : 'No'},
+Line Count: ${instances.length},
+Offsets: ${allOffsets.sort(numberSort).join(', ')}
+`,
+          choices: triggerSuggestOptions.map((e) => {
+            return {
+              name: e,
+              value: e,
+            };
+          }),
+          default: suggestedOperation,
+        },
+      ]);
+
+      switch (result.action) {
+        case 'Tankbuster':
+          headMarkerTriggers += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} Headmarker Tankbuster ${headmarker}',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData['${headmarker}'], capture: true },
+      response: Responses.tankBuster(),
+    },`;
+          break;
+        case 'Stack':
+          headMarkerTriggers += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} Headmarker Stack ${headmarker}',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData['${headmarker}'], capture: true },
+      response: Responses.stackMarkerOn(),
+    },`;
+          break;
+        case 'Party Stacks':
+          headMarkerTriggers += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} Headmarker Party Stacks ${headmarker}',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData['${headmarker}'], capture: false },
+      infoText: (_data, _matches, output) => output.stacks!(),
+      outputStrings: {
+        stacks: {
+          en: 'Stacks',
+          de: 'Sammeln',
+          fr: 'Package',
+          cn: '分摊',
+          ko: '쉐어',
+        },
+      },
+    },`;
+          break;
+        case 'Spread':
+          // TODO: Maybe we want a condition here for target is you?
+          headMarkerTriggers += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} Headmarker Spread ${headmarker}',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData['${headmarker}'], capture: true },
+      suppressSeconds: 5,
+      response: Responses.spread(),
+    },`;
+          break;
+        case 'Knockback':
+          headMarkerTriggers += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} Headmarker Knockback ${headmarker}',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData['${headmarker}'], capture: false },
+      response: Responses.knockback(),
+    },`;
+          break;
+        case 'Custom':
+          headMarkerTriggers += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} Headmarker Custom ${headmarker}',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData['${headmarker}'], capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'Custom Text',
+        },
+      },
+    },`;
+          break;
+      }
     }
 
     headMarkerTable += `} as const;
 `;
   }
-  return headMarkerTable;
+  return [headMarkerTable, headMarkerTriggers];
 };
 
 const generateTriggersTextFromTriggerInfo = async (
@@ -1408,7 +1545,12 @@ const generateFileFromTriggerInfo = async (triggerInfo: TriggerInfo[], args: Ext
     preText += generateActorSetPosTableFromTriggerInfo(triggerInfo);
   }
 
-  preText += await generateHeadMarkerTableFromTriggerInfo(triggerInfo, args);
+  const [headmarkerMapText, headmarkerTriggersText] = await generateHeadMarkerTableFromTriggerInfo(
+    triggerInfo,
+    args,
+  );
+
+  preText += headmarkerMapText;
 
   const triggersText = await generateTriggersTextFromTriggerInfo(triggerInfo, args);
 
@@ -1428,7 +1570,7 @@ const triggerSet: TriggerSet<RaidbossData> = {
   id: '${args.zone_id ?? ''}',
   zoneId: ZoneId.${args.zone_id ?? ''},
   timelineFile: '???.txt',
-  triggers: [${triggersText}
+  triggers: [${headmarkerTriggersText}${triggersText}
   ]
 };
 
