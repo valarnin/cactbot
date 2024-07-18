@@ -96,16 +96,18 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       id: 'R4N Left Roll',
-      type: 'StartsUsing',
+      type: 'Ability',
       netRegex: { id: '92AC', source: 'Wicked Thunder', capture: false },
       response: Responses.goWest(),
     },
     {
       id: 'R4N Right Roll',
-      type: 'StartsUsing',
+      type: 'Ability',
       netRegex: { id: '92AB', source: 'Wicked Thunder', capture: false },
       response: Responses.goEast(),
     },
+    // These don't work, probably this is based on an AC packet instead?
+    /*
     {
       id: 'R4N Threefold Blast S N S',
       type: 'StartsUsing',
@@ -131,14 +133,14 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
-      id: 'R4N Fourfold Blast S N N S',
+      id: 'R4N Fourfold Blast S S N S',
       type: 'StartsUsing',
       netRegex: { id: '9B4F', source: 'Wicked Thunder', capture: false },
       durationSeconds: 18.9,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
-          en: 'S => N => stay N => S',
+          en: 'S => stay S => N => S',
         },
       },
     },
@@ -151,50 +153,6 @@ const triggerSet: TriggerSet<Data> = {
       outputStrings: {
         text: {
           en: 'N => S => stay S => N',
-        },
-      },
-    },
-    {
-      id: 'R4N Bewitching Flight Left Safe',
-      type: 'StartsUsing',
-      netRegex: { id: '8DE4', source: 'Wicked Thunder', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'West offset safe',
-        },
-      },
-    },
-    {
-      id: 'R4N Bewitching Flight North Safe',
-      type: 'StartsUsing',
-      netRegex: { id: '8DE4', source: 'Wicked Replica', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'North offset safe',
-        },
-      },
-    },
-    {
-      id: 'R4N Bewitching Flight Right Safe',
-      type: 'StartsUsing',
-      netRegex: { id: '8DE6', source: 'Wicked Thunder', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'East offset safe',
-        },
-      },
-    },
-    {
-      id: 'R4N Bewitching Flight South Safe',
-      type: 'StartsUsing',
-      netRegex: { id: '8DE6', source: 'Wicked Replica', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'South offset safe',
         },
       },
     },
@@ -217,6 +175,51 @@ const triggerSet: TriggerSet<Data> = {
       outputStrings: {
         text: {
           en: 'N => S => N => S, stay S',
+        },
+      },
+    },
+    */
+    {
+      id: 'R4N Bewitching Flight Right Safe',
+      type: 'StartsUsing',
+      netRegex: { id: '8DE4', source: 'Wicked Thunder', capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'East offset safe',
+        },
+      },
+    },
+    {
+      id: 'R4N Bewitching Flight South Safe',
+      type: 'StartsUsing',
+      netRegex: { id: '8DE4', source: 'Wicked Replica', capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'South offset safe',
+        },
+      },
+    },
+    {
+      id: 'R4N Bewitching Flight Left Safe',
+      type: 'StartsUsing',
+      netRegex: { id: '8DE6', source: 'Wicked Thunder', capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'West offset safe',
+        },
+      },
+    },
+    {
+      id: 'R4N Bewitching Flight North Safe',
+      type: 'StartsUsing',
+      netRegex: { id: '8DE6', source: 'Wicked Replica', capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'North offset safe',
         },
       },
     },
