@@ -638,8 +638,8 @@ const mapEffectData = {`;
       const allFlags = [
         ...new Set(
           mapEffectMap.byOffset
-            .filter((entry) => entry.entries.find((subEntry) => subEntry.location === location))
-            .flatMap((entry) => entry.entries.map((subEntry) => subEntry.flags)),
+            .flatMap((entry) => entry.entries.filter((subEntry) => subEntry.location === location))
+            .map((entry) => entry.flags),
         ),
       ].sort(hexSort);
       mapEffectTable += `
