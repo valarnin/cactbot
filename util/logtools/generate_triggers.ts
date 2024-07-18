@@ -42,6 +42,10 @@ const triggerSuggestOptions = [
   'Circle (out)',
   'Away from Front (cone)',
   'Tankbuster',
+  'Stack',
+  'Party Stacks',
+  'Spread',
+  'Knockback',
   'Custom Separate',
   'Custom Joined',
   'Skip',
@@ -1288,6 +1292,60 @@ CastInfo Hints: ${[...castTypeFullSuggestions].join(', ')}
           mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
         }', capture: false },
       response: Responses.tankBuster(),
+    },`;
+        break;
+      case 'Stack':
+        triggersText += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
+      type: 'StartsUsing',
+      netRegex: { id: ${allIdsString}, source: '${
+          mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
+        }', capture: true },
+      response: Responses.stackMarkerOn(),
+    },`;
+        break;
+      case 'Party Stacks':
+        triggersText += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
+      type: 'StartsUsing',
+      netRegex: { id: ${allIdsString}, source: '${
+          mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
+        }', capture: false },
+      infoText: (_data, _matches, output) => output.stacks!(),
+      outputStrings: {
+        stacks: {
+          en: 'Stacks',
+          de: 'Sammeln',
+          fr: 'Package',
+          cn: '分摊',
+          ko: '쉐어',
+        },
+      },
+    },`;
+        break;
+      case 'Spread':
+        triggersText += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
+      type: 'StartsUsing',
+      netRegex: { id: ${allIdsString}, source: '${
+          mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
+        }', capture: false },
+      suppressSeconds: 5,
+      response: Responses.spread(),
+    },`;
+        break;
+      case 'Knockback':
+        triggersText += `
+    {
+      id: '${args.trigger_id_prefix ?? ''} ${abilityName}',
+      type: 'StartsUsing',
+      netRegex: { id: ${allIdsString}, source: '${
+          mapInfo.fights[0]?.instances[0]?.groups?.source ?? 'MISSING SOURCE'
+        }', capture: false },
+      response: Responses.knockback(),
     },`;
         break;
       case 'Custom Joined':
