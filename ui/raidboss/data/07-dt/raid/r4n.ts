@@ -1,9 +1,39 @@
+import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
 
-export type Data = RaidbossData;
+const effectB9AMap = {
+  orangeDiamondFront: '2D3',
+  blueCircleBack: '2D4',
+} as const;
+
+type B9AMapKeys = keyof typeof effectB9AMap;
+type B9AMapValues = typeof effectB9AMap[B9AMapKeys];
+
+export interface Data extends RaidbossData {
+  expectedBlasts: 3 | 4 | 5;
+  storedBlasts: B9AMapValues[];
+}
+
+const b9aValueToNorthSouth = (
+  searchValue: B9AMapValues | undefined,
+): 'north' | 'south' | 'unknown' => {
+  if (searchValue === effectB9AMap.blueCircleBack) {
+    return 'north';
+  } else if (searchValue === effectB9AMap.orangeDiamondFront) {
+    return 'south';
+  }
+
+  return 'unknown';
+};
+
+const isEffectB9AValue = (value: string | undefined): value is B9AMapValues => {
+  if (value === undefined)
+    return false;
+  return Object.values<string>(effectB9AMap).includes(value);
+};
 
 // TODO: Map out MapEffect data if needed? Might be useful for prep for savage.
 // TODO: Better triggers for Sidewise Spark. Some sort of phase detection and collect setup is needed
@@ -50,6 +80,10 @@ const triggerSet: TriggerSet<Data> = {
   id: 'AacLightHeavyweightM4',
   zoneId: ZoneId.AacLightHeavyweightM4,
   timelineFile: 'r4n.txt',
+  initData: () => ({
+    expectedBlasts: 3,
+    storedBlasts: [],
+  }),
   triggers: [
     {
       id: 'R4N Headmarker Soaring Soulpress Stack',
@@ -106,79 +140,90 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '92AB', source: 'Wicked Thunder', capture: false },
       response: Responses.goEast(),
     },
-    // These don't work, probably this is based on an AC packet instead?
-    /*
     {
-      id: 'R4N Threefold Blast S N S',
+      id: 'R4N Threefold Blast Initializer',
       type: 'StartsUsing',
-      netRegex: { id: '92AD', source: 'Wicked Thunder', capture: false },
-      durationSeconds: 14.4,
-      infoText: (_data, _matches, output) => output.text!(),
+      netRegex: { id: ['92AD', '92B0'], source: 'Wicked Thunder', capture: false },
+      run: (data) => data.expectedBlasts = 3,
+    },
+    {
+      id: 'R4N Fourfold Blast Initializer',
+      type: 'StartsUsing',
+      netRegex: { id: ['9B4F', '9B55'], source: 'Wicked Thunder', capture: false },
+      run: (data) => data.expectedBlasts = 4,
+    },
+    {
+      id: 'R4N Fivefold Blast Initializer',
+      type: 'StartsUsing',
+      netRegex: { id: ['9B56', '9B57'], source: 'Wicked Thunder', capture: false },
+      run: (data) => data.expectedBlasts = 5,
+    },
+    {
+      id: 'R4N XFold Blast Collector',
+      type: 'GainsEffect',
+      netRegex: { effectId: 'B9A', count: Object.values(effectB9AMap), capture: true },
+      condition: (data, matches) => {
+        const count = matches.count;
+
+        if (!isEffectB9AValue(count))
+          return false;
+        data.storedBlasts.push(count);
+
+        return data.storedBlasts.length >= data.expectedBlasts;
+      },
+      durationSeconds: (data) => {
+        if (data.expectedBlasts === 3)
+          return 14.4;
+        if (data.expectedBlasts === 4)
+          return 18.9;
+        return 23.2;
+      },
+      infoText: (data, _matches, output) => {
+        const expectedBlasts = data.expectedBlasts;
+        data.expectedBlasts = 3;
+        const storedBlasts = data.storedBlasts;
+        data.storedBlasts = [];
+        switch (expectedBlasts) {
+          case 3:
+            return output.three!({
+              first: b9aValueToNorthSouth(storedBlasts[0]),
+              second: b9aValueToNorthSouth(storedBlasts[1]),
+              third: b9aValueToNorthSouth(storedBlasts[2]),
+            });
+          case 4:
+            return output.four!({
+              first: b9aValueToNorthSouth(storedBlasts[0]),
+              second: b9aValueToNorthSouth(storedBlasts[1]),
+              third: b9aValueToNorthSouth(storedBlasts[2]),
+              fourth: b9aValueToNorthSouth(storedBlasts[3]),
+            });
+          case 5:
+            return output.five!({
+              first: b9aValueToNorthSouth(storedBlasts[0]),
+              second: b9aValueToNorthSouth(storedBlasts[1]),
+              third: b9aValueToNorthSouth(storedBlasts[2]),
+              fourth: b9aValueToNorthSouth(storedBlasts[3]),
+              fifth: b9aValueToNorthSouth(storedBlasts[5]),
+            });
+          default:
+            return output.unknown!();
+        }
+      },
       outputStrings: {
-        text: {
-          en: 'S => N => S',
+        south: Outputs.south,
+        north: Outputs.north,
+        unknown: Outputs.unknown,
+        three: {
+          en: '${first} => ${second} => ${third}',
+        },
+        four: {
+          en: '${first} => ${second} => ${third} => ${fourth}',
+        },
+        five: {
+          en: '${first} => ${second} => ${third} => ${fourth} => ${fifth}',
         },
       },
     },
-    {
-      id: 'R4N Threefold Blast N S N',
-      type: 'StartsUsing',
-      netRegex: { id: '92B0', source: 'Wicked Thunder', capture: false },
-      durationSeconds: 14.4,
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'N => S => N',
-        },
-      },
-    },
-    {
-      id: 'R4N Fourfold Blast S S N S',
-      type: 'StartsUsing',
-      netRegex: { id: '9B4F', source: 'Wicked Thunder', capture: false },
-      durationSeconds: 18.9,
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'S => stay S => N => S',
-        },
-      },
-    },
-    {
-      id: 'R4N Fourfold Blast N S S N',
-      type: 'StartsUsing',
-      netRegex: { id: '9B55', source: 'Wicked Thunder', capture: false },
-      durationSeconds: 18.9,
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'N => S => stay S => N',
-        },
-      },
-    },
-    {
-      id: 'R4N Fivefold Blast S N S N N',
-      type: 'StartsUsing',
-      netRegex: { id: '9B56', source: 'Wicked Thunder', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'S => N => S => N, stay N',
-        },
-      },
-    },
-    {
-      id: 'R4N Fivefold Blast N S N S S',
-      type: 'StartsUsing',
-      netRegex: { id: '9B57', source: 'Wicked Thunder', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'N => S => N => S, stay S',
-        },
-      },
-    },
-    */
     {
       id: 'R4N Bewitching Flight Right Safe',
       type: 'StartsUsing',
