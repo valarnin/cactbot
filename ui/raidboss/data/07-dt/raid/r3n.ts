@@ -123,7 +123,7 @@ const triggerSet: TriggerSet<Data> = {
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
-          en: 'East, then East',
+          en: 'East, stay East',
         },
       },
     },
@@ -135,7 +135,7 @@ const triggerSet: TriggerSet<Data> = {
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
-          en: 'West to East',
+          en: 'West, then East',
         },
       },
     },
@@ -147,7 +147,7 @@ const triggerSet: TriggerSet<Data> = {
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
-          en: 'West to West',
+          en: 'West, stay West',
         },
       },
     },
