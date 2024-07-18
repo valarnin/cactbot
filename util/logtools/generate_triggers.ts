@@ -987,7 +987,9 @@ const generateHeadMarkerTableFromTriggerInfo = async (
           headMarkerMap.byOffset.push(byOffsetEntry);
         }
 
-        byOffsetEntry.vfx.push((parseInt(id, 16) - headmarkerOffset).toString(16).toUpperCase());
+        byOffsetEntry.vfx.push(
+          (parseInt(id, 16) - headmarkerOffset).toString(16).toUpperCase().padStart(4, '0'),
+        );
       }
     }
   }
@@ -1041,15 +1043,18 @@ const headMarkerData = {
         case 'com_share3t':
         case 'com_share3_7s0p':
         case 'loc05sp_05a_se_p':
+        case 'com_share5a1':
           suggestedOperation = 'Stack';
           break;
         case 'tank_lockon02k1':
         case 'm0676trg_tw_d0t1p':
         case 'tank_laser_lockon01p':
+        case 'tank_laser_5sec_lockon_c0a1':
           suggestedOperation = 'Tankbuster';
           break;
         case 'target_ae_s7k1':
         case 'm0906_tgae_s701k2':
+        case 'tag_ae5m_8s_0v':
           suggestedOperation = 'Spread';
           break;
         case 'm0906_share4_7s0k2':
