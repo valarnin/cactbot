@@ -2,6 +2,7 @@ import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
+import { PluginCombatantState } from '../../../../../types/event';
 import { TriggerSet } from '../../../../../types/trigger';
 
 // TODO: Map out MapEffect data if needed? Might be useful for prep for savage.
@@ -23,6 +24,9 @@ type B9AMapValues = typeof effectB9AMap[B9AMapKeys];
 export interface Data extends RaidbossData {
   expectedBlasts: 0 | 3 | 4 | 5;
   storedBlasts: B9AMapValues[];
+  expectedCleaves: 1 | 2 | 5;
+  storedCleaves: string[];
+  actors: PluginCombatantState[];
 }
 
 const b9aValueToNorthSouth = (
@@ -83,8 +87,40 @@ const triggerSet: TriggerSet<Data> = {
   initData: () => ({
     expectedBlasts: 0,
     storedBlasts: [],
+    actors: [],
+    expectedCleaves: 1,
+    storedCleaves: [],
   }),
   triggers: [
+    /* {
+      id: 'R4N Actor Collector',
+      type: 'StartsUsing',
+      netRegex: { id: '92C7', source: 'Wicked Thunder', capture: false },
+      promise: async (data) => {
+        data.actors = (await callOverlayHandler({
+          call: 'getCombatants',
+        })).combatants;
+      },
+    },
+    {
+      id: 'R4N Clone Cleave Collector',
+      type: 'CombatantMemory',
+      // Filter to only enemy actors for performance
+      netRegex: { id: '4[0-9A-Fa-f]{7}', pair: [{ key: 'WeaponId', value: ['33', '121'] }], capture: true },
+      condition: (data, matches) => {
+        const initActorData = data.actors.find((actor) => actor.ID === parseInt(matches.id, 16));
+        if (!initActorData)
+          return false;
+
+        const weaponId = matches.pairWeaponId;
+        if (weaponId === undefined)
+          return false;
+
+        data.storedCleaves.push(weaponId === '121' ? 'left' : 'right');
+
+        return data.storedCleaves.length >= data.expectedCleaves;
+      },
+    },*/
     {
       id: 'R4N Headmarker Soaring Soulpress Stack',
       type: 'HeadMarker',
@@ -116,7 +152,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '92C7', source: 'Wicked Thunder', capture: false },
       response: Responses.aoe(),
     },
-    {
+    /* {
       id: 'R4N Sidewise Spark Go Left',
       type: 'StartsUsing',
       netRegex: { id: ['92BC', '92BE'], source: 'Wicked Thunder', capture: false },
@@ -127,7 +163,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: ['92BD', '92BF'], source: 'Wicked Thunder', capture: false },
       response: Responses.goRight(),
-    },
+    },*/
     {
       id: 'R4N Left Roll',
       type: 'Ability',
