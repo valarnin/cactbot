@@ -4,6 +4,14 @@ import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
 
+// TODO: Map out MapEffect data if needed? Might be useful for prep for savage.
+// TODO: Better triggers for Sidewise Spark. Some sort of phase detection and collect setup is needed
+// as well as identifying the clones based on npc ID or something
+// TODO: Same thing for Bewitching Flight, collector for the loop to combine trigger with clone
+// TODO: Witch Hunt, determine starting point and figure out how to word the dodge
+
+// TODO: Might be able to use `npcYellData` to detect phase push, I didn't look into it very much
+
 const effectB9AMap = {
   orangeDiamondFront: '2D3',
   blueCircleBack: '2D4',
@@ -13,7 +21,7 @@ type B9AMapKeys = keyof typeof effectB9AMap;
 type B9AMapValues = typeof effectB9AMap[B9AMapKeys];
 
 export interface Data extends RaidbossData {
-  expectedBlasts: 3 | 4 | 5;
+  expectedBlasts: 0 | 3 | 4 | 5;
   storedBlasts: B9AMapValues[];
 }
 
@@ -35,13 +43,6 @@ const isEffectB9AValue = (value: string | undefined): value is B9AMapValues => {
   return Object.values<string>(effectB9AMap).includes(value);
 };
 
-// TODO: Map out MapEffect data if needed? Might be useful for prep for savage.
-// TODO: Better triggers for Sidewise Spark. Some sort of phase detection and collect setup is needed
-// as well as identifying the clones based on npc ID or something
-// TODO: Same thing for Bewitching Flight, collector for the loop to combine trigger with clone
-// TODO: Witch Hunt, determine starting point and figure out how to word the dodge
-
-// TODO: Might be able to use these to detect phase push, I didn't look into it very much
 const npcYellData = {
   // Offsets: 456920,494045,510794
   '43D4': {
@@ -74,14 +75,13 @@ const headMarkerData = {
   // Vfx Path: tank_laser_5sec_lockon_c0a1
   tankBusterLine: '01D7',
 } as const;
-console.assert(headMarkerData);
 
 const triggerSet: TriggerSet<Data> = {
   id: 'AacLightHeavyweightM4',
   zoneId: ZoneId.AacLightHeavyweightM4,
   timelineFile: 'r4n.txt',
   initData: () => ({
-    expectedBlasts: 3,
+    expectedBlasts: 0,
     storedBlasts: [],
   }),
   triggers: [
@@ -169,7 +169,7 @@ const triggerSet: TriggerSet<Data> = {
           return false;
         data.storedBlasts.push(count);
 
-        return data.storedBlasts.length >= data.expectedBlasts;
+        return data.expectedBlasts > 0 && data.storedBlasts.length >= data.expectedBlasts;
       },
       durationSeconds: (data) => {
         if (data.expectedBlasts === 3)
@@ -179,48 +179,22 @@ const triggerSet: TriggerSet<Data> = {
         return 23.2;
       },
       infoText: (data, _matches, output) => {
-        const expectedBlasts = data.expectedBlasts;
-        data.expectedBlasts = 3;
-        const storedBlasts = data.storedBlasts;
+        const dirs = data.storedBlasts.map((b9aVal) => output[b9aValueToNorthSouth(b9aVal)]!());
+        return output.combo!({ dirs: dirs.join(output.separator!()) });
+      },
+      run: (data) => {
+        data.expectedBlasts = 0;
         data.storedBlasts = [];
-        switch (expectedBlasts) {
-          case 3:
-            return output.three!({
-              first: b9aValueToNorthSouth(storedBlasts[0]),
-              second: b9aValueToNorthSouth(storedBlasts[1]),
-              third: b9aValueToNorthSouth(storedBlasts[2]),
-            });
-          case 4:
-            return output.four!({
-              first: b9aValueToNorthSouth(storedBlasts[0]),
-              second: b9aValueToNorthSouth(storedBlasts[1]),
-              third: b9aValueToNorthSouth(storedBlasts[2]),
-              fourth: b9aValueToNorthSouth(storedBlasts[3]),
-            });
-          case 5:
-            return output.five!({
-              first: b9aValueToNorthSouth(storedBlasts[0]),
-              second: b9aValueToNorthSouth(storedBlasts[1]),
-              third: b9aValueToNorthSouth(storedBlasts[2]),
-              fourth: b9aValueToNorthSouth(storedBlasts[3]),
-              fifth: b9aValueToNorthSouth(storedBlasts[4]),
-            });
-          default:
-            return output.unknown!();
-        }
       },
       outputStrings: {
-        south: Outputs.south,
-        north: Outputs.north,
+        south: Outputs.dirS,
+        north: Outputs.dirN,
         unknown: Outputs.unknown,
-        three: {
-          en: '${first} => ${second} => ${third}',
+        separator: {
+          en: ' => ',
         },
-        four: {
-          en: '${first} => ${second} => ${third} => ${fourth}',
-        },
-        five: {
-          en: '${first} => ${second} => ${third} => ${fourth} => ${fifth}',
+        combo: {
+          en: '${dirs}',
         },
       },
     },
@@ -228,6 +202,8 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R4N Bewitching Flight Right Safe',
       type: 'StartsUsing',
       netRegex: { id: '8DE4', source: 'Wicked Thunder', capture: false },
+      // Disabled until we have a better way to phrase this.
+      condition: false,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -239,6 +215,8 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R4N Bewitching Flight South Safe',
       type: 'StartsUsing',
       netRegex: { id: '8DE4', source: 'Wicked Replica', capture: false },
+      // Disabled until we have a better way to phrase this.
+      condition: false,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -250,6 +228,8 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R4N Bewitching Flight Left Safe',
       type: 'StartsUsing',
       netRegex: { id: '8DE6', source: 'Wicked Thunder', capture: false },
+      // Disabled until we have a better way to phrase this.
+      condition: false,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -261,6 +241,8 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R4N Bewitching Flight North Safe',
       type: 'StartsUsing',
       netRegex: { id: '8DE6', source: 'Wicked Replica', capture: false },
+      // Disabled until we have a better way to phrase this.
+      condition: false,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
