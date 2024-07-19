@@ -203,7 +203,7 @@ const triggerSet: TriggerSet<Data> = {
               second: b9aValueToNorthSouth(storedBlasts[1]),
               third: b9aValueToNorthSouth(storedBlasts[2]),
               fourth: b9aValueToNorthSouth(storedBlasts[3]),
-              fifth: b9aValueToNorthSouth(storedBlasts[5]),
+              fifth: b9aValueToNorthSouth(storedBlasts[4]),
             });
           default:
             return output.unknown!();
