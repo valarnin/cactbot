@@ -26,9 +26,9 @@ hideall "--sync--"
 24.7 "Sidewise Spark" Ability { id: ["92BC", "92BD", "92BE", "92BF"], source: "Wicked Thunder" }
 30.8 "--middle--" Ability { id: "92C9", source: "Wicked Thunder" }
 35.1 "Shadows' Sabbath" Ability { id: "9BBF", source: "Wicked Thunder" }
-44.3 "Sidewise Spark" Ability { id: ["9A05", "9A0F"], source: "Wicked Replica" }
+44.3 "Sidewise Spark (clone)" Ability { id: ["9A05", "9A0F"], source: "Wicked Replica" }
 46.3 "Shadows' Sabbath" Ability { id: "9BBF", source: "Wicked Thunder" }
-55.5 "Sidewise Spark" Ability { id: ["9A05", "9A0F"], source: "Wicked Replica" }
+55.5 "Sidewise Spark (clone)" Ability { id: ["9A05", "9A0F"], source: "Wicked Replica" }
 62.6 "Wicked Jolt" Ability { id: "92C8", source: "Wicked Thunder" }
 68.7 "--north--" Ability { id: "92C9", source: "Wicked Thunder" }
 70.1 "--sync--" Ability { id: "92A7", source: "Wicked Thunder" }
@@ -68,10 +68,10 @@ hideall "--sync--"
 
 218.2 label "loop"
 218.2 "Shadows' Sabbath" Ability { id: "9BBF", source: "Wicked Thunder" }
-227.4 "Sidewise Spark" Ability { id: ["9A05", "9A0F"], source: "Wicked Replica" } window 2,1
-229.4 "Sidewise Spark" #Ability { id: "9A05", source: "Wicked Replica" }
-231.4 "Sidewise Spark" #Ability { id: "9A0F", source: "Wicked Replica" }
-233.4 "Sidewise Spark" #Ability { id: "9A0F", source: "Wicked Replica" }
+227.4 "Sidewise Spark (clone)" Ability { id: ["9A05", "9A0F"], source: "Wicked Replica" } window 2,1
+229.4 "Sidewise Spark (clone)" #Ability { id: "9A05", source: "Wicked Replica" }
+231.4 "Sidewise Spark (clone)" #Ability { id: "9A0F", source: "Wicked Replica" }
+233.4 "Sidewise Spark (clone)" #Ability { id: "9A0F", source: "Wicked Replica" }
 235.4 "Sidewise Spark" Ability { id: ["92BC", "92BD", "92BE", "92BF"], source: "Wicked Thunder" }
 244.5 "Wrath of Zeus" Ability { id: "92C7", source: "Wicked Thunder" }
 252.7 "Wicked Jolt" Ability { id: "92C8", source: "Wicked Thunder" }
