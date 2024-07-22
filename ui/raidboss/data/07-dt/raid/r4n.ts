@@ -24,6 +24,7 @@ type B9AMapValues = typeof effectB9AMap[B9AMapKeys];
 
 const directionOutputStrings = {
   ...Directions.outputStringsCardinalDir,
+  unknown: Outputs.unknown,
   goLeft: Outputs.left,
   goRight: Outputs.right,
   separator: {
