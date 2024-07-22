@@ -1110,13 +1110,7 @@ Offsets: ${allOffsets.sort(numberSort).join(', ')}
       netRegex: { id: headMarkerData['${headmarker}'], capture: false },
       infoText: (_data, _matches, output) => output.stacks!(),
       outputStrings: {
-        stacks: {
-          en: 'Stacks',
-          de: 'Sammeln',
-          fr: 'Package',
-          cn: '分摊',
-          ko: '쉐어',
-        },
+        stacks: Outputs.stacks,
       },
     },`;
           break;
@@ -1566,6 +1560,7 @@ const generateFileFromTriggerInfo = async (triggerInfo: TriggerInfo[], args: Ext
   return `// Auto-generated with:
 // ${processArgs}
 import { Responses } from '../../../../../resources/responses';
+import { Outputs } from '../../../../../resources/outputs';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
