@@ -23,13 +23,9 @@ type B9AMapKeys = keyof typeof effectB9AMap;
 type B9AMapValues = typeof effectB9AMap[B9AMapKeys];
 
 const directionOutputStrings = {
-  dirN: Outputs.dirN,
-  dirE: Outputs.dirE,
-  dirS: Outputs.dirS,
-  dirW: Outputs.dirW,
+  ...Directions.outputStringsCardinalDir,
   goLeft: Outputs.left,
   goRight: Outputs.right,
-  unknown: Outputs.unknown,
   separator: {
     en: ' => ',
     de: ' => ',
