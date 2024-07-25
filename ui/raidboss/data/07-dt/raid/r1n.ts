@@ -239,7 +239,6 @@ export interface Data extends RaidbossData {
 }
 
 // TODO:
-// Mouser
 // Predaceous Pounce
 // Leaping Black Cat Crossing
 
