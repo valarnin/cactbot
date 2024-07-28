@@ -235,7 +235,7 @@ console.assert(headMarkerData);
 
 export interface Data extends RaidbossData {
   actorSetPosTracker: { [id: string]: NetMatches['ActorSetPos'] };
-  mouserDangerSquares: (typeof mapEffectData)[keyof typeof mapEffectData]['location'][];
+  mouserMatchedTile?: (typeof mapEffectData)[keyof typeof mapEffectData]['location'];
 }
 
 // TODO:
@@ -248,7 +248,6 @@ const triggerSet: TriggerSet<Data> = {
   timelineFile: 'r1n.txt',
   initData: () => ({
     actorSetPosTracker: {},
-    mouserDangerSquares: [],
   }),
   triggers: [
     {
@@ -262,7 +261,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'R1N Mouser',
       type: 'StartsUsing',
-      netRegex: { id: ['9315', '996B'], capture: true },
+      netRegex: { id: '996B', capture: true },
       condition: (data, matches) => {
         const actorSetPosLine = data.actorSetPosTracker[matches.sourceId];
         if (actorSetPosLine === undefined)
@@ -288,32 +287,40 @@ const triggerSet: TriggerSet<Data> = {
         if (loc === undefined)
           return false;
 
-        data.mouserDangerSquares.push(loc.location);
-        // If we have one or three matches for sw/se inner squares, and this was one of those squares
-        // give the player a callout
-        const swseEntries = data.mouserDangerSquares
-          .filter((square) => ['09', '0A'].includes(square)).length;
-        if ((swseEntries === 1 || swseEntries === 3) && ['09', '0A'].includes(loc.location))
-          return true;
+        const tile = loc.location;
 
-        return false;
+        if (tile !== '09' && tile !== '0A')
+          return false;
+
+        data.mouserMatchedTile = tile;
+        return true;
       },
-      durationSeconds: (data) => {
-        const swseEntries = data.mouserDangerSquares
-          .filter((square) => ['09', '0A'].includes(square)).length;
-        if (swseEntries === 1)
-          return 9;
-        return 11;
-      },
+      // We don't need a suppressSeconds since only one of the SW/SE tiles will get hit twice
+      durationSeconds: 11,
       infoText: (data, _matches, output) => {
-        const entries = data.mouserDangerSquares.filter((square) => ['09', '0A'].includes(square));
-        const dirs = entries.map((e) => e === '09' ? 'dirSE' : 'dirSW')
-          .map((e) => output[e]!());
+        const dangerTile = data.mouserMatchedTile;
+        if (dangerTile === undefined)
+          return false;
+
+        // Danger tile is SW, so safe movement is SW => SE (Stay)
+        if (dangerTile === '09') {
+          return output.swSeStay!({
+            dir1: output['dirSW']!(),
+            sep: output.separator!(),
+            dir2: output['dirSE']!(),
+          });
+        }
+
+        const dirs = ['dirSW', 'dirSE', 'dirSW'].map((e) => output[e]!());
 
         return output.combo!({ dirs: dirs.join(output.separator!()) });
       },
+      run: (data) => delete data.mouserMatchedTile,
       outputStrings: {
         ...Directions.outputStrings8Dir,
+        swSeStay: {
+          en: '${dir1} ${sep} ${dir2} (Stay)',
+        },
         separator: {
           en: ' => ',
           de: ' => ',
@@ -327,14 +334,6 @@ const triggerSet: TriggerSet<Data> = {
           cn: '${dirs}',
         },
       },
-    },
-    {
-      id: 'R1N Mouser Cleanup',
-      type: 'StartsUsing',
-      netRegex: { id: ['9315', '996B'], capture: false },
-      delaySeconds: 15,
-      suppressSeconds: 15,
-      run: (data) => data.mouserDangerSquares = [],
     },
     {
       id: 'R1N One-two Paw Right Left',
