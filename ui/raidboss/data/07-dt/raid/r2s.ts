@@ -34,13 +34,13 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R2S Headmarker Shared Tankbuster',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.sharedBuster, capture: true },
-      response: Responses.tankBuster(),
+      response: Responses.sharedTankBuster(),
     },
     {
       id: 'R2S Headmarker Cone Tankbuster',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.tankLaser, capture: true },
-      response: Responses.tankBuster(),
+      response: Responses.tankCleave(),
     },
     {
       id: 'R2S Headmarker Spread',
