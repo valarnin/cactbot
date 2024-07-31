@@ -126,12 +126,12 @@ hideall "--sync--"
 498.0 "Killer Sting/Stinging Slash (cast)" Ability { id: ["919C", "919B"], source: "Honey B. Lovely" }
 499.2 "Killer Sting/Stinging Slash (damage)" Ability { id: ["919E", "919D"], source: "Honey B. Lovely" }
 508.2 "--middle--" Ability { id: "9163", source: "Honey B. Lovely" }
-511.3 "Rotten Heart" Ability { id: "91AA", source: "Honey B. Lovely" }
-515.0 "Rotten Heart" Ability { id: "91D2", source: "Honey B. Lovely" }
+511.3 "Rotten Heart (cast)" Ability { id: "91AA", source: "Honey B. Lovely" }
+515.0 "Rotten Heart (damage)" Ability { id: "91D2", source: "Honey B. Lovely" }
 531.5 "Call Me Honey" Ability { id: "9183", source: "Honey B. Lovely" }
 548.6 "Call Me Honey" Ability { id: "9183", source: "Honey B. Lovely" }
 565.7 "Call Me Honey" Ability { id: "9183", source: "Honey B. Lovely" }
 582.9 "Call Me Honey" Ability { id: "9183", source: "Honey B. Lovely" }
-604.9 "Sheer Heart Attack" Ability { id: "91B7", source: "Honey B. Lovely" }
+604.9 "Sheer Heart Attack (stun for enrage)" Ability { id: "91B7", source: "Honey B. Lovely" }
 605.9 "--sync--" Ability { id: "9703", source: "Honey B. Lovely" }
 608.1 "Honey B. Finale (enrage)" Ability { id: "91B8", source: "Honey B. Lovely" }

@@ -214,6 +214,12 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '918F', source: 'Honey B. Lovely', capture: false },
       response: Responses.aoe(),
     },
+    {
+      id: 'R2S Rotten Heart',
+      type: 'StartsUsing',
+      netRegex: { id: '91AA', source: 'Honey B. Lovely', capture: false },
+      response: Responses.bigAoe(),
+    },
   ],
 };
 
