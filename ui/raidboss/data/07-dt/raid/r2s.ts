@@ -175,7 +175,7 @@ const triggerSet: TriggerSet<Data> = {
       response: Responses.aoe(),
     },
     {
-      id: 'R2S Honey B. Live: 3nd Beat',
+      id: 'R2S Honey B. Live: 3rd Beat',
       type: 'StartsUsing',
       netRegex: { id: '9C26', source: 'Honey B. Lovely', capture: false },
       response: Responses.aoe(),
@@ -190,10 +190,11 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R2S Centerstage Combo',
       type: 'StartsUsing',
       netRegex: { id: '91AC', source: 'Honey B. Lovely', capture: false },
+      durationSeconds: 9,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
-          en: 'Under Intercards => Out Intercards => Out Cards',
+          en: 'Under Intercards => Out => Cards',
         },
       },
     },
@@ -201,10 +202,11 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R2S Outerstage Combo',
       type: 'StartsUsing',
       netRegex: { id: '91AD', source: 'Honey B. Lovely', capture: false },
+      durationSeconds: 9,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
-          en: 'Out Cards => Out Intercards => Under Intercards',
+          en: 'Out Cards => Intercards => Under',
         },
       },
     },
