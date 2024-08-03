@@ -9,6 +9,8 @@ export interface Data extends RaidbossData {
   phaseTracker: number;
 }
 
+// TODO: Lariat Combo during second KB towers?
+
 const triggerSet: TriggerSet<Data> = {
   id: 'AacLightHeavyweightM3Savage',
   zoneId: ZoneId.AacLightHeavyweightM3Savage,
@@ -205,6 +207,28 @@ const triggerSet: TriggerSet<Data> = {
           en: 'Long Fuse',
           de: 'Lange Lunte',
           cn: '长引线',
+        },
+      },
+    },
+    {
+      id: 'R3S Octoboom Bombarian Special',
+      type: 'StartsUsing',
+      netRegex: { id: '9752', source: 'Brute Bomber', capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'Out => In => Knockback => Spread',
+        },
+      },
+    },
+    {
+      id: 'R3S Quadroboom Bombarian Special',
+      type: 'StartsUsing',
+      netRegex: { id: '940A', source: 'Brute Bomber', capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'Out => In => Knockback => Partners',
         },
       },
     },
