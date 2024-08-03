@@ -10,6 +10,7 @@ export interface Data extends RaidbossData {
 }
 
 // TODO: Lariat Combo during second KB towers?
+// TODO: <foo>boom Special delayed in/out triggers?
 
 const triggerSet: TriggerSet<Data> = {
   id: 'AacLightHeavyweightM3Savage',
