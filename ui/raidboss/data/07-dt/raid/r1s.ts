@@ -1,3 +1,4 @@
+import Conditions from '../../../../../resources/conditions';
 import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
 import { Directions } from '../../../../../resources/util';
@@ -35,6 +36,7 @@ export interface Data extends RaidbossData {
 const mapEffectTileState = {
   'cracked': '00020001',
   'clear': '00040004',
+  'quickRebuid': '00080004', // rebuilding from broken, rapidly
   'broken': '00200010',
   'refreshing': '00800004', // refreshing from cracked
   'rebuilding': '01000004', // rebuilding from broken
@@ -93,7 +95,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'R1S Shockwave Knockback Safe Directions',
       type: 'MapEffect',
-      netRegex: { location: ['00', '03'], flags: '00080004', capture: true },
+      netRegex: { location: ['00', '03'], flags: mapEffectTileState.quickRebuid, capture: true },
       infoText: (_data, matches, output) => {
         if (matches.location === '00')
           return output.nwSE!();
@@ -216,10 +218,15 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'R1S Headmarker Nailchipper Spread',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData.spreadMarker1, capture: false },
+      netRegex: { id: headMarkerData.spreadMarker1, capture: true },
       condition: Conditions.targetIsYou(),
       suppressSeconds: 5,
-      response: Responses.spread(),
+      infoText: (_data, _matches, output) => output.outSpread!(),
+      outputStrings: {
+        outSpread: {
+          en: 'Out + Spread',
+        },
+      },
     },
     {
       id: 'R1S Headmarker Grimalkin Gale Spread',
@@ -531,7 +538,6 @@ const triggerSet: TriggerSet<Data> = {
         },
         proximity: {
           en: 'Go ${dir} => Proximity Baits + Spreads',
-        },
         },
       },
     },
