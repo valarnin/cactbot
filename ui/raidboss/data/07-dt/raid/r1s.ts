@@ -217,6 +217,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R1S Headmarker Nailchipper Spread',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.spreadMarker1, capture: false },
+      condition: Conditions.targetIsYou(),
       suppressSeconds: 5,
       response: Responses.spread(),
     },
@@ -520,16 +521,17 @@ const triggerSet: TriggerSet<Data> = {
         dirE: Outputs.dirE,
         dirW: Outputs.dirW,
         in: {
-          en: 'In => Out',
+          en: 'In + Healer Stacks => Out',
         },
         out: {
-          en: 'Out => In',
+          en: 'Out + Healer Stacks => In',
         },
         healerStacks: {
-          en: 'Go ${dir}, ${inOut}, Healer Stacks',
+          en: 'Go ${dir} => ${inOut}',
         },
         proximity: {
-          en: 'Go ${dir}, Proximity Baits/Spreads',
+          en: 'Go ${dir} => Proximity Baits + Spreads',
+        },
         },
       },
     },
