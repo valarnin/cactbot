@@ -50,6 +50,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'GainsEffect',
       netRegex: { effectId: ['F52', 'F53', 'F54'], capture: true },
       condition: Conditions.targetIsYou(),
+      delaySeconds: (data) => data.beat === 1 ? 17 : 0,
       suppressSeconds: (data) => {
         if (data.beat === 1)
           return 120;
@@ -61,12 +62,7 @@ const triggerSet: TriggerSet<Data> = {
       },
       infoText: (data, matches, output) => {
         if (data.beat === 1) {
-          if (matches.effectId === 'F52')
-            return output.beatOneZeroHearts!();
-          if (matches.effectId === 'F53')
-            return output.beatOneOneHearts!();
-          if (matches.effectId === 'F54')
-            return output.beatOneTwoHearts!();
+          return output.beatOne!();
         }
         if (data.beat === 2) {
           if (matches.effectId === 'F52')
@@ -76,14 +72,8 @@ const triggerSet: TriggerSet<Data> = {
         }
       },
       outputStrings: {
-        beatOneZeroHearts: {
-          en: 'Soak 2-3 towers',
-        },
-        beatOneOneHearts: {
-          en: 'Soak 1-2 towers',
-        },
-        beatOneTwoHearts: {
-          en: 'Soak 0-1 towers',
+        beatOne: {
+          en: 'Soak towers - need 2-3 hearts',
         },
         beatTwoZeroHearts: {
           en: 'Puddles & Stacks',
