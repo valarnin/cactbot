@@ -366,6 +366,7 @@ const triggerSet: TriggerSet<Data> = {
           return true;
         return false;
       },
+      durationSeconds: 10.7,
       infoText: (data, _matches, output) => {
         const myClone = data.tagTeamClones.find((clone) => clone.dir === data.tagTeamCloneTethered);
         const otherClone = data.tagTeamClones.find((clone) =>
@@ -403,6 +404,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '9BD7', capture: true },
       // Sometimes this MM cast is before the clones, sometimes it's after
       delaySeconds: 0.1,
+      durationSeconds: 12.7,
       infoText: (data, matches, output) => {
         const myClone = data.tagTeamClones.find((clone) => clone.dir === data.tagTeamCloneTethered);
         const otherClone = data.tagTeamClones.find((clone) =>
@@ -441,9 +443,10 @@ const triggerSet: TriggerSet<Data> = {
       outputStrings: tagTeamOutputStrings,
     },
     {
-      id: 'R3S Lariat Combo Right Left',
+      id: 'R3S KB Towers 2 Lariat Combo',
       type: 'StartsUsing',
       netRegex: { id: ['9AE8', '9AE9', '9AEA', '9AEB'], source: 'Brute Bomber', capture: true },
+      durationSeconds: 11,
       infoText: (_data, matches, output) => {
         const x = parseFloat(matches.x);
         const y = parseFloat(matches.y);
