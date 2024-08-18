@@ -351,11 +351,23 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'R3S Tag Team Clone',
       type: 'StartsUsing',
+      /*
+        Clones spawn on a random cardinal. They do one lariat dash across, then another one back.
+        There are two sets of IDs, one for Tag Team 1, and one for Tag Team 2.
+        IDs:
+        9B2C - TT1, Right -> Left
+        9B2E - TT1, Left -> Right
+        9BD8 - TT2, Right -> Left
+        9BDA - TT2, Left -> Right
+      */
       netRegex: { id: ['9B2C', '9B2E', '9BD8', '9BDA'], source: 'Brute Distortion', capture: true },
       condition: (data, matches) => {
         const x = parseFloat(matches.x);
         const y = parseFloat(matches.y);
         const cloneDir = Directions.xyTo8DirNum(x, y, 100, 100);
+        // Increment clockwise from our starting position to get the cleave direction.
+        // If this is a right cleave, increment by 6 (South + 6 = East)
+        // Otherwise, increment 2 positions (South + 2 = West)
         const cleaveAdjust = ['9B2C', '9BD8'].includes(matches.id) ? 6 : 2;
         const cleaveDir = (cloneDir + cleaveAdjust) % 8;
         data.tagTeamClones.push({
@@ -445,6 +457,18 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'R3S KB Towers 2 Lariat Combo',
       type: 'StartsUsing',
+      /*
+        Boss jumps to a random cardinal. Does one lariat dash across, then another one back.
+        IDs:
+        9AE8 - Right cleave, then right cleave again.
+             - If north, then east safe, then west. (go)
+        9AE9 - Right cleave, then left cleave.
+             - If north, then east safe, then east. (stay)
+        9AEA - Left cleave, then left cleave again.
+             - If north, then west safe, then east. (go)
+        9AEB - Left cleave, then right cleave.
+             - If north, then west safe, then west. (stay)
+      */
       netRegex: { id: ['9AE8', '9AE9', '9AEA', '9AEB'], source: 'Brute Bomber', capture: true },
       durationSeconds: 11,
       infoText: (_data, matches, output) => {
@@ -459,11 +483,15 @@ const triggerSet: TriggerSet<Data> = {
         let secondSafeSpots = [...firstSafeSpots];
 
         for (let idx = 0; idx < 5; ++idx) {
+          // Starting at boss position, treat the 5 positions clockwise as unsafe
+          // If this is a right cleave instead, then start opposite of boss
           const dir = (bossDir + (firstCleaveDir === 'left' ? 0 : 4) + idx) % 8;
           firstSafeSpots = firstSafeSpots.filter((spot) => spot !== dir);
         }
 
         for (let idx = 0; idx < 5; ++idx) {
+          // Starting opposite boss position, treat the 5 positions clockwise as unsafe
+          // If this is a right cleave instead, then start at boss
           const dir = (bossDir + (secondCleaveDir === 'right' ? 0 : 4) + idx) % 8;
           secondSafeSpots = secondSafeSpots.filter((spot) => spot !== dir);
         }
