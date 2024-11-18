@@ -10,7 +10,7 @@ import { TriggerSet } from '../../../../../types/trigger';
 
 // TODO:
 // Earth phase boulders, track the amount that hit platform and specify off for second set if 8 have already hit?
-// Coronation followup trigger for the memorized lines, not sure how to word this
+// Divide and Conquer followup trigger for the memorized lines, not sure how to word this
 // Ice phase, tethers + line stack, might need a strat option for this
 
 type CoronationLaser = {
