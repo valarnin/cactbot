@@ -319,7 +319,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'QueenEternal Ex Earth Phase Boulder',
       type: 'HeadMarker',
-      netRegex: { id: '00DB', capture: false },
+      netRegex: { id: '022F', capture: false },
       suppressSeconds: 1,
       response: Responses.spread(),
     },
