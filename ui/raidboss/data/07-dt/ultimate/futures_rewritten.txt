@@ -98,9 +98,9 @@ hideall "--sync--"
 283.3 "Hallowed Ray" Ability { id: "9D12", source: "Usurper of Frost" }
 283.7 "Hallowed Ray" Ability { id: "9D13", source: "Usurper of Frost" }
 292.8 "Mirror, Mirror" Ability { id: "9CF3", source: "Usurper of Frost" }
-306.9 "Scythe Kick/Axe Kick" Ability { id: "9D0B", source: "Usurper of Frost" }
+306.9 "Scythe Kick" Ability { id: "9D0B", source: "Usurper of Frost" }
 317.7 "The House of Light" Ability { id: "9D0E", source: "Usurper of Frost" }
-323.1 "Banish III" Ability { id: "9D1E", source: "Usurper of Frost" }
+323.1 "Banish III" Ability { id: ["9D1C", "9D1D"], source: "Usurper of Frost" }
 326.2 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
 332.3 "Light Rampant" Ability { id: "9D14", source: "Usurper of Frost" }
 340.3 "Luminous Hammer" #Ability { id: "9D1A", source: "Usurper of Frost" }
@@ -111,7 +111,7 @@ hideall "--sync--"
 346.6 "Luminous Hammer" #Ability { id: "9D1A", source: "Usurper of Frost" }
 349.4 "Powerful Light" Ability { id: "9D19", source: "Usurper of Frost" }
 358.4 "Bright Hunger" Ability { id: "9D15", source: "Usurper of Frost" }
-361.5 "Banish III" Ability { id: "9D1F", source: "Usurper of Frost" }
+361.5 "Banish III" Ability { id: ["9D1C", "9D1D"], source: "Usurper of Frost" }
 370.4 "The House of Light" Ability { id: "9CFC", source: "Usurper of Frost" }
 375.8 "--sync--" Ability { id: "9CEF", source: "Usurper of Frost" }
 379.1 "--sync--" StartsUsing { id: "9D20", source: "Usurper of Frost" }
