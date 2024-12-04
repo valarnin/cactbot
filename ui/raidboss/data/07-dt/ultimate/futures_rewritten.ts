@@ -266,6 +266,7 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
+      'missingTranslations': true,
       'locale': 'de',
       'replaceSync': {
         'Fatebreaker(?!\')': 'fusioniert(?:e|er|es|en) Ascian',
@@ -293,6 +294,7 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
+      'missingTranslations': true,
       'locale': 'fr',
       'replaceSync': {
         'Fatebreaker(?!\')': 'Sabreur de destins',
@@ -320,6 +322,7 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
+      'missingTranslations': true,
       'locale': 'ja',
       'replaceSync': {
         'Fatebreaker(?!\')': 'フェイトブレイカー',
