@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "./ui",
+    "./types",
+    "./resources",
+    "./util",
+    "./test",
+    "./user"
+  ],
+  "exclude": [
+    "./dist"
+  ]
+}
