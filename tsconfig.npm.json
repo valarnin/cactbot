@@ -4,9 +4,7 @@
     "./ui",
     "./types",
     "./resources",
-    "./util",
-    "./test",
-    "./user"
+    "./util"
   ],
   "exclude": [
     "./dist"
