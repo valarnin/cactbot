@@ -403,7 +403,11 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
       addDiv(container, 'label', translate(header, lang));
   }
 
-  const buildRow = (zoneId: number, exDirName: exKeys | '00-misc', zone: (typeof ZoneInfo)[number]) => {
+  const buildRow = (
+    zoneId: number,
+    exDirName: exKeys | '00-misc',
+    zone: (typeof ZoneInfo)[number],
+  ) => {
     const zoneCoverage: CoverageEntry = coverage[zoneId] ?? {
       oopsy: { num: 0 },
       triggers: { num: 0 },
@@ -491,8 +495,8 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
 
         const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
         const lastUpdated = new Date(zoneCoverage.lastModified);
-        const version =
-          [...new Set(
+        const version = [
+          ...new Set(
             zoneCoverage.files.map((file) => {
               const fileTag = file.tag;
               if (fileTag === undefined)
@@ -502,11 +506,12 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
                 return undefined;
               return {
                 tag: file.tag,
-                ...tag
+                ...tag,
               };
             })
-            .filter(notUndefined)
-          )].sort((left, right) => right?.tagDate - left?.tagDate)[0];
+              .filter(notUndefined),
+          ),
+        ].sort((left, right) => right?.tagDate - left?.tagDate)[0];
 
         const unreleased = version?.tag === undefined;
 

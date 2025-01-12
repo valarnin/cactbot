@@ -2,8 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// vscode gets confused about these imports, but they work
-import { simpleGit, LogResult, TagResult } from 'simple-git';
+// eslint gets confused about these imports, but they work
+// eslint-disable-next-line import/named
+import { LogResult, simpleGit, TagResult } from 'simple-git';
 
 import contentList from '../resources/content_list';
 import ContentType from '../resources/content_type';
@@ -14,7 +15,13 @@ import { LooseOopsyTriggerSet } from '../types/oopsy';
 import { LooseTriggerSet } from '../types/trigger';
 import { oopsyTriggerSetFields } from '../ui/oopsyraidsy/oopsy_fields';
 
-import { Coverage, CoverageEntry, CoverageTotals, Tags, TranslationTotals } from './coverage/coverage.d';
+import {
+  Coverage,
+  CoverageEntry,
+  CoverageTotals,
+  Tags,
+  TranslationTotals,
+} from './coverage/coverage.d';
 import { findMissingTranslations, MissingTranslationErrorType } from './find_missing_translations';
 import findManifestFiles from './manifest';
 
@@ -211,7 +218,7 @@ const processOopsyFile = (
   const thisCoverage = coverage[zoneId] ??= emptyCoverage();
   thisCoverage.oopsy = { num: numTriggers };
   thisCoverage.files.push({
-    name: triggerFileName.replace(/^\.\.\//, '')
+    name: triggerFileName.replace(/^\.\.\//, ''),
   });
 };
 
@@ -466,7 +473,7 @@ const writeMissingTranslations = (missing: MissingTranslations[], outputFileName
 
   await git.tags({
     '--sort': '-authordate',
-    '--format': '%(objectname)|%(refname:strip=2)|%(authordate)|%(*authordate)'
+    '--format': '%(objectname)|%(refname:strip=2)|%(authordate)|%(*authordate)',
   }, (_err, data) => {
     tagData = data;
   });
@@ -478,7 +485,8 @@ const writeMissingTranslations = (missing: MissingTranslations[], outputFileName
     const [tagHash, tagName, tagDate, commitDate] = tag.split('|', 4);
     if (
       tagHash === undefined || tagName === undefined ||
-      tagDate === undefined || commitDate === undefined)
+      tagDate === undefined || commitDate === undefined
+    )
       continue;
     let tagDateObj = new Date(tagDate);
     if (isNaN(tagDateObj.getTime())) {
@@ -524,8 +532,10 @@ const writeMissingTranslations = (missing: MissingTranslations[], outputFileName
 
       const latest = logData.latest;
       if (latest !== null) {
-        coverageEntry.lastModified =
-          Math.max(coverageEntry.lastModified, (new Date(latest.date)).getTime());
+        coverageEntry.lastModified = Math.max(
+          coverageEntry.lastModified,
+          (new Date(latest.date)).getTime(),
+        );
         file.commit = latest.hash;
       }
 
