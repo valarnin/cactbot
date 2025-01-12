@@ -146,7 +146,7 @@
       "eslint --max-warnings=0"
     ],
     "*.ts": [
-      "eslint --max-warnings=0 --plugin tsc --rule 'tsc/config: [2, {configFile: \"./tsconfig.json\"}]'"
+      "eslint --max-warnings=0 --plugin tsc --rule 'tsc/config: [2, {configFile: \"./tsconfig.eslint.json\"}]'"
     ],
     "*.md": "markdownlint",
     "ui/(raidboss|oopsyraidsy)/data/**": [

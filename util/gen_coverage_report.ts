@@ -2,9 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// eslint gets confused about these imports, but they work
-// eslint-disable-next-line import/named
-import { LogResult, simpleGit, TagResult } from 'simple-git';
+import { simpleGit } from 'simple-git';
 
 import contentList from '../resources/content_list';
 import ContentType from '../resources/content_type';
@@ -24,6 +22,19 @@ import {
 } from './coverage/coverage.d';
 import { findMissingTranslations, MissingTranslationErrorType } from './find_missing_translations';
 import findManifestFiles from './manifest';
+
+// eslint can't find these types from simple-git for some reason
+// Redefine the parts that we actually use
+type TagResult = {
+  all: string[];
+};
+
+type LogResult = {
+  latest: {
+    date: string;
+    hash: string;
+  } | null;
+};
 
 type MissingTranslations = {
   file: string;
