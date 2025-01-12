@@ -488,6 +488,11 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
 
       checkedZoneIds.push(zoneId);
     }
+
+    // Add a divider row between expansions
+    Object.keys(zoneGridHeaders).forEach(() => {
+      addDiv(container, 'grid-row-divider', '&nbsp;');
+    });
   }
 
   // Everything else
