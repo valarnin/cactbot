@@ -112,6 +112,7 @@
     "postcss": "^8.3.5",
     "proxy-agent": "^5.0.0",
     "recast": "^0.20.4",
+    "simple-git": "^3.27.0",
     "style-loader": "^3.3.1",
     "stylelint": "^14.8.2",
     "stylelint-config-standard": "^25.0.0",

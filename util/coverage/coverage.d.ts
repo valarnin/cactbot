@@ -21,6 +21,12 @@ export type CoverageEntry = {
     };
   };
   comments?: LocaleText;
+  files: {
+    name: string;
+    commit?: string;
+    tag?: string;
+  }[];
+  lastModified: number;
 };
 
 export type Coverage = { [zoneId: string]: CoverageEntry };
@@ -48,5 +54,12 @@ export type TranslationTotals = {
     totalFiles: number;
     missingFiles: number;
     errors: number;
+  };
+};
+
+export type Tags = {
+  [tagName: string]: {
+    tagDate: number;
+    tagHash: string;
   };
 };

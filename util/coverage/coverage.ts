@@ -13,7 +13,7 @@ import {
   CoverageTotals,
   TranslationTotals,
 } from './coverage.d';
-import { coverage, coverageTotals, translationTotals } from './coverage_report';
+import { coverage, coverageTotals, tags, translationTotals } from './coverage_report';
 
 import './coverage.css';
 
@@ -199,6 +199,9 @@ const zoneGridHeaders = {
     cn: '已翻译',
     ko: '번역됨',
   },
+  releaseStatus: {
+    en: 'Status',
+  },
   comments: {
     en: 'Comments',
   },
@@ -250,6 +253,22 @@ const miscStrings = {
     ja: 'エラー：npm run coverage-report を実行し、データを生成しよう。',
     cn: '错误：请先运行 npm run coverage-report 以生成数据。',
     ko: '에러: 데이터를 생성하려면 node npm run coverage-report를 실행하세요.',
+  },
+  // Indicator that content is unsupported
+  unsupported: {
+    en: 'Unsupported',
+  },
+  // Indicator that content has not had a release yet
+  unreleased: {
+    en: 'Unreleased',
+  },
+  // Prefix for hover text of release status column
+  mergeDate: {
+    en: 'Merge Date: ',
+  },
+  // Prefix for hover text of release status column
+  releaseDate: {
+    en: 'Release Date: ',
   },
 } as const;
 
@@ -389,6 +408,8 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
       oopsy: { num: 0 },
       triggers: { num: 0 },
       timeline: {},
+      files: [],
+      lastModified: 0,
     };
 
     // Build in order of zone grid headers, so the headers can be rearranged
@@ -458,6 +479,46 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
         }
 
         addDiv(container, 'emoji', emoji);
+      },
+      releaseStatus: () => {
+        const hasOopsy = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0;
+        const hasTriggers = zoneCoverage.triggers.num > 0;
+
+        if (!hasTriggers && !hasOopsy && !zoneCoverage.timeline.hasFile) {
+          addDiv(container, 'text', translate(miscStrings.unsupported, lang));
+          return;
+        }
+
+        const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
+        const lastUpdated = new Date(zoneCoverage.lastModified);
+        const version =
+          [...new Set(
+            zoneCoverage.files.map((file) => {
+              const fileTag = file.tag;
+              if (fileTag === undefined)
+                return undefined;
+              const tag = tags[fileTag];
+              if (tag === undefined)
+                return undefined;
+              return {
+                tag: file.tag,
+                ...tag
+              };
+            })
+            .filter(notUndefined)
+          )].sort((left, right) => right?.tagDate - left?.tagDate)[0];
+
+        const unreleased = version?.tag === undefined;
+
+        const displayText = version?.tag ?? translate(miscStrings.unreleased, lang);
+        const titleText =
+          translate(unreleased ? miscStrings.mergeDate : miscStrings.releaseDate, lang) +
+          lastUpdated.toString();
+
+        const div = document.createElement('div');
+        div.classList.add('text');
+        div.innerHTML = `<abbr title="${titleText}">${displayText}</abbr>`;
+        container.appendChild(div);
       },
       comments: () => {
         const comments = zoneCoverage.comments;
