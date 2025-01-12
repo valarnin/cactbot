@@ -199,8 +199,8 @@ const zoneGridHeaders = {
     cn: '已翻译',
     ko: '번역됨',
   },
-  releaseStatus: {
-    en: 'Status',
+  releaseVersion: {
+    en: 'Release Version',
   },
   comments: {
     en: 'Comments',
@@ -262,11 +262,11 @@ const miscStrings = {
   unreleased: {
     en: 'Unreleased',
   },
-  // Prefix for hover text of release status column
+  // Prefix for hover text of release version column
   mergeDate: {
     en: 'Merge Date: ',
   },
-  // Prefix for hover text of release status column
+  // Prefix for hover text of release version column
   releaseDate: {
     en: 'Release Date: ',
   },
@@ -486,7 +486,7 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
 
         addDiv(container, 'emoji', emoji);
       },
-      releaseStatus: () => {
+      releaseVersion: () => {
         const hasOopsy = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0;
         const hasTriggers = zoneCoverage.triggers.num > 0;
 
