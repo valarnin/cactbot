@@ -63,3 +63,10 @@ export type Tags = {
     tagHash: string;
   };
 };
+
+export type Pulls = {
+  url: string;
+  number: number;
+  title: string;
+  files: string[];
+}[];

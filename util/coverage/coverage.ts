@@ -13,7 +13,7 @@ import {
   CoverageTotals,
   TranslationTotals,
 } from './coverage.d';
-import { coverage, coverageTotals, tags, translationTotals } from './coverage_report';
+import { coverage, coverageTotals, pulls, tags, translationTotals } from './coverage_report';
 
 import './coverage.css';
 
@@ -325,6 +325,7 @@ const addDiv = (container: HTMLElement, cls: string, text?: string) => {
   if (text !== undefined)
     div.innerHTML = text;
   container.appendChild(div);
+  return div;
 };
 
 const buildExpansionGrid = (container: HTMLElement, lang: Lang, totals: CoverageTotals) => {
@@ -435,7 +436,8 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
         let name = translate(zoneCoverage.label ?? zone.name, lang);
         name = name.replace('<Emphasis>', '<i>');
         name = name.replace('</Emphasis>', '</i>');
-        addDiv(container, 'text', name);
+        const div = addDiv(container, 'text', name);
+        div.id = `${zoneId}_${name.replaceAll(/[^a-zA-Z0-9 ]/g, '').replaceAll(' ', '_')}`;
       },
       triggers: () => {
         const emoji = zoneCoverage.triggers.num > 0 ? '✔️' : undefined;
@@ -489,7 +491,8 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
         const hasTriggers = zoneCoverage.triggers.num > 0;
 
         if (!hasTriggers && !hasOopsy && !zoneCoverage.timeline.hasFile) {
-          addDiv(container, 'text', translate(miscStrings.unsupported, lang));
+          const div = addDiv(container, 'text', translate(miscStrings.unsupported, lang));
+          div.style.color = 'red';
           return;
         }
 
@@ -513,17 +516,33 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
           ),
         ].sort((left, right) => right?.tagDate - left?.tagDate)[0];
 
+        const openPRs = pulls
+          .filter((pr) =>
+            pr.files.find((file) => zoneCoverage.files.find((file2) => file === file2.name))
+          );
+
+        let color = 'green';
+
         const unreleased = version?.tag === undefined;
 
+        if (unreleased || openPRs.length > 0) {
+          color = 'orange';
+        }
+
         const displayText = version?.tag ?? translate(miscStrings.unreleased, lang);
-        const titleText =
+        let titleText =
           translate(unreleased ? miscStrings.mergeDate : miscStrings.releaseDate, lang) +
           lastUpdated.toString();
+
+        if (openPRs.length > 0) {
+          titleText += ` | Open PRs: ${openPRs.map((pr) => `#${pr.number}`).join(', ')}`;
+        }
 
         const div = document.createElement('div');
         div.classList.add('text');
         div.innerHTML = `<abbr title="${titleText}">${displayText}</abbr>`;
         container.appendChild(div);
+        div.style.color = color;
       },
       comments: () => {
         const comments = zoneCoverage.comments;
