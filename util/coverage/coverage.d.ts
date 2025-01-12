@@ -1,4 +1,5 @@
 import { Lang } from '../../resources/languages';
+import { LocaleText } from '../../types/trigger';
 import { MissingTranslationErrorType } from '../find_missing_translations';
 
 export type CoverageEntry = {
@@ -18,6 +19,7 @@ export type CoverageEntry = {
       [type in MissingTranslationErrorType]?: number;
     };
   };
+  comments?: LocaleText;
 };
 
 export type Coverage = { [zoneId: string]: CoverageEntry };

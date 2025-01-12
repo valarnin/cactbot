@@ -199,6 +199,9 @@ const zoneGridHeaders = {
     cn: '已翻译',
     ko: '번역됨',
   },
+  comments: {
+    en: 'Comments',
+  },
 } as const;
 
 const miscStrings = {
@@ -466,6 +469,11 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
           }
 
           addDiv(container, 'emoji', emoji);
+        },
+        comments: () => {
+          const comments = zoneCoverage.comments;
+          const text = comments !== undefined ? translate(comments, lang) : undefined;
+          addDiv(container, 'text', text);
         },
       };
 

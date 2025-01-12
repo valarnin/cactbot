@@ -83,6 +83,7 @@ const processRaidbossFile = (
 
   thisCoverage.timeline = timelineEntry;
   thisCoverage.triggers.num = numTriggers;
+  thisCoverage.comments = triggerSet.comments;
 
   for (const [lang, missing] of Object.entries(missingTranslations)) {
     if (!isLang(lang))
