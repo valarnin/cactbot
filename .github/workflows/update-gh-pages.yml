@@ -32,6 +32,11 @@ jobs:
 
       - uses: ./.github/actions/setup-js-env
 
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Build
         run: |
           npm run coverage-report
