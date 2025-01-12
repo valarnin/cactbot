@@ -3,6 +3,7 @@ import { LocaleText } from '../../types/trigger';
 import { MissingTranslationErrorType } from '../find_missing_translations';
 
 export type CoverageEntry = {
+  label?: LocaleText;
   triggers: {
     num: number;
   };

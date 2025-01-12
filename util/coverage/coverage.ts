@@ -384,6 +384,94 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
       addDiv(container, 'label', translate(header, lang));
   }
 
+  const buildRow = (zoneId: number, exDirName: exKeys | '00-misc', zone: (typeof ZoneInfo)[number]) => {
+    const zoneCoverage: CoverageEntry = coverage[zoneId] ?? {
+      oopsy: { num: 0 },
+      triggers: { num: 0 },
+      timeline: {},
+    };
+
+    // Build in order of zone grid headers, so the headers can be rearranged
+    // and the data will follow.
+    const headerFuncs: Record<keyof typeof zoneGridHeaders, () => void> = {
+      expansion: () => {
+        const shortName = kPrefixToCategory[exDirName];
+        const text = shortName !== undefined ? translate(shortName, lang) : undefined;
+        addDiv(container, 'text', text);
+      },
+      type: () => {
+        const label = zone.contentType !== undefined
+          ? contentTypeToLabel[zone.contentType]
+          : undefined;
+        const text = label !== undefined ? translate(label, lang) : undefined;
+        addDiv(container, 'text', text);
+      },
+      name: () => {
+        let name = translate(zoneCoverage.label ?? zone.name, lang);
+        name = name.replace('<Emphasis>', '<i>');
+        name = name.replace('</Emphasis>', '</i>');
+        addDiv(container, 'text', name);
+      },
+      triggers: () => {
+        const emoji = zoneCoverage.triggers.num > 0 ? '✔️' : undefined;
+        addDiv(container, 'emoji', emoji);
+      },
+      timeline: () => {
+        let emoji = undefined;
+        if (zoneCoverage.timeline.hasNoTimeline)
+          emoji = '➖';
+        else if (zoneCoverage.timeline.timelineNeedsFixing)
+          emoji = '⚠️';
+        else if (zoneCoverage.timeline.hasFile)
+          emoji = '✔️';
+
+        addDiv(container, 'emoji', emoji);
+      },
+      oopsy: () => {
+        const emoji = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0 ? '✔️' : undefined;
+        addDiv(container, 'emoji', emoji);
+      },
+      translated: () => {
+        let emoji = undefined;
+
+        const translations = zoneCoverage.translations?.[lang];
+
+        if (lang === 'en') {
+          emoji = undefined;
+        } else if (translations === undefined) {
+          emoji = '✔️';
+        } else {
+          const isMissingSync = translations.sync !== undefined && translations.sync > 0;
+
+          let totalMissing = 0;
+          for (const value of Object.values(translations))
+            totalMissing += value;
+
+          // Missing a sync translation means that triggers or timelines won't work properly
+          // and so count as "not being translated at all". If all syncs are translated but
+          // there are missing timeline texts or output strings, that's a "partial" translation
+          // given the warning sign.
+          if (totalMissing === 0)
+            emoji = '✔️';
+          else if (!isMissingSync)
+            emoji = '⚠️';
+        }
+
+        addDiv(container, 'emoji', emoji);
+      },
+      comments: () => {
+        const comments = zoneCoverage.comments;
+        const text = comments !== undefined ? translate(comments, lang) : undefined;
+        addDiv(container, 'text', text);
+      },
+    };
+
+    for (const func of Object.values(headerFuncs))
+      func();
+  };
+
+  const checkedZoneIds: number[] = [];
+
   // By expansion, then content list.
   for (const exVersion in exVersionToShortName) {
     for (const zoneId of contentList) {
@@ -396,90 +484,24 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
       if (exDirName !== exVersion)
         continue;
 
-      const zoneCoverage: CoverageEntry = coverage[zoneId] ?? {
-        oopsy: { num: 0 },
-        triggers: { num: 0 },
-        timeline: {},
-      };
+      buildRow(zoneId, exDirName, zone);
 
-      // Build in order of zone grid headers, so the headers can be rearranged
-      // and the data will follow.
-      const headerFuncs: Record<keyof typeof zoneGridHeaders, () => void> = {
-        expansion: () => {
-          const shortName = kPrefixToCategory[exDirName];
-          const text = shortName !== undefined ? translate(shortName, lang) : undefined;
-          addDiv(container, 'text', text);
-        },
-        type: () => {
-          const label = zone.contentType !== undefined
-            ? contentTypeToLabel[zone.contentType]
-            : undefined;
-          const text = label !== undefined ? translate(label, lang) : undefined;
-          addDiv(container, 'text', text);
-        },
-        name: () => {
-          let name = translate(zone.name, lang);
-          name = name.replace('<Emphasis>', '<i>');
-          name = name.replace('</Emphasis>', '</i>');
-          addDiv(container, 'text', name);
-        },
-        triggers: () => {
-          const emoji = zoneCoverage.triggers.num > 0 ? '✔️' : undefined;
-          addDiv(container, 'emoji', emoji);
-        },
-        timeline: () => {
-          let emoji = undefined;
-          if (zoneCoverage.timeline.hasNoTimeline)
-            emoji = '➖';
-          else if (zoneCoverage.timeline.timelineNeedsFixing)
-            emoji = '⚠️';
-          else if (zoneCoverage.timeline.hasFile)
-            emoji = '✔️';
-
-          addDiv(container, 'emoji', emoji);
-        },
-        oopsy: () => {
-          const emoji = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0 ? '✔️' : undefined;
-          addDiv(container, 'emoji', emoji);
-        },
-        translated: () => {
-          let emoji = undefined;
-
-          const translations = zoneCoverage.translations?.[lang];
-
-          if (lang === 'en') {
-            emoji = undefined;
-          } else if (translations === undefined) {
-            emoji = '✔️';
-          } else {
-            const isMissingSync = translations.sync !== undefined && translations.sync > 0;
-
-            let totalMissing = 0;
-            for (const value of Object.values(translations))
-              totalMissing += value;
-
-            // Missing a sync translation means that triggers or timelines won't work properly
-            // and so count as "not being translated at all". If all syncs are translated but
-            // there are missing timeline texts or output strings, that's a "partial" translation
-            // given the warning sign.
-            if (totalMissing === 0)
-              emoji = '✔️';
-            else if (!isMissingSync)
-              emoji = '⚠️';
-          }
-
-          addDiv(container, 'emoji', emoji);
-        },
-        comments: () => {
-          const comments = zoneCoverage.comments;
-          const text = comments !== undefined ? translate(comments, lang) : undefined;
-          addDiv(container, 'text', text);
-        },
-      };
-
-      for (const func of Object.values(headerFuncs))
-        func();
+      checkedZoneIds.push(zoneId);
     }
+  }
+
+  // Everything else
+  for (const zoneIdStr in coverage) {
+    const zoneId = parseInt(zoneIdStr);
+    if (zoneId.toString() !== zoneIdStr)
+      continue;
+    if (checkedZoneIds.includes(zoneId))
+      continue;
+    const zone = ZoneInfo[zoneId];
+    if (!zone)
+      continue;
+
+    buildRow(zoneId, '00-misc', zone);
   }
 };
 

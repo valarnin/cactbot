@@ -61,6 +61,7 @@ const processRaidbossFile = (
   timelineContents: string | undefined,
   coverage: Coverage,
   missingTranslations: MissingTranslationsDict,
+  isSingle: boolean,
 ) => {
   let numTriggers = 0;
   if (triggerSet.triggers)
@@ -84,6 +85,8 @@ const processRaidbossFile = (
   thisCoverage.timeline = timelineEntry;
   thisCoverage.triggers.num = numTriggers;
   thisCoverage.comments = triggerSet.comments;
+  if (isSingle)
+    thisCoverage.label = triggerSet.zoneLabel;
 
   for (const [lang, missing] of Object.entries(missingTranslations)) {
     if (!isLang(lang))
@@ -138,7 +141,7 @@ const processRaidbossCoverage = async (
     // Only process real zones.
     if (zoneId === ZoneId.MatchAll)
       continue;
-    if (!Array.isArray(zoneId) && (!ZoneInfo[zoneId] || !contentList.includes(zoneId)))
+    if (!Array.isArray(zoneId) && !ZoneInfo[zoneId])
       continue;
 
     // TODO: this is kind of a hack, and maybe we should do this better.
@@ -156,6 +159,7 @@ const processRaidbossCoverage = async (
           timelineContents,
           coverage,
           missingTranslations,
+          false,
         );
     } else {
       processRaidbossFile(
@@ -166,6 +170,7 @@ const processRaidbossCoverage = async (
         timelineContents,
         coverage,
         missingTranslations,
+        true,
       );
     }
   }
@@ -218,7 +223,7 @@ const processOopsyCoverage = async (manifest: string, coverage: Coverage) => {
     // Only process real zones.
     if (zoneId === ZoneId.MatchAll)
       continue;
-    if (!Array.isArray(zoneId) && (!ZoneInfo[zoneId] || !contentList.includes(zoneId)))
+    if (!Array.isArray(zoneId) && !ZoneInfo[zoneId])
       continue;
 
     if (Array.isArray(zoneId)) {
