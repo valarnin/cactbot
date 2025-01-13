@@ -74,4 +74,5 @@ export type Pulls = {
   number: number;
   title: string;
   files: string[];
+  zones: number[];
 }[];

@@ -534,6 +534,8 @@ const writeMissingTranslations = (missing: MissingTranslations[], outputFileName
     state: 'open',
   });
 
+  const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
+
   for (const openPull of openPulls) {
     const pullFiles = await octokit.paginate(
       'GET /repos/{owner}/{repo}/pulls/{pull_number}/files',
@@ -547,11 +549,24 @@ const writeMissingTranslations = (missing: MissingTranslations[], outputFileName
 
     const files = pullFiles.map((f) => f.filename);
 
+    const zones = pullFiles
+      .filter((f) =>
+        (f.filename.startsWith('ui/raidboss/data') ||
+          f.filename.startsWith('ui/oopsyraidsy/data')) && f.filename.endsWith('.ts')
+      )
+      .map((f) => /ZoneId\.([a-zA-Z0-9]+)/.exec(f.patch ?? '')?.[1])
+      .filter(notUndefined)
+      .map((zoneId) =>
+        zoneId in ZoneId ? ZoneId[zoneId as keyof typeof ZoneId] as number : undefined
+      )
+      .filter(notUndefined);
+
     pulls.push({
       number: openPull.number,
       title: openPull.title,
       url: openPull.html_url,
       files: files,
+      zones: zones,
     });
   }
 
