@@ -523,7 +523,8 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
 
         let color = 'green';
 
-        const unreleased = version?.tag === undefined;
+        const unreleased = version?.tag === undefined ||
+          (version?.tagDate ?? 0) < zoneCoverage.lastModified;
 
         if (unreleased || openPRs.length > 0) {
           color = 'orange';
