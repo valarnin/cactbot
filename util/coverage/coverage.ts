@@ -535,7 +535,7 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
           lastUpdated.toString();
 
         if (openPRs.length > 0) {
-          titleText += `Open PRs: ${openPRs.map((pr) => `#${pr.number}`).join(', ')} | `;
+          titleText = `Open PRs: ${openPRs.map((pr) => `#${pr.number}`).join(', ')} | ${titleText}`;
         }
 
         const div = document.createElement('div');
