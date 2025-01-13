@@ -493,7 +493,7 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
         const openPRs = pulls
           .filter((pr) =>
             (pr.files.find((file) => zoneCoverage.files.find((file2) => file === file2.name)) !==
-              null) ||
+              undefined) ||
             pr.zones.includes(zoneId)
           );
 
