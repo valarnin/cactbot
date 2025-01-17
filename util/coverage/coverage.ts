@@ -4,7 +4,8 @@ import { isLang, Lang, langMap, langToLocale, languages } from '../../resources/
 import { UnreachableCode } from '../../resources/not_reached';
 import ZoneInfo from '../../resources/zone_info';
 import { LocaleObject, LocaleText } from '../../types/trigger';
-import { kPrefixToCategory } from '../../ui/config/config';
+import { kDirectoryToCategory, kPrefixToCategory } from '../../ui/config/config';
+import { MissingTranslationErrorType } from '../find_missing_translations';
 
 import {
   Coverage,
@@ -23,7 +24,28 @@ const emptyTotal: CoverageTotalEntry = {
   total: 0,
 };
 
-// TODO: these tables are pretty wide, add some sort of alternating highlight?
+const translationKeyMap: Record<MissingTranslationErrorType, LocaleText> = {
+  sync: {
+    en: 'Sync',
+  },
+  code: {
+    en: 'Code',
+  },
+  other: {
+    en: 'Other',
+  },
+  replaceSection: {
+    en: 'Replace Section',
+  },
+  text: {
+    en: 'Text',
+  },
+};
+
+const isTranslationKeyMap = (key: string): key is MissingTranslationErrorType => {
+  return key in translationKeyMap;
+};
+
 // TODO: make it possible to click on a zone row and highlight/link to it.
 type exKeys = Exclude<keyof typeof kPrefixToCategory, '00-misc' | 'user'>;
 
@@ -36,7 +58,10 @@ const exVersionToDirName: readonly exKeys[] = [
   '07-dt',
 ] as const;
 
-const exVersionToShortName: { [exVersion in exKeys]: LocaleText } = {
+const exVersionToShortName: Record<exKeys | '00-misc', LocaleText> = {
+  '00-misc': {
+    en: 'Misc',
+  },
   '02-arr': {
     en: 'ARR',
     de: 'ARR',
@@ -87,50 +112,133 @@ const exVersionToShortName: { [exVersion in exKeys]: LocaleText } = {
   },
 };
 
-const contentTypeToLabel: { [contentType: number]: LocaleText } = {
+const contentTypeToLabel: {
+  [contentType: number]: {
+    full: LocaleText;
+    short: LocaleText;
+  };
+} = {
   [ContentType.Raids]: {
-    en: 'Raid',
-    de: 'Raid',
-    fr: 'Raid',
-    ja: 'レイド',
-    cn: '大型任务',
-    ko: '레이드',
+    full: kDirectoryToCategory.raid,
+    short: {
+      en: 'Raid',
+      de: 'Raid',
+      fr: 'Raid',
+      ja: 'レイド',
+      cn: '大型任务',
+      ko: '레이드',
+    },
   },
   [ContentType.Trials]: {
-    en: 'Trial',
-    de: 'Prfng',
-    fr: 'Défi',
-    ja: '討伐戦',
-    cn: '讨伐战',
-    ko: '토벌전',
+    full: kDirectoryToCategory.trial,
+    short: {
+      en: 'Trial',
+      de: 'Prfng',
+      fr: 'Défi',
+      ja: '討伐戦',
+      cn: '讨伐战',
+      ko: '토벌전',
+    },
   },
   [ContentType.UltimateRaids]: {
-    en: 'Ult',
-    de: 'Ult',
-    fr: 'Fatal',
-    ja: '絶',
-    cn: '绝境战',
-    ko: '절',
+    full: kDirectoryToCategory.ultimate,
+    short: {
+      en: 'Ult',
+      de: 'Ult',
+      fr: 'Fatal',
+      ja: '絶',
+      cn: '绝境战',
+      ko: '절',
+    },
   },
   [ContentType.Dungeons]: {
-    en: 'Dgn',
-    de: 'Dgn',
-    fr: 'Donjon',
-    ja: 'ID',
-    cn: '迷宫挑战',
-    ko: '던전',
+    full: kDirectoryToCategory.dungeon,
+    short: {
+      en: 'Dgn',
+      de: 'Dgn',
+      fr: 'Donjon',
+      ja: 'ID',
+      cn: '迷宫挑战',
+      ko: '던전',
+    },
   },
   [ContentType.VCDungeonFinder]: {
-    en: 'V&C',
-    de: 'Gewölbesuche',
-    fr: 'Donjon V&C',
-    ja: 'ヴァリアント&アナザーダンジョン',
-    cn: '多变&异闻迷宫',
-    ko: '변형&파생던전',
+    full: {
+      en: 'Variant & Criterion Dungeon',
+    },
+    short: {
+      en: 'V&C',
+      de: 'Gewölbesuche',
+      fr: 'Donjon V&C',
+      ja: 'ヴァリアント&アナザーダンジョン',
+      cn: '多变&异闻迷宫',
+      ko: '변형&파생던전',
+    },
   },
   [ContentType.ChaoticAllianceRaid]: {
-    en: 'Chaotic',
-    fr: 'Chaotique',
+    full: {
+      en: 'Chaotic Alliance Raid',
+    },
+    short: {
+      en: 'Chaotic',
+      fr: 'Chaotique',
+    },
+  },
+  [ContentType.TheMaskedCarnivale]: {
+    full: {
+      en: 'The Masked Carnivale',
+    },
+    short: {
+      en: 'BLU',
+    },
+  },
+  [ContentType.Eureka]: {
+    full: {
+      en: 'Eureka',
+    },
+    short: {
+      en: 'Eureka',
+    },
+  },
+  [ContentType.SaveTheQueen]: {
+    full: {
+      en: 'Save The Queen',
+    },
+    short: {
+      en: 'Bozja',
+    },
+  },
+  [ContentType.DisciplesOfTheLand]: {
+    full: {
+      en: 'Ocean Fishing/Diadem',
+    },
+    short: {
+      en: 'Diadem',
+    },
+  },
+  [ContentType.TreasureHunt]: {
+    full: {
+      en: 'Treasure Hunt',
+    },
+    short: {
+      en: 'Maps',
+    },
+  },
+  [ContentType.DeepDungeons]: {
+    full: {
+      en: 'Deep Dungeons',
+    },
+    short: {
+      en: 'DD',
+    },
+  },
+  [ContentType.Pvp]: {
+    full: {
+      en: 'PvP',
+    },
+    short: {
+      en: 'PvP',
+    },
   },
 } as const;
 
@@ -143,22 +251,6 @@ const contentTypeLabelOrder = [
 
 // This is also the order of the table columns.
 const zoneGridHeaders = {
-  expansion: {
-    en: 'Ex',
-    de: 'Ex',
-    fr: 'Ext',
-    ja: 'パッチ',
-    cn: '资料片',
-    ko: '확장팩',
-  },
-  type: {
-    en: 'Type',
-    de: 'Art',
-    fr: 'Type',
-    ja: 'タイプ',
-    cn: '类型',
-    ko: '분류',
-  },
   name: {
     en: 'Name',
     de: 'Name',
@@ -200,7 +292,7 @@ const zoneGridHeaders = {
     ko: '번역됨',
   },
   releaseVersion: {
-    en: 'Release Version',
+    en: 'Version',
   },
   comments: {
     en: 'Comments',
@@ -270,6 +362,30 @@ const miscStrings = {
   releaseDate: {
     en: 'Release Date: ',
   },
+  raidbossTriggerCount: {
+    en: 'Raidboss Trigger Count',
+  },
+  oopsyTriggerCount: {
+    en: 'Oopsy Trigger Count',
+  },
+  none: {
+    en: 'None',
+  },
+  otherContentType: {
+    en: 'Other Content',
+  },
+  changesSinceLastRelease: {
+    en: 'Changes since last release',
+  },
+  timelineEntries: {
+    en: 'Timeline Entries',
+  },
+  timelineDuration: {
+    en: 'Timeline Duration',
+  },
+  noTranslationInformation: {
+    en: 'No Translation Information',
+  },
 } as const;
 
 const translationGridHeaders = {
@@ -333,7 +449,7 @@ const buildExpansionGrid = (container: HTMLElement, lang: Lang, totals: Coverage
   addDiv(container, 'label');
   addDiv(container, 'label', translate(miscStrings.overall, lang));
   for (const contentType of contentTypeLabelOrder) {
-    const label = contentTypeToLabel[contentType];
+    const label = contentTypeToLabel[contentType]?.short;
     const text = label !== undefined ? translate(label, lang) : undefined;
     addDiv(container, 'label', text);
   }
@@ -395,173 +511,311 @@ const buildTranslationGrid = (
   }
 };
 
-const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) => {
+const templateHtmlToDom = (template: string) => {
+  const templateElem = document.createElement('template');
+  templateElem.innerHTML = template.trim();
+  const result = templateElem.content.firstChild;
+  if (result === null)
+    throw new Error('Invalid template markup');
+  return result;
+};
+
+const buildZoneTableHeader = (container: HTMLElement, lang: Lang) => {
+  let cells = '';
+
   for (const [key, header] of Object.entries(zoneGridHeaders)) {
-    // English is already "translated" so we skip it.
-    if (key === 'translated' && lang === 'en')
-      addDiv(container, 'label', '');
-    else
-      addDiv(container, 'label', translate(header, lang));
+    cells += `<th id="zone-table-header-${key}">${translate(header, lang)}</th>`;
+  }
+  const headerRow = templateHtmlToDom(`<thead><tr id="zone-table-header-row">${cells}</tr></th>`);
+  container.appendChild(headerRow);
+};
+
+const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
+
+const buildZoneTableContentRow = (
+  zoneId: number,
+  exDirName: exKeys | '00-misc',
+  zone: (typeof ZoneInfo)[number],
+  container: HTMLElement,
+  lang: Lang,
+  coverage: Coverage,
+) => {
+  const zoneCoverage: CoverageEntry = coverage[zoneId] ?? {
+    oopsy: { num: 0 },
+    triggers: { num: 0 },
+    timeline: {},
+    files: [],
+    lastModified: 0,
+    allTags: [],
+    openPRs: [],
+    comments: [],
+  };
+  const openPRs = zoneCoverage.openPRs
+    .map((prNum) => pulls.find((pr) => pr.number === prNum))
+    .filter(notUndefined);
+  const allTags = zoneCoverage.allTags
+    .map((tagName) => tags[tagName])
+    .filter(notUndefined);
+
+  const version = allTags?.[0];
+
+  const unreleased = version?.tagName === undefined ||
+    (version?.tagDate ?? 0) < zoneCoverage.lastModified;
+
+  const hasOopsy = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0;
+  const hasTriggers = zoneCoverage.triggers.num > 0;
+
+  const unsupported = !hasTriggers && !hasOopsy && !zoneCoverage.timeline.hasFile &&
+    openPRs.length === 0;
+
+  let name = translate(zoneCoverage.label ?? zone.name, lang);
+  name = name.replace('<Emphasis>', '<i>');
+  name = name.replace('</Emphasis>', '</i>');
+
+  // Build in order of zone grid headers, so the headers can be rearranged
+  // and the data will follow.
+  const headerFuncs: Record<keyof typeof zoneGridHeaders, () => string> = {
+    name: () => {
+      // Add some hidden text to allow searching by expansion or content type
+      let hiddenText = '';
+      const exShortName = exVersionToShortName[exDirName];
+      if (exShortName !== undefined) {
+        hiddenText += `${translate(exShortName, lang)} `;
+      }
+      const exLongName = kPrefixToCategory[exDirName];
+      if (exLongName !== undefined) {
+        hiddenText += `${translate(exLongName, lang)} `;
+      }
+      const contentTypeShort = zone.contentType !== undefined
+        ? contentTypeToLabel[zone.contentType]?.short
+        : undefined;
+      if (contentTypeShort !== undefined) {
+        hiddenText += `${translate(contentTypeShort, lang)} `;
+      }
+      const contentTypeLong = zone.contentType !== undefined
+        ? contentTypeToLabel[zone.contentType]?.full
+        : undefined;
+      if (contentTypeLong !== undefined) {
+        hiddenText += `${translate(contentTypeLong, lang)} `;
+      }
+
+      return `<td class="zone-table-name"><span style="display:none">${hiddenText.trim()}</span>${name}</td>`;
+    },
+    triggers: () => {
+      const emoji = zoneCoverage.triggers.num > 0 ? '✔️' : '';
+      return `<td class="emoji zone-table-triggers">${emoji}</td>`;
+    },
+    timeline: () => {
+      let emoji = '';
+      if (zoneCoverage.timeline.hasNoTimeline)
+        emoji = '➖';
+      else if (zoneCoverage.timeline.timelineNeedsFixing)
+        emoji = '⚠️';
+      else if (zoneCoverage.timeline.hasFile)
+        emoji = '✔️';
+
+      return `<td class="emoji zone-table-timeline">${emoji}</td>`;
+    },
+    oopsy: () => {
+      const emoji = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0 ? '✔️' : '';
+      return `<td class="emoji zone-table-oopsy">${emoji}</td>`;
+    },
+    translated: () => {
+      let emoji = '';
+
+      const translations = zoneCoverage.translations?.[lang];
+
+      if (lang === 'en') {
+        emoji = '';
+      } else if (translations === undefined) {
+        emoji = '✔️';
+      } else {
+        const isMissingSync = translations.sync !== undefined && translations.sync > 0;
+
+        let totalMissing = 0;
+        for (const value of Object.values(translations))
+          totalMissing += value;
+
+        // Missing a sync translation means that triggers or timelines won't work properly
+        // and so count as "not being translated at all". If all syncs are translated but
+        // there are missing timeline texts or output strings, that's a "partial" translation
+        // given the warning sign.
+        if (totalMissing === 0)
+          emoji = '✔️';
+        else if (!isMissingSync)
+          emoji = '⚠️';
+      }
+
+      return `<td class="emoji zone-table-translated">${emoji}</td>`;
+    },
+    releaseVersion: () => {
+      if (unsupported) {
+        return `<td class="zone-table-releaseVersion table-danger"><span>${
+          translate(miscStrings.unsupported, lang)
+        }</span></td>`;
+      }
+
+      let color = 'table-success';
+
+      if (unreleased || openPRs.length > 0) {
+        color = 'table-warning';
+      }
+
+      const displayText = version?.tagName ?? translate(miscStrings.unreleased, lang);
+
+      return `<td class="zone-table-releaseVersion ${color}"><span>${displayText}</span></td>`;
+    },
+    comments: () => {
+      const comments = zoneCoverage.comments;
+      let text = '';
+      if (comments.length > 1) {
+        text = `<span class="comment">${
+          comments
+            .map((c) => translate(c, lang))
+            .join('</span><span class="comment">')
+        }</span>`;
+      } else if (comments.length === 1) {
+        const comment = comments[0];
+        text = comment ? translate(comment, lang) : '';
+      }
+      return `<td class="zone-table-comments">${text}</td>`;
+    },
+  };
+
+  let cells = '';
+  for (const func of Object.values(headerFuncs))
+    cells += func();
+
+  const id = `zone-table-content-${zoneId}-${
+    name.replaceAll(/[^a-zA-Z0-9 ]/g, '').replaceAll(' ', '_')
+  }`;
+
+  const contentRow = templateHtmlToDom(`\
+<tr id="${id}" class="zone-table-content-row" \
+data-bs-toggle="collapse" data-bs-target="#data-${id}" \
+aria-expanded="false" aria-controls="data-${id}">${cells}</tr>`);
+  container.appendChild(contentRow);
+
+  const detailsColumn = `
+      <div class="col">
+        <table class="table table-striped">
+          <tr><th>${
+    translate(miscStrings.raidbossTriggerCount, lang)
+  }:</th><td>${zoneCoverage.triggers.num}</td></tr>
+          <tr><th>${translate(miscStrings.oopsyTriggerCount, lang)}:</th><td>${
+    zoneCoverage.oopsy?.num ?? 0
+  }</td></tr>
+          <tr><th>${translate(miscStrings.timelineEntries, lang)}:</th><td>${
+    zoneCoverage.timeline?.entries ?? 0
+  }</td></tr>
+          <tr><th>${translate(miscStrings.timelineDuration, lang)}:</th><td>${
+    zoneCoverage.timeline?.duration ?? 0
+  }</td></tr>
+        </table>
+      </div>`;
+
+  let translationsColumn = `
+      <div class="col"><h3>${translate(miscStrings.noTranslationInformation, lang)}</h3></div>`;
+  if (zoneCoverage.translations !== undefined) {
+    translationsColumn = `
+      <div class="col">
+        <table class="table table-striped">
+          <thead>
+            <tr><th colspan="${Object.keys(translationKeyMap).length + 1}">${
+      translate(translationGridHeaders.language, lang)
+    }</th></tr>
+            <tr><th></th><th>${
+      Object.values(translationKeyMap).map((value) => translate(value, lang)).join('</th><th>')
+    }</th></tr>
+          </thead>
+          <tbody>
+          <tr>${
+      Object.keys(langMap)
+        .filter(isLang)
+        .map((tlLang) => {
+          const translations = zoneCoverage.translations?.[tlLang] ?? {};
+          return `
+<td>${translate(langMap[lang], tlLang)}</td>
+<td>${
+            Object.keys(translationKeyMap)
+              .filter(isTranslationKeyMap)
+              .map((col) => {
+                const total = zoneCoverage.translationCount?.[col] ?? 0;
+                const missing = total - (translations[col] ?? 0);
+                return `${missing}/${total}`;
+              })
+              .filter(notUndefined)
+              .join('</td><td>')
+          }</td>`;
+        })
+        .join('</tr><tr>')
+    }</tr>
+          </tbody>
+        </table>
+      </div>`;
   }
 
-  const buildRow = (
-    zoneId: number,
-    exDirName: exKeys | '00-misc',
-    zone: (typeof ZoneInfo)[number],
-  ) => {
-    const zoneCoverage: CoverageEntry = coverage[zoneId] ?? {
-      oopsy: { num: 0 },
-      triggers: { num: 0 },
-      timeline: {},
-      files: [],
-      lastModified: 0,
-    };
+  const pullRequestsColumn = `
+      <div class="col">
+        <h3>Open Pull Requests</h3>
+        <ul>
+          <li>${
+    openPRs.length === 0
+      ? translate(miscStrings.none, lang)
+      : openPRs.map((pr) => `<a target="_blank" href="${pr.url}">#${pr.number} - ${pr.title}</a>`)
+        .join('</li><li>')
+  }</li>
+        </ul>
+      </div>`;
 
-    // Build in order of zone grid headers, so the headers can be rearranged
-    // and the data will follow.
-    const headerFuncs: Record<keyof typeof zoneGridHeaders, () => void> = {
-      expansion: () => {
-        const shortName = kPrefixToCategory[exDirName];
-        const text = shortName !== undefined ? translate(shortName, lang) : undefined;
-        addDiv(container, 'text', text);
-      },
-      type: () => {
-        const label = zone.contentType !== undefined
-          ? contentTypeToLabel[zone.contentType]
-          : undefined;
-        const text = label !== undefined ? translate(label, lang) : undefined;
-        addDiv(container, 'text', text);
-      },
-      name: () => {
-        let name = translate(zoneCoverage.label ?? zone.name, lang);
-        name = name.replace('<Emphasis>', '<i>');
-        name = name.replace('</Emphasis>', '</i>');
-        const div = addDiv(container, 'text', name);
-        div.id = `${zoneId}_${name.replaceAll(/[^a-zA-Z0-9 ]/g, '').replaceAll(' ', '_')}`;
-      },
-      triggers: () => {
-        const emoji = zoneCoverage.triggers.num > 0 ? '✔️' : undefined;
-        addDiv(container, 'emoji', emoji);
-      },
-      timeline: () => {
-        let emoji = undefined;
-        if (zoneCoverage.timeline.hasNoTimeline)
-          emoji = '➖';
-        else if (zoneCoverage.timeline.timelineNeedsFixing)
-          emoji = '⚠️';
-        else if (zoneCoverage.timeline.hasFile)
-          emoji = '✔️';
+  const releasesColumn = `
+      <div class="col">
+        <h3>Releases</h3>
+        <ul>
+          ${
+    (!unsupported && unreleased)
+      ? `<li class="text-danger">${translate(miscStrings.changesSinceLastRelease, lang)} (${
+        new Date(zoneCoverage.lastModified ?? 0).toDateString()
+      })</li>`
+      : ''
+  }<li>${
+    allTags.length === 0
+      ? translate(miscStrings.none, lang)
+      : allTags
+        .map((tag) =>
+          `<div><a target="_blank" href="https://github.com/OverlayPlugin/cactbot/releases/tag/${tag.tagName}">${tag.tagName} - ${
+            new Date(tag.tagDate).toDateString()
+          }${
+            tag.tagTitle === undefined
+              ? ''
+              : ` - ${tag.tagTitle.replace(/^v?(?:\d+\.?)+:?/, '').trim()}`
+          }</a></div>`
+        )
+        .join('</li><li>')
+  }</li>
+        </ul>
+      </div>`;
 
-        addDiv(container, 'emoji', emoji);
-      },
-      oopsy: () => {
-        const emoji = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0 ? '✔️' : undefined;
-        addDiv(container, 'emoji', emoji);
-      },
-      translated: () => {
-        let emoji = undefined;
+  const dataRow = templateHtmlToDom(`
+<tr id="data-${id}" class="collapse">
+  <td colspan="${Object.keys(zoneGridHeaders).length}">
+    <div class="row">${detailsColumn}${translationsColumn}</div>
+    <div class="row">${pullRequestsColumn}${releasesColumn}</div>
+  </td>
+</tr>`);
+  container.appendChild(dataRow);
+};
 
-        const translations = zoneCoverage.translations?.[lang];
-
-        if (lang === 'en') {
-          emoji = undefined;
-        } else if (translations === undefined) {
-          emoji = '✔️';
-        } else {
-          const isMissingSync = translations.sync !== undefined && translations.sync > 0;
-
-          let totalMissing = 0;
-          for (const value of Object.values(translations))
-            totalMissing += value;
-
-          // Missing a sync translation means that triggers or timelines won't work properly
-          // and so count as "not being translated at all". If all syncs are translated but
-          // there are missing timeline texts or output strings, that's a "partial" translation
-          // given the warning sign.
-          if (totalMissing === 0)
-            emoji = '✔️';
-          else if (!isMissingSync)
-            emoji = '⚠️';
-        }
-
-        addDiv(container, 'emoji', emoji);
-      },
-      releaseVersion: () => {
-        const hasOopsy = zoneCoverage.oopsy && zoneCoverage.oopsy.num > 0;
-        const hasTriggers = zoneCoverage.triggers.num > 0;
-
-        const openPRs = pulls
-          .filter((pr) =>
-            (pr.files.find((file) => zoneCoverage.files.find((file2) => file === file2.name)) !==
-              undefined) ||
-            pr.zones.includes(zoneId)
-          );
-
-        if (!hasTriggers && !hasOopsy && !zoneCoverage.timeline.hasFile && openPRs.length === 0) {
-          const div = addDiv(container, 'text', translate(miscStrings.unsupported, lang));
-          div.style.color = 'red';
-          return;
-        }
-
-        const notUndefined = <T>(v: T | undefined): v is T => v !== undefined;
-        const lastUpdated = new Date(zoneCoverage.lastModified);
-        const version = [
-          ...new Set(
-            zoneCoverage.files.map((file) => {
-              const fileTag = file.tag;
-              if (fileTag === undefined)
-                return undefined;
-              const tag = tags[fileTag];
-              if (tag === undefined)
-                return undefined;
-              return {
-                tag: file.tag,
-                ...tag,
-              };
-            })
-              .filter(notUndefined),
-          ),
-        ].sort((left, right) => right?.tagDate - left?.tagDate)[0];
-
-        let color = 'green';
-
-        const unreleased = version?.tag === undefined ||
-          (version?.tagDate ?? 0) < zoneCoverage.lastModified;
-
-        if (unreleased || openPRs.length > 0) {
-          color = 'orange';
-        }
-
-        const displayText = version?.tag ?? translate(miscStrings.unreleased, lang);
-        let titleText =
-          translate(unreleased ? miscStrings.mergeDate : miscStrings.releaseDate, lang) +
-          lastUpdated.toString();
-
-        if (openPRs.length > 0) {
-          titleText = `Open PRs: ${openPRs.map((pr) => `#${pr.number}`).join(', ')} | ${titleText}`;
-        }
-
-        const div = document.createElement('div');
-        div.classList.add('text');
-        div.innerHTML = `<abbr title="${titleText}">${displayText}</abbr>`;
-        container.appendChild(div);
-        div.style.color = color;
-      },
-      comments: () => {
-        const comments = zoneCoverage.comments;
-        const text = comments !== undefined ? translate(comments, lang) : undefined;
-        addDiv(container, 'text', text);
-      },
-    };
-
-    for (const func of Object.values(headerFuncs))
-      func();
-  };
+const buildZoneTable = (container: HTMLElement, lang: Lang, coverage: Coverage) => {
+  buildZoneTableHeader(container, lang);
 
   const checkedZoneIds: number[] = [];
 
+  const tbody = document.createElement('tbody');
+
   // By expansion, then content list.
-  for (const exVersion in exVersionToShortName) {
+  for (const exVersion of exVersionToDirName) {
+    let lastContentType = '';
     for (const zoneId of contentList) {
       if (zoneId === null)
         continue;
@@ -572,30 +826,191 @@ const buildZoneGrid = (container: HTMLElement, lang: Lang, coverage: Coverage) =
       if (exDirName !== exVersion)
         continue;
 
-      buildRow(zoneId, exDirName, zone);
+      const currentContentTypeLang = zone.contentType !== undefined
+        ? contentTypeToLabel[zone.contentType]?.full
+        : undefined;
+      const currentContentType = currentContentTypeLang !== undefined
+        ? translate(currentContentTypeLang, lang)
+        : '';
+
+      if (currentContentType !== '' && currentContentType !== lastContentType) {
+        lastContentType = currentContentType;
+        // Add expansion + content type header row
+        tbody.appendChild(
+          templateHtmlToDom(
+            `<tr class="expansion-row"><th colspan="${Object.keys(zoneGridHeaders).length}">${
+              translate(kPrefixToCategory[exVersion], lang)
+            } &gt; ${currentContentType}</th></tr>`,
+          ),
+        );
+      }
+
+      buildZoneTableContentRow(zoneId, exDirName, zone, tbody, lang, coverage);
 
       checkedZoneIds.push(zoneId);
     }
 
     // Add a divider row between expansions
-    Object.keys(zoneGridHeaders).forEach(() => {
-      addDiv(container, 'grid-row-divider', '&nbsp;');
-    });
+    tbody.appendChild(
+      templateHtmlToDom(
+        `<tr class="spacer-row"><td colspan="${
+          Object.keys(zoneGridHeaders).length
+        }">&nbsp;</th></tr>`,
+      ),
+    );
   }
 
   // Everything else
-  for (const zoneIdStr in coverage) {
-    const zoneId = parseInt(zoneIdStr);
-    if (zoneId.toString() !== zoneIdStr)
-      continue;
-    if (checkedZoneIds.includes(zoneId))
-      continue;
-    const zone = ZoneInfo[zoneId];
-    if (!zone)
-      continue;
+  const miscLabel = translate(kPrefixToCategory['00-misc'], lang);
+  const order = [
+    ContentType.Dungeons,
+    ContentType.Trials,
+    ContentType.Raids,
+    ContentType.VCDungeonFinder,
+    ContentType.ChaoticAllianceRaid,
+    ContentType.UltimateRaids,
 
-    buildRow(zoneId, '00-misc', zone);
+    // @TODO: Remap categories to group them better
+    ContentType.TheMaskedCarnivale,
+    ContentType.Eureka,
+    ContentType.SaveTheQueen,
+    ContentType.DisciplesOfTheLand,
+    ContentType.TreasureHunt,
+    ContentType.DeepDungeons,
+    ContentType.Pvp,
+
+    undefined, // catchall for the rest
+  ];
+  for (const contentTypeNumber of order) {
+    let currentContentType: string = translate(miscStrings.otherContentType, lang);
+    if (contentTypeNumber !== undefined) {
+      const currentContentTypeLang = contentTypeToLabel[contentTypeNumber]?.full;
+      if (currentContentTypeLang === undefined) {
+        const contentTypeKey = Object.entries(ContentType).find((ct) => ct[1] === contentTypeNumber)
+          ?.[0] ?? 'unknown';
+        console.warn(`Missing i18n for content type ${contentTypeNumber} / ${contentTypeKey}`);
+      }
+      currentContentType = currentContentTypeLang !== undefined
+        ? translate(currentContentTypeLang, lang)
+        : '';
+    }
+    const headerRow = templateHtmlToDom(
+      `<tr class="expansion-row"><th colspan="${
+        Object.keys(zoneGridHeaders).length
+      }">${miscLabel} &gt; ${currentContentType}</th></tr>`,
+    );
+    let builtRow = false;
+    tbody.appendChild(headerRow);
+    for (const zoneIdStr in coverage) {
+      const zoneId = parseInt(zoneIdStr);
+      if (zoneId.toString() !== zoneIdStr)
+        continue;
+      if (checkedZoneIds.includes(zoneId))
+        continue;
+      const zone = ZoneInfo[zoneId];
+      if (!zone)
+        continue;
+
+      if (zone.contentType !== contentTypeNumber && contentTypeNumber !== undefined)
+        continue;
+
+      const exDirName = exVersionToDirName[zone.exVersion] ?? '00-misc';
+
+      buildZoneTableContentRow(zoneId, exDirName, zone, tbody, lang, coverage);
+
+      builtRow = true;
+
+      checkedZoneIds.push(zoneId);
+    }
+
+    if (!builtRow) {
+      tbody.removeChild(headerRow);
+    }
   }
+
+  container.appendChild(tbody);
+
+  const searchInput = document.getElementById('zone-table-filter');
+
+  if (searchInput === null || !(searchInput instanceof HTMLInputElement))
+    throw new UnreachableCode();
+
+  let lastFilterValue = '';
+
+  const filter = () => {
+    const lcValue = searchInput.value.toLowerCase();
+    if (lastFilterValue === lcValue)
+      return;
+
+    lastFilterValue = lcValue;
+
+    // Hide rows that don't match our filter
+    container.querySelectorAll('.zone-table-content-row').forEach((row) => {
+      if (!(row instanceof HTMLElement))
+        return;
+
+      const dataRow = document.querySelector(
+        row.attributes.getNamedItem('data-bs-target')?.value ?? '',
+      );
+
+      if (dataRow === null || !(dataRow instanceof HTMLElement))
+        return;
+
+      // `innerText` is vastly slower to scan all rows here, ~750ms with `innerText`
+      // vs ~45ms with `textContent`
+      const display = row.textContent?.toLowerCase().includes(lcValue);
+
+      if (display) {
+        row.classList.remove('d-none');
+        dataRow.classList.remove('d-none');
+      } else {
+        row.classList.add('d-none');
+        dataRow.classList.add('d-none');
+      }
+    });
+
+    // Hide header rows if they have no content
+    container.querySelectorAll('.expansion-row').forEach((row) => {
+      if (!(row instanceof HTMLElement))
+        return;
+
+      let display: boolean = false;
+
+      let nextSibling = row.nextSibling;
+
+      while (nextSibling !== null) {
+        if (!(nextSibling instanceof HTMLElement))
+          return;
+
+        if (
+          nextSibling.classList.contains('expansion-row') ||
+          nextSibling.classList.contains('spacer-row')
+        )
+          break;
+
+        if (nextSibling.classList.contains('d-none')) {
+          nextSibling = nextSibling.nextSibling;
+          continue;
+        }
+
+        display = true;
+        break;
+      }
+
+      if (display) {
+        row.classList.remove('d-none');
+      } else {
+        row.classList.add('d-none');
+      }
+    });
+  };
+
+  for (const ev of ['blur', 'change', 'keydown', 'keypress', 'keyup']) {
+    searchInput.addEventListener(ev, filter);
+  }
+
+  // Fire an initial filter to hide unused category header rows
+  filter();
 };
 
 const buildLanguageSelect = (container: HTMLElement, lang: Lang) => {
@@ -663,8 +1078,8 @@ document.addEventListener('DOMContentLoaded', () => {
     throw new UnreachableCode();
   buildTranslationGrid(translationGrid, lang, translationTotals);
 
-  const zoneGrid = document.getElementById('zone-grid');
+  const zoneGrid = document.getElementById('zone-table');
   if (!zoneGrid)
     throw new UnreachableCode();
-  buildZoneGrid(zoneGrid, lang, coverage);
+  buildZoneTable(zoneGrid, lang, coverage);
 });

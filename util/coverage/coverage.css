@@ -97,3 +97,43 @@ body > div {
 #zone-grid > div {
   width: 100%;
 }
+
+#zone-table .text {
+  color: white;
+}
+
+#zone-table > thead {
+  position: sticky;
+  top: 0;
+}
+
+#zone-table > tbody > .expansion-row {
+  position: sticky;
+  top: calc(1em + 1rem);
+}
+
+#zone-table .collapsed > td:not(:first-child) {
+  display: table-cell;
+}
+
+#zone-table tbody > tr:nth-child(odd of .zone-table-content-row:not(.d-none)),
+#zone-table tbody > tr:nth-child(odd of .zone-table-content-row:not(.d-none)) > *,
+#zone-table tbody > tr:nth-child(odd of .zone-table-content-row:not(.d-none)) + .collapse,
+#zone-table tbody > tr:nth-child(odd of .zone-table-content-row:not(.d-none)) + .collapse > * {
+  background-color: rgb(0 0 0 / 5%);
+}
+
+#zone-table tbody > tr:nth-child(odd of .zone-table-content-row:not(.d-none)) > td.table-success {
+  /* Convert base RGB for cells to HSL, reduce luminance by 15% */
+  background-color: rgb(159 203 183);
+}
+
+#zone-table tbody > tr:nth-child(odd of .zone-table-content-row:not(.d-none)) > td.table-warning {
+  /* Convert base RGB for cells to HSL, reduce luminance by 15% */
+  background-color: rgb(255 225 128);
+}
+
+#zone-table tbody > tr:nth-child(odd of .zone-table-content-row:not(.d-none)) > td.table-danger {
+  /* Convert base RGB for cells to HSL, reduce luminance by 15% */
+  background-color: rgb(237 151 158);
+}
