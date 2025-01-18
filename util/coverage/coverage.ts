@@ -435,65 +435,80 @@ const translate = <T>(object: LocaleObject<T>, lang: Lang): T => {
   return object[lang] ?? object.en;
 };
 
-const addDiv = (container: HTMLElement, cls: string, text?: string) => {
-  const div = document.createElement('div');
-  div.classList.add(cls);
-  if (text !== undefined)
-    div.innerHTML = text;
-  container.appendChild(div);
-  return div;
-};
+const buildExpansionTable = (container: HTMLElement, lang: Lang, totals: CoverageTotals) => {
+  // @TODO: The previous implementation of this table/grid had all cells except the
+  // expansion name cells styled with `justify-self: right`, which did not work
+  // Should we add the `text-end` class to "fix" this "bug"?
 
-const buildExpansionGrid = (container: HTMLElement, lang: Lang, totals: CoverageTotals) => {
-  // Labels.
-  addDiv(container, 'label');
-  addDiv(container, 'label', translate(miscStrings.overall, lang));
+  // Header
+  // Blank, `Overall`
+  let headerCells = `<th></th><th>${translate(miscStrings.overall, lang)}</th>`;
   for (const contentType of contentTypeLabelOrder) {
     const label = contentTypeToLabel[contentType]?.short;
     const text = label !== undefined ? translate(label, lang) : undefined;
-    addDiv(container, 'label', text);
+    headerCells += `<th>${text}</th>`;
   }
-  addDiv(container, 'label', translate(miscStrings.oopsy, lang));
+  headerCells += `<th>${translate(miscStrings.oopsy, lang)}</th>`;
+  container.appendChild(templateHtmlToDom(`
+<thead>
+  <tr>${headerCells}</tr>
+</thead>
+`));
 
+  // Body
+  let tableRows = '';
   // By expansion.
   for (const exKey of exVersionToDirName) {
+    let rowCells = '';
     const name = kPrefixToCategory[exKey];
     const exIndex = exVersionToDirName.indexOf(exKey);
     const expansionName = translate(name, lang);
-    addDiv(container, 'header', expansionName);
+    rowCells += `<th>${expansionName}</th>`;
 
     const versionInfo = totals.byExpansion[exIndex];
     const overall = versionInfo?.overall ?? emptyTotal;
-    addDiv(container, 'data', `${overall.raidboss} / ${overall.total}`);
+    rowCells += `<td>${overall.raidboss} / ${overall.total}</td>`;
 
     for (const contentType of contentTypeLabelOrder) {
       const accum: CoverageTotalEntry = versionInfo?.byContentType[contentType] ?? emptyTotal;
-      const text = accum.total ? `${accum.raidboss} / ${accum.total}` : undefined;
-      addDiv(container, 'data', text);
+      const text = accum.total ? `${accum.raidboss} / ${accum.total}` : '';
+      rowCells += `<td>${text}</td>`;
     }
 
-    addDiv(container, 'data', `${overall.oopsy} / ${overall.total}`);
+    rowCells += `<td>${overall.oopsy} / ${overall.total}</td>`;
+    tableRows += `<tr>${rowCells}</tr>`;
   }
 
   // Totals.
-  addDiv(container, 'label');
-  addDiv(container, 'data', `${totals.overall.raidboss} / ${totals.overall.total}`);
+  let rowCells = `<td></td><td>${totals.overall.raidboss} / ${totals.overall.total}</td>`;
   for (const contentType of contentTypeLabelOrder) {
     const accum = totals.byContentType[contentType] ?? emptyTotal;
-    const text = accum.total ? `${accum.raidboss} / ${accum.total}` : undefined;
-    addDiv(container, 'data', text);
+    const text = accum.total ? `${accum.raidboss} / ${accum.total}` : '';
+    rowCells += `<td>${text}</td>`;
   }
-  addDiv(container, 'data', `${totals.overall.oopsy} / ${totals.overall.total}`);
+  rowCells += `<td>${totals.overall.oopsy} / ${totals.overall.total}</td>`;
+  tableRows += `<tr>${rowCells}</tr>`;
+
+  container.appendChild(templateHtmlToDom(`<tbody>${tableRows}</tbody>`));
 };
 
-const buildTranslationGrid = (
+const buildTranslationTable = (
   container: HTMLElement,
   thisLang: Lang,
   translationTotals: TranslationTotals,
 ) => {
+  // Header
+  let headerCells = '';
   for (const header of Object.values(translationGridHeaders))
-    addDiv(container, 'label', translate(header, thisLang));
+    headerCells += `<th>${translate(header, thisLang) ?? ''}</th>`;
+  container.appendChild(templateHtmlToDom(`
+<thead>
+  <tr>${headerCells}</tr>
+</thead>
+`));
 
+  // Body
+  let tableRows = '';
   for (const lang of languages) {
     if (lang === 'en')
       continue;
@@ -503,12 +518,17 @@ const buildTranslationGrid = (
 
     const langTotals = translationTotals[lang];
 
-    addDiv(container, 'text', translate(langMap, thisLang)[lang]);
-    addDiv(container, 'data', `${langTotals.translatedFiles} / ${langTotals.totalFiles}`);
-    addDiv(container, 'data', `${langTotals.errors}`);
-    addDiv(container, 'data', `${langTotals.missingFiles === 0 ? '' : langTotals.missingFiles}`);
-    addDiv(container, 'text', aHref);
+    tableRows += `
+<tr>
+  <th>${translate(langMap, thisLang)[lang] ?? ''}</th>
+  <td>${langTotals.translatedFiles} / ${langTotals.totalFiles}</td>
+  <td>${langTotals.errors}</td>
+  <td>${langTotals.missingFiles === 0 ? '' : langTotals.missingFiles}</td>
+  <td>${aHref}</td>
+</tr>`;
   }
+
+  container.appendChild(templateHtmlToDom(`<tbody>${tableRows}</tbody>`));
 };
 
 const templateHtmlToDom = (template: string) => {
@@ -1014,25 +1034,20 @@ const buildZoneTable = (container: HTMLElement, lang: Lang, coverage: Coverage) 
 };
 
 const buildLanguageSelect = (container: HTMLElement, lang: Lang) => {
-  const langMap = {
-    en: 'English',
-    de: 'Deutsch',
-    fr: 'Français',
-    ja: '日本語',
-    cn: '中文',
-    ko: '한국어',
-  };
-  for (const [key, langStr] of Object.entries(langMap)) {
-    let html = '';
-    if (lang === key)
-      html = `[${langStr}]`;
-    else
-      html = `[<a href="?lang=${key}">${langStr}</a>]`;
+  const langMapEntry = langMap[lang];
+  const items = languages.map((key) => {
+    if (key === lang)
+      return `<li class="list-group-item active">[${translate(langMapEntry, key)}]</li>`;
 
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    container.appendChild(div);
-  }
+    return `<li class="list-group-item">[<a href="?lang=${key}">${
+      translate(langMapEntry, key)
+    }</a>]</li>`;
+  });
+
+  const elem = templateHtmlToDom(
+    `<ul class="list-group list-group-horizontal">${items.join('')}</ul>`,
+  );
+  container.appendChild(elem);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1068,15 +1083,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const expansionGrid = document.getElementById('expansion-grid');
+  const expansionGrid = document.getElementById('expansion-table');
   if (!expansionGrid)
     throw new UnreachableCode();
-  buildExpansionGrid(expansionGrid, lang, coverageTotals);
+  buildExpansionTable(expansionGrid, lang, coverageTotals);
 
-  const translationGrid = document.getElementById('translation-grid');
+  const translationGrid = document.getElementById('translation-table');
   if (!translationGrid)
     throw new UnreachableCode();
-  buildTranslationGrid(translationGrid, lang, translationTotals);
+  buildTranslationTable(translationGrid, lang, translationTotals);
 
   const zoneGrid = document.getElementById('zone-table');
   if (!zoneGrid)
