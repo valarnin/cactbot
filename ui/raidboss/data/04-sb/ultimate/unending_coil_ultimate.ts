@@ -1437,30 +1437,27 @@ const triggerSet: TriggerSet<Data> = {
       condition: (data) => data.trio === 'quickmarch',
       run: (data, matches) => data.trioSourceIds.twin = parseInt(matches.sourceId, 16),
     },
-    // For Blackfire:
-    // After bosses jump, there's no clear log line we can trigger off of to find Nael's position
-    // until it's effectively too late.  The best way to do this seems to be to fire the trigger
-    // with a delay when Bahamut uses Blackfire Trio before all 3 bosses jump.
     {
       id: 'UCU Blackfire Party Dir',
-      type: 'Ability',
-      netRegex: { id: '26E3', source: 'Bahamut Prime', capture: false },
-      condition: (data) => data.trio === 'blackfire',
-      delaySeconds: 3.5,
-      promise: async (data) => {
-        if (data.trioSourceIds.nael === undefined)
-          return;
-        data.combatantData = [];
-        data.combatantData = (await callOverlayHandler({
-          call: 'getCombatants',
-          ids: [data.trioSourceIds.nael],
-        })).combatants;
+      type: 'ActorSetPos',
+      netRegex: { capture: true },
+      condition: (data, matches) => {
+        if (data.trio !== 'blackfire')
+          return false;
+        if (parseInt(matches.id, 16) !== data.trioSourceIds.nael)
+          return false;
+
+        // Nael jumps to beside Bahamut during the cast, floating 0.0405 off the floor
+        // When the jump to outside happens, Z === 0
+        if (Math.abs(parseFloat(matches.z)) > 0.01)
+          return false;
+
+        return true;
       },
-      alertText: (data, _matches, output) => {
-        if (data.combatantData[0] === undefined)
-          return;
-        const nael = data.combatantData[0];
-        const naelDirOutput = Directions.combatantStatePosTo8DirOutput(nael, centerX, centerY);
+      alertText: (_data, matches, output) => {
+        const posX = parseFloat(matches.x);
+        const posY = parseFloat(matches.y);
+        const naelDirOutput = Directions.xyTo8DirOutput(posX, posY, centerX, centerY);
         return output.naelPosition!({ dir: output[naelDirOutput]!() });
       },
       outputStrings: {
