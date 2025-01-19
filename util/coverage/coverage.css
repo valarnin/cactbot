@@ -22,16 +22,6 @@ body > div {
   margin-bottom: 10px;
 }
 
-#description-emoji {
-  float: left;
-  margin-right: 5px;
-}
-
-#description-text {
-  display: inline-block;
-  white-space: normal;
-}
-
 #warning {
   font-size: 30px;
   color: red;
@@ -39,25 +29,6 @@ body > div {
 
 .emoji {
   text-align: center;
-}
-
-#expansion-grid {
-  display: grid;
-  grid-template-columns: max-content repeat(6, minmax(60px, max-content));
-  column-gap: 20px;
-  row-gap: 10px;
-}
-
-#translation-grid {
-  display: grid;
-  grid-template-columns: max-content repeat(4, minmax(60px, max-content));
-  column-gap: 20px;
-  row-gap: 10px;
-}
-
-#expansion-grid > div,
-#translation-grid > div {
-  width: 100%;
 }
 
 .table > thead {
