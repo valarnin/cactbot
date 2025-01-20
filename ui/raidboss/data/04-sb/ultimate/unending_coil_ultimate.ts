@@ -1695,9 +1695,10 @@ const triggerSet: TriggerSet<Data> = {
       id: 'UCU Heavensfall Tower Spot',
       type: 'StartsUsingExtra',
       netRegex: { id: '26DF', capture: true },
-      condition: (data) =>
-        data.triggerSetConfig.heavensfallTowerPosition !== 'disabled' &&
-        data.trio === 'heavensfall',
+      condition: (data) => {
+        return data.triggerSetConfig.heavensfallTowerPosition !== 'disabled' &&
+          data.trio === 'heavensfall';
+      },
       preRun: (data, matches) => {
         const posX = parseFloat(matches.x);
         const posY = parseFloat(matches.y);
@@ -1708,6 +1709,7 @@ const triggerSet: TriggerSet<Data> = {
           angle: angle,
         });
       },
+      durationSeconds: 8,
       infoText: (data, _matches, output) => {
         if (data.heavensfallTowerSpots.length < 8)
           return;
@@ -1716,15 +1718,16 @@ const triggerSet: TriggerSet<Data> = {
         if (naelAngle === undefined)
           return;
         const wantedIdx = parseInt(data.triggerSetConfig.heavensfallTowerPosition);
-        const towers = data.heavensfallTowerSpots.sort((l, r) => {
-          const lAngle = l.angle < naelAngle ? l.angle + 360 : l.angle;
-          const rAngle = r.angle < naelAngle ? r.angle + 360 : r.angle;
-          return rAngle - lAngle;
-        });
+        const towers = data.heavensfallTowerSpots.sort((l, r) => l.angle - r.angle);
 
-        const towersMap = towers.map((t) => Directions.hdgTo16DirNum(t.angle * (Math.PI / 180)));
+        const towersMap = towers.map((t) => Directions.xyTo16DirNum(t.x, t.y, 0, 0));
 
-        const towerDir = towersMap[wantedIdx];
+        let naelIdx = towers.findIndex((t) => t.angle >= naelAngle);
+
+        if (naelIdx < 0)
+          naelIdx += 8;
+
+        const towerDir = towersMap[(wantedIdx + naelIdx) % 8];
 
         const myTowerDir = towerDir !== undefined
           ? Directions.output16Dir[towerDir] ?? 'unknown'
