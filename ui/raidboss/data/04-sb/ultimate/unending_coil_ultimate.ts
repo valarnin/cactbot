@@ -2,7 +2,7 @@ import Conditions from '../../../../../resources/conditions';
 import Outputs from '../../../../../resources/outputs';
 import { callOverlayHandler } from '../../../../../resources/overlay_plugin_api';
 import { Responses } from '../../../../../resources/responses';
-import Util, { Directions } from '../../../../../resources/util';
+import { Directions } from '../../../../../resources/util';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { PluginCombatantState } from '../../../../../types/event';
@@ -15,8 +15,6 @@ export interface Data extends RaidbossData {
 
   // TODO: replace partyList with data.party
   partyList: { [name: string]: boolean };
-  hpThresholds: number[];
-  monitoringHP: boolean;
   currentPhase: number;
   hatch?: string[];
   doomCount?: number;
@@ -237,8 +235,6 @@ const triggerSet: TriggerSet<Data> = {
   initData: () => {
     return {
       partyList: {},
-      monitoringHP: false,
-      hpThresholds: [0, 0, 0.75, 0.45],
       currentPhase: 2,
       fireDebuff: false,
       iceDebuff: false,
@@ -461,25 +457,14 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       id: 'UCU Twintania Phase Change Watcher',
-      type: 'StartsUsing',
-      // On Twister or Generate.
-      netRegex: { id: '26A[AE]', source: 'Twintania' },
-      condition: (data) => !data.monitoringHP && data.hpThresholds[data.currentPhase] !== undefined,
-      preRun: (data) => data.monitoringHP = true,
-      promise: (data, matches) =>
-        Util.watchCombatant({
-          ids: [parseInt(matches.sourceId, 16)],
-        }, (ret) => {
-          return ret.combatants.some((c) => {
-            const currentHPCheck = data.hpThresholds[data.currentPhase] ?? -1;
-            return c.CurrentHP / c.MaxHP <= currentHPCheck;
-          });
-        }),
+      type: 'CombatantMemory',
+      // When Neurolink spawns
+      netRegex: { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }], capture: false },
+      condition: (data) => data.currentPhase < 4,
       sound: 'Long',
       infoText: (data, _matches, output) => output.text!({ num: data.currentPhase }),
       run: (data) => {
         data.currentPhase++;
-        data.monitoringHP = false;
       },
       outputStrings: {
         text: {
