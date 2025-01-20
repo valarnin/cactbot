@@ -386,6 +386,9 @@ const miscStrings = {
   noTranslationInformation: {
     en: 'No Translation Information',
   },
+  linkToEntry: {
+    en: 'Link to this entry',
+  },
 } as const;
 
 const translationGridHeaders = {
@@ -428,6 +431,22 @@ const translationGridHeaders = {
     ja: '欠落している翻訳のリストへのリンク',
     cn: '缺失翻译表链接',
     ko: '번역 누락 리스트 링크',
+  },
+} as const;
+
+const themeKeys = [
+  'light',
+  'dark',
+] as const;
+
+type ThemeKey = (typeof themeKeys)[number];
+
+const themes: Record<ThemeKey, LocaleText> = {
+  'light': {
+    en: 'Light',
+  },
+  'dark': {
+    en: 'Dark',
   },
 } as const;
 
@@ -713,8 +732,13 @@ const buildZoneTableContentRow = (
   const contentRow = templateHtmlToDom(`\
 <tr id="${id}" class="zone-table-content-row" \
 data-bs-toggle="collapse" data-bs-target="#data-${id}" \
-aria-expanded="false" aria-controls="data-${id}">${cells}</tr>`);
+aria-expanded="${
+    `#${id}` === window.location.hash ? 'true' : 'false'
+  }" aria-controls="data-${id}">${cells}</tr>`);
   container.appendChild(contentRow);
+
+  const linkUrl = new URL(window.location.href);
+  linkUrl.hash = id;
 
   const detailsColumn = `
       <div class="col">
@@ -732,6 +756,7 @@ aria-expanded="false" aria-controls="data-${id}">${cells}</tr>`);
     zoneCoverage.timeline?.duration ?? 0
   }</td></tr>
         </table>
+        <div><a href="${linkUrl.toString()}">🔗 ${translate(miscStrings.linkToEntry, lang)}</a></div>
       </div>`;
 
   let translationsColumn = `
@@ -817,7 +842,7 @@ aria-expanded="false" aria-controls="data-${id}">${cells}</tr>`);
       </div>`;
 
   const dataRow = templateHtmlToDom(`
-<tr id="data-${id}" class="collapse">
+<tr id="data-${id}" class="collapse${`#${id}` === window.location.hash ? ' show' : ''}">
   <td colspan="${Object.keys(zoneGridHeaders).length}">
     <div class="row">${detailsColumn}${translationsColumn}</div>
     <div class="row">${pullRequestsColumn}${releasesColumn}</div>
@@ -1033,13 +1058,40 @@ const buildZoneTable = (container: HTMLElement, lang: Lang, coverage: Coverage) 
   filter();
 };
 
+const buildThemeSelect = (container: HTMLElement, lang: Lang) => {
+  const curTheme = document.documentElement.getAttribute('data-bs-theme') ?? 'light';
+
+  const baseUrl = new URL(window.location.href);
+
+  const items = themeKeys.map((key) => {
+    if (key === curTheme)
+      return `<li class="list-group-item active">[${translate(themes[key], lang)}]</li>`;
+
+    const newUrl = new URL(baseUrl);
+    newUrl.searchParams.set('theme', key);
+    return `<li class="list-group-item">[<a href="${newUrl.toString()}">${
+      translate(themes[key], lang)
+    }</a>]</li>`;
+  });
+
+  const elem = templateHtmlToDom(
+    `<ul class="list-group list-group-horizontal">${items.join('')}</ul>`,
+  );
+  container.appendChild(elem);
+};
+
 const buildLanguageSelect = (container: HTMLElement, lang: Lang) => {
   const langMapEntry = langMap[lang];
+
+  const baseUrl = new URL(window.location.href);
+
   const items = languages.map((key) => {
     if (key === lang)
       return `<li class="list-group-item active">[${translate(langMapEntry, key)}]</li>`;
 
-    return `<li class="list-group-item">[<a href="?lang=${key}">${
+    const newUrl = new URL(baseUrl);
+    newUrl.searchParams.set('lang', key);
+    return `<li class="list-group-item">[<a href="${newUrl.toString()}">${
       translate(langMapEntry, key)
     }</a>]</li>`;
   });
@@ -1069,6 +1121,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!languageSelect)
     throw new UnreachableCode();
   buildLanguageSelect(languageSelect, lang);
+
+  const themeSelect = document.getElementById('theme-select');
+  if (!themeSelect)
+    throw new UnreachableCode();
+  buildThemeSelect(themeSelect, lang);
 
   const description = document.getElementById('description-text');
   if (!description)

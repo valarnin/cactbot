@@ -45,6 +45,30 @@ body > div {
   display: table-cell;
 }
 
+#zone-table .comment {
+  margin: calc(-0.5rem - 1px) 0 calc(-0.5rem - 4px);
+  padding: calc(0.5rem + 1px) 0 calc(0.5rem + 3px);
+  font-size: inherit;
+  max-width: initial;
+  word-wrap: initial;
+  hyphens: initial;
+  display: inline-block;
+  padding-right: 0.5rem;
+}
+
+#zone-table .comment + .comment {
+  padding-left: 0.5rem;
+  border-left: var(--bs-border-width) solid var(--bs-table-border-color);
+}
+
+#zone-table .zone-table-content-row {
+  cursor: pointer;
+}
+
+:target {
+  scroll-margin-top: calc(2em + 2rem);
+}
+
 /* I can't find a way for stlyelint to allow wrapping these selectors across multiple lines */
 /* stylelint-disable max-line-length */
 
