@@ -12,8 +12,6 @@ export interface Data extends RaidbossData {
     heavensfallTowerPosition: 'disabled' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7';
   };
 
-  // TODO: replace partyList with data.party
-  partyList: { [name: string]: boolean };
   currentPhase: number;
   hatch?: string[];
   doomCount?: number;
@@ -377,17 +375,6 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '26E7', source: 'Bahamut Prime', capture: false },
       delaySeconds: 1,
       run: (data) => resetTrio(data, 'octet'),
-    },
-    {
-      id: 'UCU Ragnarok Party Tracker',
-      type: 'Ability',
-      netRegex: { id: '26B8', source: 'Ragnarok' },
-      run: (data, matches) => {
-        // This happens once during the nael transition and again during
-        // the heavensfall trio.  This should proooobably hit all 8
-        // people by the time you get to octet.
-        data.partyList[matches.target] = true;
-      },
     },
 
     // --- Twintania ---
@@ -1117,9 +1104,12 @@ const triggerSet: TriggerSet<Data> = {
         });
         data.wideThirdDive = result.wideThirdDive;
         data.unsafeThirdMark = result.unsafeThirdMark;
-        // In case you forget, print marks in the log.
-        // TODO: Maybe only if Options.Debug?
-        console.log(data.naelMarks.join(', ') + (data.wideThirdDive ? ' (WIDE)' : ''));
+        if (data.options.Debug) {
+          // In case you forget, print marks in the log.
+          console.log(
+            `UCU Dragon Tracker${data.naelMarks.join(', ')}${data.wideThirdDive ? ' (WIDE)' : ''}`,
+          );
+        }
       },
     },
     {
@@ -1231,7 +1221,7 @@ const triggerSet: TriggerSet<Data> = {
         if (data.octetMarker.length !== 7)
           return;
 
-        const partyList = Object.keys(data.partyList);
+        const partyList = data.party.details.map((p) => p.name);
 
         if (partyList.length !== 8) {
           console.error(`Octet error: bad party list size: ${JSON.stringify(partyList)}`);
