@@ -70,7 +70,6 @@ export interface Data extends RaidbossData {
   titanBury: NetMatches['AddedCombatant'][];
   ifritRadiantPlumeLocations: DirectionOutputCardinal[];
   possibleIfritIDs: string[];
-  lastTitanMove?: NetMatches['ActorMove'];
 }
 
 type GaolKey = Extract<keyof Data['triggerSetConfig'], string>;
