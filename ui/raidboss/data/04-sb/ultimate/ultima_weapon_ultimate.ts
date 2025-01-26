@@ -10,6 +10,10 @@ import { PluginCombatantState } from '../../../../../types/event';
 import { NetMatches } from '../../../../../types/net_matches';
 import { TriggerSet } from '../../../../../types/trigger';
 
+// Note: without extra network data that is not exposed, it seems impossible to know where Titan
+// looks briefly before jumping for Geocrush. A getCombatants trigger on NameToggle 00 was
+// extremely inaccurate and so that is likely too late to know.
+
 const centerX = 100;
 const centerY = 100;
 
@@ -1099,93 +1103,6 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     // --------- Titan ----------
-    {
-      id: 'UWU Titan Last Move Collector',
-      type: 'ActorMove',
-      netRegex: { id: '4[0-9a-fA-F]{7}', capture: true },
-      condition: (data, matches) => {
-        if (data.phase !== 'titan')
-          return false;
-        if (data.bossId.titan !== matches.id)
-          return false;
-        return true;
-      },
-      run: (data, matches) => {
-        data.lastTitanMove = matches;
-      },
-    },
-    {
-      id: 'UWU Titan Jump Direction',
-      type: 'NameToggle',
-      netRegex: { id: '4[0-9a-fA-F]{7}', toggle: '00', capture: true },
-      condition: (data, matches) => {
-        if (data.phase !== 'titan')
-          return false;
-        if (data.bossId.titan !== matches.id)
-          return false;
-        if (data.lastTitanMove === undefined)
-          return false;
-        return true;
-      },
-      delaySeconds: 0.2,
-      infoText: (data, _, outputs) => {
-        const lastMove = data.lastTitanMove;
-        if (lastMove === undefined) {
-          return outputs.unknown!();
-        }
-
-        // The last move Titan does before name toggle is always to look at the cardinal he's jumping to
-        // TODO: Just a heading/rotation to cardinal is not sufficient here, because it relies on Titan being
-        // relatively centered. Instead, maybe do some slope checking or something?
-
-        // Snap heading to closest card and add 2 for opposite direction
-        // N = 0, E = 1, S = 2, W = 3
-        const cardinal = (Directions.hdgTo4DirNum(parseFloat(lastMove.heading)) + 2) % 4;
-
-        const dirs: { [dir: number]: string } = {
-          0: outputs.dirN!(),
-          1: outputs.dirE!(),
-          2: outputs.dirS!(),
-          3: outputs.dirW!(),
-        };
-
-        const xyToHdg = (x: number, y: number, centerX: number, centerY: number): number => {
-          x = x - centerX;
-          y = y - centerY;
-          return Math.atan2(x, y);
-        };
-
-        type Dir = 'N' | 'E' | 'S' | 'W';
-        type JumpCoords= { dir: Dir; x: number; y: number };
-        const jumpCoords: JumpCoords[] = [
-            { dir: 'W', x: 86.0, y: 100.0 },
-            { dir: 'E', x: 114.0, y: 100.0 },
-            { dir: 'N', x: 100.0, y: 86.0 },
-            { dir: 'S', x: 100.0, y: 114.0 },
-        ];
-
-        const titanX = parseFloat(lastMove.x); // from ActorMove
-        const titanY = parseFloat(lastMove.y); // from ActorMove
-        const titanHdg = parseFloat(lastMove.heading); // from ActorMove
-
-        let jumpDir: Dir | '??' = '??';
-        for (const site of jumpCoords) {
-           const hdgToTitan = xyToHdg(titanX, titanY, site.x, site.y);
-           const combo = Math.abs(titanHdg - hdgToTitan);
-           if (combo >= 3 && combo <= 3.28) // should be = Math.PI, but safety margin?
-             jumpDir = site.dir;
-        }
-        console.log(`Titan jumping ${jumpDir}, ${dirs[cardinal] ?? ''}`);
-        return dirs[cardinal];
-      },
-      outputStrings: {
-        unknown: Outputs.unknown,
-        dirN: Outputs.dirN,
-        dirE: Outputs.dirE,
-        dirS: Outputs.dirS,
-        dirW: Outputs.dirW,
-      },
-    },
     {
       id: 'UWU Titan Bury Direction',
       type: 'AddedCombatant',
