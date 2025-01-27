@@ -47,6 +47,10 @@ class TimelineParserLint extends TimelineParser {
   // Capture lint errors separately from TimelineParser's errors so we can do a separate unit test
   public lintErrors: LintError[] = [];
 
+  private lastParsedLineNum = 0;
+  private lastParsedLineTime = -10000;
+  private lastParsedLineWindowAfter = 0;
+
   constructor(
     text: string,
     triggers: LooseTimelineTrigger[],
@@ -262,6 +266,58 @@ class TimelineParserLint extends TimelineParser {
         });
         return;
       }
+    }
+
+    const parsed = new TimelineParser(origLine, [], []);
+    const parsedEntry = parsed.events[0];
+    if (parsedEntry === undefined) {
+      this.lintErrors.push({
+        lineNumber: lineNumber,
+        line: origLine,
+        error: `TimelineParser failed to parse line "${origLine}"`,
+      });
+      return;
+    }
+    const parsedEntrySync = parsedEntry.sync;
+    if (parsedEntrySync !== undefined) {
+      const syncBeforeDuration = parsedEntrySync.time - parsedEntrySync.start;
+      if (
+        // Don't check the initial line
+        this.lastParsedLineTime !== -10000 &&
+        // If this is a big window (>= 15s), assume it's a
+        // phase push detection and don't warn for overlaps
+        syncBeforeDuration < 15 &&
+        // If the previous sync time was 0, don't check for overlap
+        this.lastParsedLineTime > 0 &&
+        // Don't check jumps
+        parsedEntrySync.jump === undefined && parsedEntrySync.jumpType === undefined
+      ) {
+        const minSyncTime = parsedEntrySync.start;
+        if (
+          // Don't check for overlap with previous sync window if our sync time is 0,
+          // this avoids initial timeline syncs
+          minSyncTime > 0 &&
+          minSyncTime <= this.lastParsedLineTime
+        ) {
+          this.lintErrors.push({
+            lineNumber: lineNumber,
+            line: origLine,
+            error:
+              `Sync window "${minSyncTime.toString()}" overlaps with previous sync window end time of "${this.lastParsedLineTime.toString()}" for line ${this.lastParsedLineNum.toString()}, ${JSON.stringify(parsedEntrySync.jump)}, ${JSON.stringify(parsedEntrySync.jumpType)}`,
+          });
+        }
+        if (parsedEntry.time <= this.lastParsedLineWindowAfter) {
+          this.lintErrors.push({
+            lineNumber: lineNumber,
+            line: origLine,
+            error:
+              `Sync time "${time.toString()}" overlaps prior entry's window of "${this.lastParsedLineWindowAfter.toString()}" for line ${this.lastParsedLineNum.toString()}`,
+          });
+        }
+      }
+      this.lastParsedLineTime = parsedEntry.time;
+      this.lastParsedLineWindowAfter = parsedEntrySync.end;
+      this.lastParsedLineNum = lineNumber;
     }
     return;
   }
