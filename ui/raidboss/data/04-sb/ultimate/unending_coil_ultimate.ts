@@ -40,6 +40,7 @@ export interface Data extends RaidbossData {
   megaStack: string[];
   octetMarker: string[];
   lastOctetMarker?: string;
+  octetTwinDir: number;
   exaflareCount: number;
   akhMornCount: number;
   mornAfahCount: number;
@@ -265,6 +266,7 @@ const triggerSet: TriggerSet<Data> = {
       shakers: [],
       megaStack: [],
       octetMarker: [],
+      octetTwinDir: -1,
       exaflareCount: 0,
       akhMornCount: 0,
       mornAfahCount: 0,
@@ -1319,60 +1321,31 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
-      id: 'UCU Octet Twin Marker',
+      id: 'UCU Octet Twin Bait',
       type: 'HeadMarker',
       netRegex: { id: '0029', capture: false },
       condition: (data) => data.trio === 'octet',
       delaySeconds: 0.5,
-      alarmText: (data, _matches, output) => {
-        if (data.lastOctetMarker === data.me)
-          return output.twinOnYou!();
-      },
-      infoText: (data, _matches, output) => {
+      alertText: (data, _matches, output) => {
         if (data.lastOctetMarker === undefined)
-          return output.twinOnUnknown!();
+          return output.twinOnUnknown!({
+            unknown: output.unknown!(),
+            dir: output[Directions.outputFrom8DirNum(data.octetTwinDir)]!(),
+          });
 
-        // If this person is not alive, then everybody should stack,
-        // but tracking whether folks are alive or not is a mess.
-        if (data.lastOctetMarker !== data.me)
-          return output.twinOnPlayer!({ player: data.party.member(data.lastOctetMarker) });
-      },
-      tts: (data, _matches, output) => {
-        if (data.lastOctetMarker === undefined || data.lastOctetMarker === data.me)
-          return output.stackTTS!();
+        return output.twinOnPlayer!({
+          player: data.party.member(data.lastOctetMarker),
+          dir: output[Directions.outputFrom8DirNum(data.octetTwinDir)]!(),
+        });
       },
       outputStrings: {
-        twinOnYou: {
-          en: 'YOU Stack for Twin',
-          de: 'DU: Sammeln für Twintania',
-          fr: 'Packez-vous pour Gémellia',
-          ja: '自分にツインタニア',
-          cn: '双塔俯冲点名',
-          ko: '내가 트윈징 대상자',
-        },
+        ...Directions.outputStrings8Dir,
+        unknown: Outputs.unknown,
         twinOnPlayer: {
-          en: '8: ${player} (twin)',
-          de: '8: ${player} (Twintania)',
-          fr: '8 : ${player} (Gémellia)',
-          ja: '8: ${player} (ツインタニア)',
-          cn: '8: ${player} (双塔)',
-          ko: '8: ${player} (트윈타니아)',
+          en: '${player} Bait Twin (${dir})',
         },
         twinOnUnknown: {
-          en: '8: ??? (twin)',
-          de: '8: ??? (Twintania)',
-          fr: '8 : ??? (Gémellia)',
-          ja: '8: ??? (ツインタニア)',
-          cn: '8: ??? (双塔)',
-          ko: '8: ??? (트윈타니아)',
-        },
-        stackTTS: {
-          en: 'stack for twin',
-          de: 'Sammeln für Twintania',
-          fr: 'Packez-vous pour Gémellia',
-          ja: 'ツインタニア',
-          cn: '双塔俯冲点名',
-          ko: '트윈타니아 옆에 서기',
+          en: '${unknown} Bait Twin (${dir})',
         },
       },
     },
@@ -1476,6 +1449,7 @@ const triggerSet: TriggerSet<Data> = {
 
         return true;
       },
+      suppressSeconds: 9999,
       alertText: (_data, matches, output) => {
         const posX = parseFloat(matches.x);
         const posY = parseFloat(matches.y);
@@ -1623,6 +1597,11 @@ const triggerSet: TriggerSet<Data> = {
           return false;
 
         if (!Object.values(data.trioSourceIds).includes(parseInt(matches.id, 16)))
+          return false;
+
+        // Can't use suppressSeconds since this is a collector trigger
+        // so just return false if we already have 3 actors stored
+        if (Object.keys(data.combatantData).length >= 3)
           return false;
 
         return true;
@@ -1803,9 +1782,12 @@ const triggerSet: TriggerSet<Data> = {
         if (data.trio !== 'octet')
           return false;
 
-        const id = parseInt(matches.id, 16);
+        if (!Object.values(data.trioSourceIds).includes(parseInt(matches.id, 16)))
+          return false;
 
-        if (![data.trioSourceIds.nael, data.trioSourceIds.bahamut].includes(id))
+        // Can't use suppressSeconds since this is a collector trigger
+        // so just return false if we already have 3 actors stored
+        if (Object.keys(data.combatantData).length >= 3)
           return false;
 
         return true;
@@ -1814,8 +1796,8 @@ const triggerSet: TriggerSet<Data> = {
         data.combatantData[parseInt(matches.id, 16)] = matches;
       },
       alertText: (data, _matches, output) => {
-        if (Object.keys(data.combatantData).length < 2)
-          return false;
+        if (Object.keys(data.combatantData).length < 3)
+          return;
 
         let naelDirIdx;
         let bahaDirIdx;
@@ -1832,6 +1814,8 @@ const triggerSet: TriggerSet<Data> = {
             naelDirIdx = mobDirIdx;
           else if (mobId === data.trioSourceIds.bahamut)
             bahaDirIdx = mobDirIdx;
+          else if (mobId === data.trioSourceIds.twin)
+            data.octetTwinDir = mobDirIdx;
         }
 
         if (naelDirIdx === undefined || bahaDirIdx === undefined)
