@@ -1927,19 +1927,31 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
-      id: 'UCU Exaflare',
+      id: 'UCU Exaflare Direction',
+      type: 'StartsUsingExtra',
+      netRegex: { id: '26F0', capture: true },
+      suppressSeconds: 20,
+      infoText: (_data, matches, output) =>
+        output.text!({
+          dir: output[
+            Directions.outputFrom8DirNum(Directions.hdgTo8DirNum(parseFloat(matches.heading)))
+          ]!(),
+        }),
+      outputStrings: {
+        ...Directions.outputStrings8Dir,
+        text: {
+          en: 'Exaflares ${dir}',
+        },
+      },
+    },
+    {
+      id: 'UCU Morn Afah Enrage Spread Warning',
       type: 'StartsUsing',
-      netRegex: { id: '26EF', source: 'Bahamut Prime', capture: false },
-      preRun: (data) => data.exaflareCount++,
-      infoText: (data, _matches, output) => output.text!({ num: data.exaflareCount }),
+      netRegex: { id: '26ED', source: 'Bahamut Prime', capture: false },
+      alarmText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
-          en: 'Exaflare #${num}',
-          de: 'Exaflare #${num}',
-          fr: 'ExaBrasier #${num}',
-          ja: 'エクサフレア${num}回',
-          cn: '百京核爆 #${num}',
-          ko: '엑사플레어 ${num}',
+          en: 'Spread (Enrage)',
         },
       },
     },
