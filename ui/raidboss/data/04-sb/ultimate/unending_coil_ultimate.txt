@@ -16,9 +16,8 @@ hideall "--sync--"
 27.6 "Plummet" Ability { id: "26A8", source: "Twintania" }
 32.8 "Twister" Ability { id: "26AA", source: "Twintania" }
 36.0 "Fireball" Ability { id: "26AC", source: "Twintania" }
-40.0 "--push--"
-#44.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
 # TODO: presumably 44.2 is a loop back to 24.5.
+44.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" } forcejump 24.5
 
 ### Twintania P2: 75% -> 45%
 # TODO: Switch this Neurolink detection to a `SpawnObject` log line from OP if we ever add it.
@@ -32,9 +31,9 @@ hideall "--sync--"
 138.6 "Generate" Ability { id: "26AE", source: "Twintania" }
 141.6 "Twister" Ability { id: "26AA", source: "Twintania" }
 147.6 "Plummet" Ability { id: "26A8", source: "Twintania" }
-152.7 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-160.0 "--push--"
 # TODO: presumably 152.7 is a loop back to 108.5.
+152.7 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
+158.2 "--sync--" StartsUsing { id: "26AE", source: "Twintania" } forcejump 114
 
 ### Twintania P3: 45% -> 0%
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
@@ -53,12 +52,7 @@ hideall "--sync--"
 255.5 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 264.0 "Generate x2" Ability { id: "26AE", source: "Twintania" }
 267.1 "Targeted Fire x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-273.7 "Fireball" Ability { id: "26AC", source: "Twintania" } window 20,20 jump 124.6
-282.7 "Death Sentence" #Ability { id: "26A9", source: "Twintania" }
-285.7 "Plummet" #Ability { id: "26A8", source: "Twintania" }
-292.7 "Generate x2" #Ability { id: "26AE", source: "Twintania" }
-295.7 "Twister" #Ability { id: "26AA", source: "Twintania" }
-300.7 "Plummet" #Ability { id: "26A8", source: "Twintania" }
+273.7 "Fireball" Ability { id: "26AC", source: "Twintania" } window 20,20 forcejump 124.6
 
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
 400.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 195,0
