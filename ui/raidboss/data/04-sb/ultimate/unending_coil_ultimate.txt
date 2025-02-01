@@ -267,7 +267,7 @@ hideall "--sync--"
 
 # 2019-11-04T19:22:00.3700000-08:00 - favor
 ##### ADDS PHASE: NAEL + TWIN #####
-1504.6 "Bahamut's Favor" Ability { id: "26E8", source: "Bahamut Prime" } window 1500,100
+1504.6 "Bahamut's Favor" Ability { id: "26E8", source: "Bahamut Prime" } window 1500,3
 1506.1 "--targetable--"
 1514.1 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
 1514.1 "Plummet" Ability { id: "26A8", source: "Twintania" }
@@ -312,16 +312,16 @@ hideall "--sync--"
 2061.6 "--targetable--"
 2067.7 "Morn Afah #1" Ability { id: "26EC", source: "Bahamut Prime" }
 2074.1 "Akh Morn #1" Ability { id: "26EA", source: "Bahamut Prime" } duration 3.3
-2086.6 "Exaflare #1" Ability { id: "26EF", source: "Bahamut Prime" } window 10,10
+2086.6 "Exaflare #1" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
 2105.9 "Akh Morn #2" Ability { id: "26EA", source: "Bahamut Prime" } duration 4.4
 2123.5 "Morn Afah #2" Ability { id: "26EC", source: "Bahamut Prime" }
-2135.8 "Exaflare #2" Ability { id: "26EF", source: "Bahamut Prime" } window 10,10
+2135.8 "Exaflare #2" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
 2157.1 "Morn Afah #3" Ability { id: "26EC", source: "Bahamut Prime" }
 2169.3 "Akh Morn #3" Ability { id: "26EA", source: "Bahamut Prime" } duration 5.5
-2186.0 "Exaflare #3" Ability { id: "26EF", source: "Bahamut Prime" } window 10,10
+2186.0 "Exaflare #3" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
 2207.2 "Morn Afah #4" Ability { id: "26EC", source: "Bahamut Prime" }
 2219.3 "Akh Morn #4" Ability { id: "26EA", source: "Bahamut Prime" } duration 6.6
-2237.1 "Exaflare #4" Ability { id: "26EF", source: "Bahamut Prime" } window 10,10
+2237.1 "Exaflare #4" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
 2258.2 "Morn Afah #5" Ability { id: "26EC", source: "Bahamut Prime" }
 2270.3 "Morn Afah Enrage" Ability { id: "26ED", source: "Bahamut Prime" }
 #1455.9 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
