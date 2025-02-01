@@ -216,7 +216,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'heavensfallTowerPosition',
       comment: {
         en:
-          `With a tower at Nael being position 1, rotating clockwise, your tower poisition. e.g. H1 in <a href="https://clees.me/guides/ucob/" target="_blank">Clees' guide</a> is position 7.`,
+          `With a tower at Nael being position 1, rotating clockwise, your tower position. e.g. H1 in <a href="https://clees.me/guides/ucob/" target="_blank">Clees' guide</a> is position 7.`,
       },
       name: {
         en: 'P3 Heavensfall Tower Position',
