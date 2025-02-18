@@ -1931,16 +1931,35 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsingExtra',
       netRegex: { id: '26F0', capture: true },
       suppressSeconds: 20,
-      infoText: (_data, matches, output) =>
-        output.text!({
-          dir: output[
-            Directions.outputFrom8DirNum(Directions.hdgTo8DirNum(parseFloat(matches.heading)))
-          ]!(),
-        }),
+      infoText: (_data, matches, output) => {
+        const towardsDirNum = Directions.hdgTo8DirNum(parseFloat(matches.heading));
+        const towardsDir = Directions.outputFrom8DirNum(towardsDirNum);
+        const startDir = Directions.outputFrom8DirNum((towardsDirNum + 4) % 8);
+        return output.text!(
+          {
+            dir1: output[startDir]!(),
+            dir2: output[towardsDir]!(),
+          },
+        );
+      },
+      tts: (_data, matches, output) => {
+        const towardsDirNum = Directions.hdgTo8DirNum(parseFloat(matches.heading));
+        const towardsDir = Directions.outputFrom8DirNum(towardsDirNum);
+        const startDir = Directions.outputFrom8DirNum((towardsDirNum + 4) % 8);
+        return output.tts!(
+          {
+            dir1: output[startDir]!(),
+            dir2: output[towardsDir]!(),
+          },
+        );
+      },
       outputStrings: {
         ...Directions.outputStrings8Dir,
         text: {
-          en: 'Exaflares ${dir}',
+          en: 'Exaflares ${dir1} -> ${dir2}',
+        },
+        tts: {
+          en: 'Exaflares ${dir1} towards ${dir2}',
         },
       },
     },
