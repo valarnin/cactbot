@@ -8,6 +8,8 @@ hideall "--sync--"
 
 ##### TWINTANIA #####
 ### Twintania P1: 100% -> 75%
+# TODO: Twintania timeline has been updated to actually loop,
+# but the loops have not been verified against actual pulls.
 0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
 7.0 "Plummet" Ability { id: "26A8", source: "Twintania" } window 12,12
 13.1 "Twister" Ability { id: "26AA", source: "Twintania" }
@@ -24,7 +26,6 @@ hideall "--sync--"
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
 100.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 100,0
 108.5 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-114.0 "--sync--" StartsUsing { id: "26AE", source: "Twintania" } window 53,10
 117.0 "Generate" Ability { id: "26AE", source: "Twintania" }
 120.1 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 131.6 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
@@ -39,7 +40,6 @@ hideall "--sync--"
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
 200.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 95,0
 208.1 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-213.6 "--sync--" StartsUsing { id: "26AE", source: "Twintania" } window 30,10
 216.6 "Generate x2" Ability { id: "26AE", source: "Twintania" }
 219.7 "Targeted Fire x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 226.3 "Fireball" Ability { id: "26AC", source: "Twintania" } window 70,10
@@ -59,9 +59,9 @@ hideall "--sync--"
 
 ##### NAEL #####
 407.3 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" } window 407.3,2
-412.8 "Meteor Stream x4" Ability { id: "26C0", source: "Nael Geminus" }
+412.8 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
 414.3 "Thermionic Burst" Ability { id: "26B9", source: "Ragnarok" }
-415.8 "Meteor Stream x4" Ability { id: "26C0", source: "Nael Geminus" }
+415.8 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
 418.3 "Thermionic Burst" Ability { id: "26B9", source: "Ragnarok" }
 418.8 "Dalamud Dive" Ability { id: "26C1", source: "Nael deus Darnus" }
 
@@ -74,10 +74,10 @@ hideall "--sync--"
 # https://xivapi.com/NpcYell/6492?pretty=true
 # en: O hallowed moon, shine you the iron path!
 437.4 "--sync--" NpcYell { npcYellId: ["195D", "195C"] }
-442.4 "Chain Lightning x2" Ability { id: "26C8", source: "Thunderwing" }
+442.4 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
 442.4 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
 445.4 "Iron Chariot/Thermionic Beam" Ability { id: ["26BB", "26BD"], source: "Nael deus Darnus" }
-446.4 "Doom x2" Ability { id: "26C9", source: "Tail Of Darkness" }
+446.4 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
 448.4 "Fireball (1)" Ability { id: "26C5", source: "Firehorn" }
 449.4 "Wings Of Salvation x2" Ability { id: "26CA", source: "Fang Of Light" } duration 4
 456.6 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
@@ -92,9 +92,9 @@ hideall "--sync--"
 467.3 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
 470.9 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
 473.9 "Lunar Dynamo/Iron Chariot" Ability { id: ["26BB", "26BC"], source: "Nael deus Darnus" }
-475.3 "Doom x3" Ability { id: "26C9", source: "Tail Of Darkness" }
+475.3 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
 477.3 "Wings Of Salvation x3" Ability { id: "26CA", source: "Fang Of Light" } duration 8
-486.2 "Chain Lightning x2" Ability { id: "26C8", source: "Thunderwing" }
+486.2 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
 489.2 "Fireball (3)" Ability { id: "26C5", source: "Firehorn" }
 
 492.0 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
@@ -108,8 +108,8 @@ hideall "--sync--"
 503.9 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
 506.9 "Lunar Dynamo/Iron Chariot" Ability { id: ["26BB", "26BC"], source: "Nael deus Darnus" }
 510.2 "Fireball (4)" Ability { id: "26C5", source: "Firehorn" }
-511.2 "Doom x3" Ability { id: "26C9", source: "Tail Of Darkness" }
-513.2 "Chain Lightning x2" Ability { id: "26C8", source: "Thunderwing" }
+511.2 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
+513.2 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
 513.3 "Wings Of Salvation x3" Ability { id: "26CA", source: "Fang Of Light" } duration 8
 530.6 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
 
@@ -118,24 +118,25 @@ hideall "--sync--"
 540.8 "Hypernova x4" duration 6 #Ability { id: "26BF", source: "Nael deus Darnus" }
 543.8 "Marker 3" HeadMarker { id: '0014' }
 546.8 "Cauterize" #Ability { id: "26CD", source: "Thunderwing" }
-#339.5 "Cauterize" #Ability { id: "26CE", source: "Tail Of Darkness" }
 548.3 "--untargetable--"
+# TODO: Missing next "--targetable--" here. Also the timing for the "--untargetable--"
+# might vary depending on the quote? Not sure, my group never sees divebombs.
+# TODO: P2 beyond this point could benefit from a rework to map the quotes out properly
+# like was done for adds phase, but need more data first.
 548.3 "Meteor/Dive or Dive/Beam" duration 3 # first mechanic -> second
-#342.7 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
 550.8 "Cauterize" #Ability { id: "26CB", source: "Firehorn" }
-#345.7 "Dalamud Dive" Ability { id: "26C1", source: "Nael deus Darnus" }
 554.7 "Cauterize" #Ability { id: "26CC", source: "Iceclaw" }
-#347.5 "Cauterize" #Ability { id: "26CF", source: "Fang Of Light" }
+
 
 557.0 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
 
 568.5 "Random Combo Attack" duration 8
-#366.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
-#369.2 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+#573.5 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+#576.5 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
 
 580.0 "Random Combo Attack" duration 8
-#377.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-#380.3 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+#584.6 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+#587.6 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
 
 596.0 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
 603.0 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
@@ -159,14 +160,14 @@ hideall "--sync--"
 ### QUICKMARCH
 1037.3 "Quickmarch Trio" Ability { id: "26E2", source: "Bahamut Prime" } window 30,10
 1039.3 "--untargetable--"
-#540.0 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
-#540.0 "Lunar Dive" Ability { id: "26C3", source: "Nael deus Darnus" }
+#1045.3 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
+#1045.3 "Lunar Dive" Ability { id: "26C3", source: "Nael deus Darnus" }
 1045.3 "Twisting Dive" Ability { id: "26B2", source: "Twintania" }
 1049.3 "Spread" Ability { id: "26DC", source: "Bahamut Prime" }
 1050.3 "--targetable--"
 1051.3 "Pepperoni" Ability { id: "26DD", source: "Bahamut Prime" }
 1053.3 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
-1055.3 "Earth Shaker x3" Ability { id: "26D9", source: "Bahamut Prime" }
+1055.3 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
 1057.3 "Tempest Wing" Ability { id: "26D7", source: "Bahamut Prime" }
 
 1061.2 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
@@ -192,8 +193,8 @@ hideall "--sync--"
 1127.3 "Fellruin Trio" Ability { id: "26E4", source: "Bahamut Prime" } window 130,10
 1129.3 "--untargetable--"
 1131.9 "Dive Dynamo Combo" duration 8
-#631.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
-#634.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+#1136.4 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+#1139.4 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
 1142.4 "Tempest Wing" Ability { id: "26D7", source: "Bahamut Prime" }
 1143.4 "Aetheric Profusion" Ability { id: "26B1", source: "Twintania" }
 
@@ -207,7 +208,7 @@ hideall "--sync--"
 #### HEAVENSFALL
 1178.7 "Heavensfall Trio" Ability { id: "26E5", source: "Bahamut Prime" } window 170,10
 1180.7 "--untargetable--"
-#681.4 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
+#1186.7 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
 1186.7 "Twisting Dive" Ability { id: "26B2", source: "Twintania" }
 1192.2 "Heavensfall" Ability { id: "26B7", source: "Nael deus Darnus" }
 1192.7 "Pepperoni" Ability { id: "26DD", source: "Bahamut Prime" }
@@ -231,8 +232,8 @@ hideall "--sync--"
 1249.8 "Generate x3" Ability { id: "26AE", source: "Twintania" }
 1250.8 "Meteor Stream (T/H)" duration 3 #Ability { id: "26C0", source: "Nael Geminus" }
 1259.7 "--targetable--"
-1259.7 "Earth Shaker x4" Ability { id: "26D9", source: "Bahamut Prime" }
-1264.7 "Earth Shaker x4" Ability { id: "26D9", source: "Bahamut Prime" }
+1259.7 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
+1264.7 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
 
 1272.7 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
 1283.7 "Flatten" Ability { id: "26D5", source: "Bahamut Prime" }
@@ -242,17 +243,17 @@ hideall "--sync--"
 1294.7 "Grand Octet" Ability { id: "26E7", source: "Bahamut Prime" } window 200,10
 1296.7 "--untargetable--"
 1302.7 "Nael Marker"
-1306.7 "Lunar Dive" Ability { id: "26C3", source: "Nael deus Darnus" }
-1313.7 "Cauterize" #Ability { id: "26CB", source: "Firehorn" }
-1315.9 "Cauterize" #Ability { id: "26CC", source: "Iceclaw" }
-1317.9 "Cauterize" #Ability { id: "26CF", source: "Fang Of Light" }
+1306.7 "Lunar Dive 1" Ability { id: "26C3", source: "Nael deus Darnus" }
+1313.7 "Cauterize 2" #Ability { id: "26CB", source: "Firehorn" }
+1315.9 "Cauterize 3" #Ability { id: "26CC", source: "Iceclaw" }
+1317.9 "Cauterize 4" #Ability { id: "26CF", source: "Fang Of Light" }
 1319.7 "Bahamut Marker"
-1319.9 "Cauterize" #Ability { id: "26CD", source: "Thunderwing" }
-1321.9 "Cauterize" #Ability { id: "26CE", source: "Tail Of Darkness" }
-1323.9 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
+1319.9 "Cauterize 5" #Ability { id: "26CD", source: "Thunderwing" }
+1321.9 "Cauterize 6" #Ability { id: "26CE", source: "Tail Of Darkness" }
+1323.9 "Megaflare Dive 7" Ability { id: "26E1", source: "Bahamut Prime" }
 1328.7 "Twin Marker"
 1331.7 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
-1332.9 "Twisting Dive" Ability { id: "26B2", source: "Twintania" }
+1332.9 "Twisting Dive 8" Ability { id: "26B2", source: "Twintania" }
 1333.7 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
 
 # https://xivapi.com/InstanceContentTextData/18100
@@ -416,7 +417,7 @@ hideall "--sync--"
 2537.1 "Exaflare #4" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
 2558.2 "Morn Afah #5" Ability { id: "26EC", source: "Bahamut Prime" }
 2570.3 "Morn Afah Enrage" Ability { id: "26ED", source: "Bahamut Prime" }
-#1455.9 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
-#1457.2 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
+#2572.5 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
+#2573.8 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
 
 # victory ezpz
