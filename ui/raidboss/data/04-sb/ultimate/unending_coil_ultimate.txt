@@ -1,7 +1,7 @@
 ### Unending Coil of Bahamut (Ultimate)
 # http://clees.me/guides/ucob/
 # -ii 26A7 26B4 26D0 26C6 26C7 26DA 26D8 26AF 26F0 26F1
-# -p 26A8:7 26AD:108.5 26B8:407.3 26D1:1005.3 26E9:1200
+# -p 26A8:7 26AD:108.5 26B8:407.3 26D1:1005.3 26E9:2300
 
 hideall "--Reset--"
 hideall "--sync--"
@@ -269,55 +269,153 @@ hideall "--sync--"
 1517.2 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 1525.7 "Generate x3" Ability { id: "26AE", source: "Twintania" }
 1529.8 "Twister" Ability { id: "26AA", source: "Twintania" }
-1532.8 "Triple Nael Quote"
-#876.3 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
-#879.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
-#882.4 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-1546.7 "Twister" Ability { id: "26AA", source: "Twintania" }
 
-1557.7 "Megaflare" Ability { id: "26BA", source: "Nael deus Darnus" }
-1565.8 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
-1565.8 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
-1569.8 "Plummet" Ability { id: "26A8", source: "Twintania" }
-1569.8 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+# Triple Nael Quote
+# https://xivapi.com/NpcYell/6504?pretty=true
+# en: Unbending iron,\n\ntake fire and descend!
+1532.5 "--sync--" NpcYell { npcYellId: "1968" } jump "adds-phase-q1-1"
+# https://xivapi.com/NpcYell/6505?pretty=true
+# en: Unbending iron,\n\ndescend with fiery edge!
+1532.5 "--sync--" NpcYell { npcYellId: "1969" } jump "adds-phase-q1-2"
+# https://xivapi.com/NpcYell/6506?pretty=true
+# en: From hallowed moon I descend,\n\nupon burning earth to tread!
+1532.5 "--sync--" NpcYell { npcYellId: "196A" } jump "adds-phase-q1-3"
+# https://xivapi.com/NpcYell/6507?pretty=true
+# en: From hallowed moon I bare iron,\n\nin my descent to wield!
+1532.5 "--sync--" NpcYell { npcYellId: "196B" } jump "adds-phase-q1-4"
+# Preview timings
+1537.2 "Lunar Dynamo/Iron Chariot"
+1540.2 "Raven's Dive/Iron Chariot/Thermionic Beam"
+1543.3 "Raven's Dive/Thermionic Beam"
 
-1578.9 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-1587.7 "Generate x3" Ability { id: "26AE", source: "Twintania" }
-1591.9 "Twister" Ability { id: "26AA", source: "Twintania" }
-1595.9 "Triple Nael Quote"
-#938.3 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
-#941.4 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
-#944.6 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-1609.1 "Twister" Ability { id: "26AA", source: "Twintania" }
+# First triple Nael quote, first iteration, chariot -> beam -> dive
+1600.0 label "adds-phase-q1-1"
+1605.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
+1608.1 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+1611.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-middle-chariot"
 
-1621.3 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
-1621.9 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
-1634.2 "Megaflare" Ability { id: "26BA", source: "Nael deus Darnus" }
-1645.2 "Enrage" # ???
+# First triple Nael quote, second iteration, chariot -> dive -> beam
+1650.0 label "adds-phase-q1-2"
+1655.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
+1658.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+1661.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-middle-chariot"
+
+# First triple Nael quote, third iteration, dynamo -> dive -> beam
+1700.0 label "adds-phase-q1-3"
+1705.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+1708.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+1711.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-middle-dynamo"
+
+# First triple Nael quote, fourth iteration, dynamo -> chariot -> dive
+1750.0 label "adds-phase-q1-4"
+1755.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+1758.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
+1761.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-middle-dynamo"
+
+1800.0 label "adds-phase-middle-chariot"
+1803.1 "Twister" Ability { id: "26AA", source: "Twintania" }
+
+1814.1 "Megaflare" Ability { id: "26BA", source: "Nael deus Darnus" }
+1822.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
+1822.2 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
+1826.2 "Plummet" Ability { id: "26A8", source: "Twintania" }
+1826.2 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+
+1835.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
+1844.1 "Generate x3" Ability { id: "26AE", source: "Twintania" }
+1848.3 "Twister" Ability { id: "26AA", source: "Twintania" }
+# Triple Nael Quote
+# https://xivapi.com/NpcYell/6506?pretty=true
+# en: From hallowed moon I descend,\n\nupon burning earth to tread!
+1851.1 "--sync--" NpcYell { npcYellId: "196A" } jump "adds-phase-q2-3"
+# https://xivapi.com/NpcYell/6507?pretty=true
+# en: From hallowed moon I bare iron,\n\nin my descent to wield!
+1851.1 "--sync--" NpcYell { npcYellId: "196B" } jump "adds-phase-q2-4"
+# Preview timings
+1855.8 "Lunar Dynamo"
+1858.8 "Raven's Dive/Iron Chariot"
+1861.9 "Raven's Dive/Thermionic Beam"
+
+1900.0 label "adds-phase-middle-dynamo"
+1903.1 "Twister" Ability { id: "26AA", source: "Twintania" }
+
+1914.1 "Megaflare" Ability { id: "26BA", source: "Nael deus Darnus" }
+1922.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
+1922.2 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
+1926.2 "Plummet" Ability { id: "26A8", source: "Twintania" }
+1926.2 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+
+1935.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
+1944.1 "Generate x3" Ability { id: "26AE", source: "Twintania" }
+1948.3 "Twister" Ability { id: "26AA", source: "Twintania" }
+# Triple Nael Quote
+# https://xivapi.com/NpcYell/6504?pretty=true
+# en: Unbending iron,\n\ntake fire and descend!
+1951.1 "--sync--" NpcYell { npcYellId: "1968" } jump "adds-phase-q2-1"
+# https://xivapi.com/NpcYell/6505?pretty=true
+# en: Unbending iron,\n\ndescend with fiery edge!
+1951.1 "--sync--" NpcYell { npcYellId: "1969" } jump "adds-phase-q2-2"
+# Preview timings
+1955.8 "Iron Chariot"
+1958.8 "Raven's Dive/Thermionic Beam"
+1961.9 "Raven's Dive/Thermionic Beam"
+
+# First triple Nael quote, first iteration, chariot -> beam -> dive
+2000.0 label "adds-phase-q2-1"
+2005.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
+2008.1 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+2011.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+
+# First triple Nael quote, second iteration, chariot -> dive -> beam
+2050.0 label "adds-phase-q2-2"
+2055.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
+2058.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+2061.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+
+# First triple Nael quote, third iteration, dynamo -> dive -> beam
+2100.0 label "adds-phase-q2-3"
+2105.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+2108.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+2111.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+
+# First triple Nael quote, fourth iteration, dynamo -> chariot -> dive
+2150.0 label "adds-phase-q2-4"
+2155.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+2158.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
+2161.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+
+2200.0 label "adds-phase-end"
+
+2203.3 "Twister" Ability { id: "26AA", source: "Twintania" }
+
+2215.5 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
+2216.1 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
+2228.4 "Megaflare" Ability { id: "26BA", source: "Nael deus Darnus" }
+2239.4 "Enrage" # ???
 
 # https://xivapi.com/InstanceContentTextData/18101
 # en: Ugh... None shall defy Lord Bahamut's will! On your knees, vermin!
-2000.0 "--sync--" BattleTalk2 { npcNameId: "0A34", instanceContentTextId: "46B5" } window 2000,0
+2300.0 "--sync--" BattleTalk2 { npcNameId: "0A34", instanceContentTextId: "46B5" } window 2300,0
 
 ##### GOLDEN BAHAMUT #####
-2016.6 "Teraflare" Ability { id: "26E9", source: "Bahamut Prime" } window 2000,0
-2041.7 "Flames Of Rebirth" #Ability { id: "26F2", source: "Phoenix" }
-2047.5 "--sync--" Ability { id: "2707", source: "Bahamut Prime" } window 30,30 # Glowing ball
-2061.6 "--targetable--"
-2067.7 "Morn Afah #1" Ability { id: "26EC", source: "Bahamut Prime" }
-2074.1 "Akh Morn #1" Ability { id: "26EA", source: "Bahamut Prime" } duration 3.3
-2086.6 "Exaflare #1" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2105.9 "Akh Morn #2" Ability { id: "26EA", source: "Bahamut Prime" } duration 4.4
-2123.5 "Morn Afah #2" Ability { id: "26EC", source: "Bahamut Prime" }
-2135.8 "Exaflare #2" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2157.1 "Morn Afah #3" Ability { id: "26EC", source: "Bahamut Prime" }
-2169.3 "Akh Morn #3" Ability { id: "26EA", source: "Bahamut Prime" } duration 5.5
-2186.0 "Exaflare #3" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2207.2 "Morn Afah #4" Ability { id: "26EC", source: "Bahamut Prime" }
-2219.3 "Akh Morn #4" Ability { id: "26EA", source: "Bahamut Prime" } duration 6.6
-2237.1 "Exaflare #4" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2258.2 "Morn Afah #5" Ability { id: "26EC", source: "Bahamut Prime" }
-2270.3 "Morn Afah Enrage" Ability { id: "26ED", source: "Bahamut Prime" }
+2316.6 "Teraflare" Ability { id: "26E9", source: "Bahamut Prime" } window 2300,0
+2341.7 "Flames Of Rebirth" #Ability { id: "26F2", source: "Phoenix" }
+2347.5 "--sync--" Ability { id: "2707", source: "Bahamut Prime" } window 30,30 # Glowing ball
+2361.6 "--targetable--"
+2367.7 "Morn Afah #1" Ability { id: "26EC", source: "Bahamut Prime" }
+2374.1 "Akh Morn #1" Ability { id: "26EA", source: "Bahamut Prime" } duration 3.3
+2386.6 "Exaflare #1" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2405.9 "Akh Morn #2" Ability { id: "26EA", source: "Bahamut Prime" } duration 4.4
+2423.5 "Morn Afah #2" Ability { id: "26EC", source: "Bahamut Prime" }
+2435.8 "Exaflare #2" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2457.1 "Morn Afah #3" Ability { id: "26EC", source: "Bahamut Prime" }
+2469.3 "Akh Morn #3" Ability { id: "26EA", source: "Bahamut Prime" } duration 5.5
+2486.0 "Exaflare #3" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2507.2 "Morn Afah #4" Ability { id: "26EC", source: "Bahamut Prime" }
+2519.3 "Akh Morn #4" Ability { id: "26EA", source: "Bahamut Prime" } duration 6.6
+2537.1 "Exaflare #4" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2558.2 "Morn Afah #5" Ability { id: "26EC", source: "Bahamut Prime" }
+2570.3 "Morn Afah Enrage" Ability { id: "26ED", source: "Bahamut Prime" }
 #1455.9 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
 #1457.2 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
 
