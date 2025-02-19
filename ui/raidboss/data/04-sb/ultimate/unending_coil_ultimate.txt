@@ -399,26 +399,31 @@ hideall "--sync--"
 2300.0 "--sync--" BattleTalk2 { npcNameId: "0A34", instanceContentTextId: "46B5" } window 2300,0
 
 ##### GOLDEN BAHAMUT #####
-2316.6 "Teraflare" Ability { id: "26E9", source: "Bahamut Prime" } window 2300,0
-2341.7 "Flames Of Rebirth" #Ability { id: "26F2", source: "Phoenix" }
-2347.5 "--sync--" Ability { id: "2707", source: "Bahamut Prime" } window 30,30 # Glowing ball
-2361.6 "--targetable--"
-2367.7 "Morn Afah #1" Ability { id: "26EC", source: "Bahamut Prime" }
-2374.1 "Akh Morn #1" Ability { id: "26EA", source: "Bahamut Prime" } duration 3.3
-2386.6 "Exaflare #1" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2405.9 "Akh Morn #2" Ability { id: "26EA", source: "Bahamut Prime" } duration 4.4
-2423.5 "Morn Afah #2" Ability { id: "26EC", source: "Bahamut Prime" }
-2435.8 "Exaflare #2" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2457.1 "Morn Afah #3" Ability { id: "26EC", source: "Bahamut Prime" }
-2469.3 "Akh Morn #3" Ability { id: "26EA", source: "Bahamut Prime" } duration 5.5
-2486.0 "Exaflare #3" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2507.2 "Morn Afah #4" Ability { id: "26EC", source: "Bahamut Prime" }
-2519.3 "Akh Morn #4" Ability { id: "26EA", source: "Bahamut Prime" } duration 6.6
-2537.1 "Exaflare #4" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
-2558.2 "Morn Afah #5" Ability { id: "26EC", source: "Bahamut Prime" }
-2570.3 "Morn Afah Enrage" Ability { id: "26ED", source: "Bahamut Prime" }
-#2572.5 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
-#2573.8 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
+2316.2 "Teraflare" Ability { id: "26E9", source: "Bahamut Prime" } window 2300,0
+2341.3 "Flames Of Rebirth" #Ability { id: "26F2", source: "Phoenix" }
+2347.1 "--sync--" Ability { id: "2707", source: "Bahamut Prime" } window 30,30 # Glowing ball
+2361.2 "--targetable--"
+2367.2 "Morn Afah #1" Ability { id: "26EC", source: "Bahamut Prime" }
+2373.3 "Akh Morn #1" Ability { id: "26EA", source: "Bahamut Prime" } duration 3.3
+2385.8 "Exaflare #1" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2405.0 "Akh Morn #2" Ability { id: "26EA", source: "Bahamut Prime" } duration 4.4
+2422.5 "Morn Afah #2" Ability { id: "26EC", source: "Bahamut Prime" }
+2434.6 "Exaflare #2" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2455.8 "Morn Afah #3" Ability { id: "26EC", source: "Bahamut Prime" }
+2467.9 "Akh Morn #3" Ability { id: "26EA", source: "Bahamut Prime" } duration 5.5
+2484.3 "Exaflare #3" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2505.5 "Morn Afah #4" Ability { id: "26EC", source: "Bahamut Prime" }
+2517.6 "Akh Morn #4" Ability { id: "26EA", source: "Bahamut Prime" } duration 6.6
+2535.1 "Exaflare #4" Ability { id: "26EF", source: "Bahamut Prime" } duration 14.7 window 10,10
+2556.2 "Morn Afah #5" Ability { id: "26EC", source: "Bahamut Prime" }
+2568.3 "Morn Afah Enrage 1" Ability { id: "26ED", source: "Bahamut Prime" }
+2570.5 "Morn Afah Enrage 2" #Ability { id: "26EE", source: "Bahamut Prime" }
+2571.8 "Morn Afah Enrage 3" #Ability { id: "26EE", source: "Bahamut Prime" }
+2573.1 "Morn Afah Enrage 4" #Ability { id: "26EE", source: "Bahamut Prime" }
+2574.4 "Morn Afah Enrage 5" #Ability { id: "26EE", source: "Bahamut Prime" }
+2575.7 "Morn Afah Enrage 6" #Ability { id: "26EE", source: "Bahamut Prime" }
+2577.0 "Morn Afah Enrage 7" #Ability { id: "26EE", source: "Bahamut Prime" }
+2578.3 "Morn Afah Enrage 8" #Ability { id: "26EE", source: "Bahamut Prime" }
 
 # victory ezpz
 
