@@ -421,3 +421,82 @@ hideall "--sync--"
 #2573.8 "Morn Afah" Ability { id: "26EE", source: "Bahamut Prime" }
 
 # victory ezpz
+
+# ALL ENCOUNTER ABILITIES
+# 26A7 --sync--: Twintania autoattack
+# 26A8 Plummet: Twintania cleave buster
+# 26A9 Death Sentence: Twintania single target debuff buster
+# 26AA Twister: Twintania twister castbar
+# 26AB Twister: Twintania twister detonation, also corresponds to Twisting Dive twisters
+# 26AC Fireball: Twintania fireball stack
+# 26AD Liquid Hell: Twintania fire puddle baits, both the "far" bait and the "targeted" bait
+# 26AE Generate: Twintania cast bar to spawn "Oviform" eggs
+# 26AF Hatch: Successful soaking of "Oviform" egg in neurolink
+# 26B0 Deep Hatch: Soaking "Oviform" egg outside of neurolink, or not soaking in time causing the egg to expire
+# 26B1 Aetheric Profusion: Twintania massive raid damage aoe during Fellruin Trio, soaked in neurolink
+# 26B2 Twisting Dive: Twintania dives during P2, spawns twisters
+# 26B3 Twin Fury: ???TODO: Twintania Enrage for P1 maybe???
+# 26B4 --sync--: Nael autoattack
+# 26B5 Bahamut's Claw: Nael 5-hit tankbuster
+# 26B6 Ravensbeak: Nael single target debuff buster
+# 26B7 Heavensfall: Nael Heavensfall Trio middle tower spawn castbar
+# 26B8 Heavensfall: P1 -> P2 transition Heavensfall tower damage + knockback, also re-used in Heavensfall Trio
+# 26B9 Thermionic Burst: Heavensfall tower pizza slices, used in P1 -> P2 transition and in Heavensfall Trio
+# 26BA Megaflare: Nael raidwide damage during adds phase. TODO: Also listed as P2 enrage castbar in original timeline but that might be incorrect
+# 26BB Iron Chariot: Nael point-blank aoe with knockback, killer of many a greedy melee
+# 26BC Lunar Dynamo: Nael doughnut aoe
+# 26BD Thermionic Beam: Nael party stack
+# 26BE Raven Dive: Nael jump on random player
+# 26BF Hypernova: Nael bleed puddles
+# 26C0 Meteor Stream: Nael targeted AoEs/spreads
+# 26C1 Dalamud Dive: Nael initial dive at start of P2
+# 26C2 Bahamut's Favor: Nael damage buff
+# 26C3 Lunar Dive: Nael dives during P3
+# 26C4 White Fury: ???TODO: Nael Enrage for P2 maybe???
+# 26C5 Fireball: Nael fire stack
+# 26C6 Iceball: Nael adds ice
+# 26C7 Chain Lightning: Nael adds chain lightning detonation
+# 26C8 Chain Lightning: Nael adds chain lightning cast, gives debuff
+# 26C9 Deathstorm: Nael adds, gives doom
+# 26CA Wings of Salvation: Nael adds, spawns light puddle
+# 26CB Cauterize: Nael/Bahamut phase Firehorn add dive
+# 26CC Cauterize: Nael/Bahamut phase Iceclaw add dive
+# 26CD Cauterize: Nael/Bahamut phase Thunderwing add dive
+# 26CE Cauterize: Nael/Bahamut phase Tail Of Darkness add dive
+# 26CF Cauterize: Nael/Bahamut phase Fang Of Light add dive
+# 26D0 --sync--: Bahamut autoattack
+# 26D1 Seventh Umbral Era: P2 -> P3 phase transition fireball drop/knockback
+# 26D2 Calamitous Flame: P2 -> P3 phase transition small damage hits
+# 26D3 Calamitous Blaze: P2 -> P3 phase transition big damage hit
+# 26D4 Flare Breath: Bahamut weak aoe tankbuster
+# 26D5 Flatten: Bahamut strong aoe tankbuster
+# 26D6 Gigaflare: Bahamut raidwide damage
+# 26D7 Tempest Wing: Bahamut tankbuster tether hit
+# 26D8 Tempest Wing: Bahamut tankbuster tether spawn
+# 26D9 Earth Shaker: Bahamut earthshaker cast
+# 26DA Earth Shaker: Bahamut earthshaker hit
+# 26DB Megaflare
+# 26DC Megaflare: Spreads during QMT
+# 26DD Megaflare: "Pepperoni" floor AoEs during Bahamut phase
+# 26DE Megaflare: Stacks during Bahamut
+# 26DF Megaflare: Towers during Bahamut
+# 26E0 Megaflare Strike: Tower missed during Bahamut
+# 26E1 Megaflare Dive: Bahamut dive
+# 26E2 Quickmarch Trio: P3
+# 26E3 Blackfire Trio: P3
+# 26E4 Fellruin Trio: P3
+# 26E5 Heavensfall Trio: P3
+# 26E6 Tenstrike Trio: P3
+# 26E7 Grand Octet: P3. Can't believe they'd break the naming scheme by not calling this "Grand Trio" or something...
+# 26E8 Bahamut's Favor: Adds phase, damage up on Twintania
+# 26E9 Teraflare: P4 -> P5 transition "party wipe" damage
+# 26EA Akh Morn: P5 tankbuster castbar/initial hit
+# 26EB Akh Morn: P5 tankbuster follow up hits
+# 26EC Morn Afah: P5 party stack
+# 26ED Morn Afah: P5 enrage cast/initial hit
+# 26EE Morn Afah: P5 enrage follow up hits
+# 26EF Exaflare: P5 Exaflare castbar
+# 26F0 Exaflare: P5 Exaflare initial position telegraph
+# 26F1 Exaflare: P5 Exaflare follow up hits
+# 26F2 Flames of Rebirth: P4 -> P5 transition Phoenix party rez, damage up buff, etc
+# 2707 --sync--: P4 -> P5 transition "glowing ball" effect
