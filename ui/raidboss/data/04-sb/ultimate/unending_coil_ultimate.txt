@@ -56,90 +56,226 @@ hideall "--sync--"
 400.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 400,0
 
 ##### NAEL #####
-407.3 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" } window 407.3,2
-412.8 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
-414.3 "Thermionic Burst" Ability { id: "26B9", source: "Ragnarok" }
-415.8 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
-418.3 "Thermionic Burst" Ability { id: "26B9", source: "Ragnarok" }
-418.8 "Dalamud Dive" Ability { id: "26C1", source: "Nael deus Darnus" }
+407.5 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" } window 407.3,2
+413.0 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
+414.5 "Thermionic Burst" Ability { id: "26B9", source: "Ragnarok" }
+416.1 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
+418.6 "Thermionic Burst" Ability { id: "26B9", source: "Ragnarok" }
+419.1 "Dalamud Dive" Ability { id: "26C1", source: "Nael deus Darnus" }
 
-420.8 "--targetable--"
-420.9 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
-429.4 "Bahamut's Favor" Ability { id: "26C2", source: "Nael deus Darnus" }
+421.1 "--targetable--"
+421.2 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
+430.2 "Bahamut's Favor" Ability { id: "26C2", source: "Nael deus Darnus" }
 # Nael Quote 1
 # https://xivapi.com/NpcYell/6493?pretty=true
 # en: O hallowed moon, take fire and scorch my foes!
 # https://xivapi.com/NpcYell/6492?pretty=true
 # en: O hallowed moon, shine you the iron path!
-437.4 "--sync--" NpcYell { npcYellId: ["195D", "195C"] }
-442.4 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
-442.4 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
-445.4 "Iron Chariot/Thermionic Beam" Ability { id: ["26BB", "26BD"], source: "Nael deus Darnus" }
-446.4 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
-448.4 "Fireball (1)" Ability { id: "26C5", source: "Firehorn" }
-449.4 "Wings Of Salvation x2" Ability { id: "26CA", source: "Fang Of Light" } duration 4
-456.6 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
-463.3 "Fireball (2)" Ability { id: "26C5", source: "Firehorn" }
+438.2 "--sync--" NpcYell { npcYellId: ["195D", "195C"] }
+443.2 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
+443.2 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+446.2 "Iron Chariot/Thermionic Beam" Ability { id: ["26BB", "26BD"], source: "Nael deus Darnus" }
+446.9 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
+448.9 "Fireball (1)" Ability { id: "26C5", source: "Firehorn" }
+449.9 "Wings Of Salvation x2" Ability { id: "26CA", source: "Fang Of Light" } duration 4
+457.3 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
+464.0 "Fireball (2)" Ability { id: "26C5", source: "Firehorn" }
 
 # Nael Quote 2
 # https://xivapi.com/NpcYell/6495?pretty=true
 # en: Take fire, O hallowed moon!
 # https://xivapi.com/NpcYell/6494?pretty=true
 # en: Blazing path, lead me to iron rule!
-465.6 "--sync--" NpcYell { npcYellId: ["195F", "195E"] }
-467.3 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
-470.9 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
-473.9 "Lunar Dynamo/Iron Chariot" Ability { id: ["26BB", "26BC"], source: "Nael deus Darnus" }
-475.3 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
-477.3 "Wings Of Salvation x3" Ability { id: "26CA", source: "Fang Of Light" } duration 8
-486.2 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
-489.2 "Fireball (3)" Ability { id: "26C5", source: "Firehorn" }
+466.3 "--sync--" NpcYell { npcYellId: ["195F", "195E"] }
+468.0 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
+471.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+474.3 "Lunar Dynamo/Iron Chariot" Ability { id: ["26BB", "26BC"], source: "Nael deus Darnus" }
+475.7 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
+477.7 "Wings Of Salvation x3" Ability { id: "26CA", source: "Fang Of Light" } duration 8
+486.8 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
+489.8 "Fireball (3)" Ability { id: "26C5", source: "Firehorn" }
 
-492.0 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+493.2 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
 
 # Nael Quote 3
 # https://xivapi.com/NpcYell/6497?pretty=true
 # en: From on high I descend, the hallowed moon to call!
 # https://xivapi.com/NpcYell/6496?pretty=true
 # en: From on high I descend, the iron path to walk!
-498.6 "--sync--" NpcYell { npcYellId: ["1961", "1960"] }
-503.9 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-506.9 "Lunar Dynamo/Iron Chariot" Ability { id: ["26BB", "26BC"], source: "Nael deus Darnus" }
-510.2 "Fireball (4)" Ability { id: "26C5", source: "Firehorn" }
-511.2 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
-513.2 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
-513.3 "Wings Of Salvation x3" Ability { id: "26CA", source: "Fang Of Light" } duration 8
-530.6 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
+499.2 "--sync--" NpcYell { npcYellId: ["1961", "1960"] }
+504.5 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+507.5 "Lunar Dynamo/Iron Chariot" Ability { id: ["26BB", "26BC"], source: "Nael deus Darnus" }
+510.8 "Fireball (4)" Ability { id: "26C5", source: "Firehorn" }
+511.5 "Doom" Ability { id: "26C9", source: "Tail Of Darkness" }
+513.8 "Chain Lightning" Ability { id: "26C8", source: "Thunderwing" }
+513.9 "Wings Of Salvation x3" Ability { id: "26CA", source: "Fang Of Light" } duration 8
+532.4 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
 
-535.8 "Marker 1" HeadMarker { id: '0014' }
-539.8 "Marker 2" HeadMarker { id: '0014' }
-540.8 "Hypernova x4" duration 6 #Ability { id: "26BF", source: "Nael deus Darnus" }
-543.8 "Marker 3" HeadMarker { id: '0014' }
-546.8 "Cauterize" #Ability { id: "26CD", source: "Thunderwing" }
-548.3 "--untargetable--"
-# TODO: Missing next "--targetable--" here. Also the timing for the "--untargetable--"
-# might vary depending on the quote? Not sure, my group never sees divebombs.
-# TODO: P2 beyond this point could benefit from a rework to map the quotes out properly
-# like was done for adds phase, but need more data first.
-548.3 "Meteor/Dive or Dive/Beam" duration 3 # first mechanic -> second
-550.8 "Cauterize" #Ability { id: "26CB", source: "Firehorn" }
-554.7 "Cauterize" #Ability { id: "26CC", source: "Iceclaw" }
+# Nael Quote 4
+# https://xivapi.com/NpcYell/6500?pretty=true
+# en: Fleeting light! Amid a rain of stars, exalt you the red moon!
+537.6 "--sync--" NpcYell { npcYellId: "1964" } jump "p2-divebombs-q1"
+# https://xivapi.com/NpcYell/6501?pretty=true
+# en: Fleeting light! 'Neath the red moon, scorch you the earth!
+537.6 "--sync--" NpcYell { npcYellId: "1965" } jump "p2-divebombs-q2"
+# Previews
+537.6 "Marker 1"
+541.6 "Marker 2"
+542.8 "Hypernova x4"
+545.6 "Marker 3"
+548.9 "Cauterize"
 
+# During Dalamud Dive, the boss goes untargetable. There's not a clear indicator in the network data
+# so I manually timed the untargetable duration as 5.467 seconds, +/-0.050 seconds of variance from pull to pull
+# The boss goes targetable the same server tick that the Dalamud Dive hit happens.
 
-557.0 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+600.0 label "p2-divebombs-q1"
+600.0 "Marker 1" #HeadMarker { id: '0014' }
+604.0 "Marker 2" HeadMarker { id: '0014' }
+605.2 "Hypernova x4" Ability { id: "26BF", source: "Nael deus Darnus" } duration 4.7 window 3,0.5
+608.0 "Marker 3" HeadMarker { id: '0014' }
+# "Cauterize" casts here don't have a sync since the ID order is random and they come two at the same time which can cause sync issues
+611.3 "Cauterize"
 
-568.5 "Random Combo Attack" duration 8
-#573.5 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
-#576.5 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+612.2 "--untargetable--"
+614.7 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
+615.3 "Cauterize" #Ability { id: ["26CB", "26CC", "26CD", "26CE", "26CF"], source: ["Firehorn", "Iceclaw", "Thunderwing", "Tail Of Darkness", "Fang Of Light"] }
+617.7 "--targetable--"
+617.7 "Dalamud Dive" Ability { id: "26C1", source: "Nael deus Darnus" }
+619.4 "Cauterize" #Ability { id: ["26CB", "26CC", "26CD", "26CE", "26CF"], source: ["Firehorn", "Iceclaw", "Thunderwing", "Tail Of Darkness", "Fang Of Light"] }
+621.9 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
 
-580.0 "Random Combo Attack" duration 8
-#584.6 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-#587.6 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+633.4 "--sync--" NpcYell { npcYellId: "195C" } forcejump "p2-post-divebombs-first-q1"
+633.4 "--sync--" NpcYell { npcYellId: "195D" } forcejump "p2-post-divebombs-first-q2"
+633.4 "--sync--" NpcYell { npcYellId: "195E" } forcejump "p2-post-divebombs-first-q3"
+633.4 "--sync--" NpcYell { npcYellId: "195F" } forcejump "p2-post-divebombs-first-q4"
+633.4 "--sync--" NpcYell { npcYellId: "1960" } forcejump "p2-post-divebombs-first-q5"
+633.4 "--sync--" NpcYell { npcYellId: "1961" } forcejump "p2-post-divebombs-first-q6"
 
-596.0 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
-603.0 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
-610.5 "--untargetable--"
-615.5 "Megaflare Enrage" Ability { id: "26BA", source: "Nael deus Darnus" }
+650.0 label "p2-divebombs-q2"
+650.0 "Marker 1" #HeadMarker { id: '0014' }
+654.0 "Marker 2" HeadMarker { id: '0014' }
+655.2 "Hypernova x4" Ability { id: "26BF", source: "Nael deus Darnus" } duration 4.7 window 3,0.5
+658.0 "Marker 3" HeadMarker { id: '0014' }
+659.2 "--untargetable--"
+661.3 "Cauterize" #Ability { id: ["26CB", "26CC", "26CD", "26CE", "26CF"], source: ["Firehorn", "Iceclaw", "Thunderwing", "Tail Of Darkness", "Fang Of Light"] }
+
+664.7 "--targetable--"
+664.7 "Dalamud Dive" Ability { id: "26C1", source: "Nael deus Darnus" }
+665.3 "Cauterize" #Ability { id: ["26CB", "26CC", "26CD", "26CE", "26CF"], source: ["Firehorn", "Iceclaw", "Thunderwing", "Tail Of Darkness", "Fang Of Light"] }
+666.9 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+669.4 "Cauterize" #Ability { id: ["26CB", "26CC", "26CD", "26CE", "26CF"], source: ["Firehorn", "Iceclaw", "Thunderwing", "Tail Of Darkness", "Fang Of Light"] }
+671.9 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
+
+683.9 "--sync--" NpcYell { npcYellId: "195C" } window 10,10 jump "p2-post-divebombs-first-q1"
+683.9 "--sync--" NpcYell { npcYellId: "195D" } window 10,10 jump "p2-post-divebombs-first-q2"
+683.9 "--sync--" NpcYell { npcYellId: "195E" } window 10,10 jump "p2-post-divebombs-first-q3"
+683.9 "--sync--" NpcYell { npcYellId: "195F" } window 10,10 jump "p2-post-divebombs-first-q4"
+683.9 "--sync--" NpcYell { npcYellId: "1960" } window 10,10 jump "p2-post-divebombs-first-q5"
+683.9 "--sync--" NpcYell { npcYellId: "1961" } window 10,10 jump "p2-post-divebombs-first-q6"
+
+# TODO: Are the quotes from divebombs possible here?
+# TODO: Timings for quotes here are copied from earlier in the fight.
+# Only q3 and q5 have been verified against an actual pull, but they synced up properly without adjustments
+
+720.0 label "p2-post-divebombs-first-q1"
+# https://xivapi.com/NpcYell/6492?pretty=true
+# en: O hallowed moon, shine you the iron path!
+720.0 "--sync--" NpcYell { npcYellId: "195C" }
+725.0 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+728.0 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-second"
+
+730.0 label "p2-post-divebombs-first-q2"
+# https://xivapi.com/NpcYell/6493?pretty=true
+# en: O hallowed moon, take fire and scorch my foes!
+730.0 "--sync--" NpcYell { npcYellId: "195D" }
+735.0 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+738.0 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-second"
+
+740.0 label "p2-post-divebombs-first-q3"
+# https://xivapi.com/NpcYell/6494?pretty=true
+# en: Blazing path, lead me to iron rule!
+740.0 "--sync--" NpcYell { npcYellId: "195E" }
+745.0 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+748.0 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-second"
+
+750.0 label "p2-post-divebombs-first-q4"
+# https://xivapi.com/NpcYell/6495?pretty=true
+# en: Take fire, O hallowed moon!
+750.0 "--sync--" NpcYell { npcYellId: "195F" }
+755.0 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+758.0 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-second"
+
+760.0 label "p2-post-divebombs-first-q5"
+# https://xivapi.com/NpcYell/6496?pretty=true
+# en: From on high I descend, the iron path to walk!
+760.0 "--sync--" NpcYell { npcYellId: "1960" }
+765.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+768.3 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-second"
+
+770.0 label "p2-post-divebombs-first-q6"
+# https://xivapi.com/NpcYell/6497?pretty=true
+# en: From on high I descend, the hallowed moon to call!
+770.0 "--sync--" NpcYell { npcYellId: "1961" }
+775.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+778.3 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-second"
+
+800.0 label "p2-post-divebombs-second"
+803.0 "--sync--" NpcYell { npcYellId: "195C" } jump "p2-post-divebombs-second-q1"
+803.0 "--sync--" NpcYell { npcYellId: "195D" } jump "p2-post-divebombs-second-q2"
+803.0 "--sync--" NpcYell { npcYellId: "195E" } jump "p2-post-divebombs-second-q3"
+803.0 "--sync--" NpcYell { npcYellId: "195F" } jump "p2-post-divebombs-second-q4"
+803.0 "--sync--" NpcYell { npcYellId: "1960" } jump "p2-post-divebombs-second-q5"
+803.0 "--sync--" NpcYell { npcYellId: "1961" } jump "p2-post-divebombs-second-q6"
+
+850.0 label "p2-post-divebombs-second-q1"
+# https://xivapi.com/NpcYell/6492?pretty=true
+# en: O hallowed moon, shine you the iron path!
+850.0 "--sync--" NpcYell { npcYellId: "195C" }
+855.0 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+858.0 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-end"
+
+860.0 label "p2-post-divebombs-second-q2"
+# https://xivapi.com/NpcYell/6493?pretty=true
+# en: O hallowed moon, take fire and scorch my foes!
+860.0 "--sync--" NpcYell { npcYellId: "195D" }
+865.0 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
+868.0 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-end"
+
+870.0 label "p2-post-divebombs-second-q3"
+# https://xivapi.com/NpcYell/6494?pretty=true
+# en: Blazing path, lead me to iron rule!
+870.0 "--sync--" NpcYell { npcYellId: "195E" }
+875.0 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+878.0 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-end"
+
+880.0 label "p2-post-divebombs-second-q4"
+# https://xivapi.com/NpcYell/6495?pretty=true
+# en: Take fire, O hallowed moon!
+880.0 "--sync--" NpcYell { npcYellId: "195F" }
+885.0 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+888.0 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-end"
+
+890.0 label "p2-post-divebombs-second-q5"
+# https://xivapi.com/NpcYell/6496?pretty=true
+# en: From on high I descend, the iron path to walk!
+890.0 "--sync--" NpcYell { npcYellId: "1960" }
+895.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+898.3 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-end"
+
+900.0 label "p2-post-divebombs-second-q6"
+# https://xivapi.com/NpcYell/6497?pretty=true
+# en: From on high I descend, the hallowed moon to call!
+900.0 "--sync--" NpcYell { npcYellId: "1961" }
+905.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
+908.3 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" } forcejump "p2-post-divebombs-end"
+
+940.0 label "p2-post-divebombs-end"
+
+948.3 "Ravensbeak" Ability { id: "26B6", source: "Nael deus Darnus" }
+955.3 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
+962.8 "--untargetable--"
+967.8 "Megaflare Enrage" Ability { id: "26BA", source: "Nael deus Darnus" }
 
 # Detect Nael going untargetable for phase change
 1000.0 "--sync--" NameToggle { name: "Nael deus Darnus", toggle: '00' } window 1000,1
@@ -177,7 +313,7 @@ hideall "--sync--"
 1081.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 1084.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
 1085.3 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
-1091.4 "Hypernova x4" duration 4.5 #Ability { id: "26BF", source: "Nael deus Darnus" }
+1091.4 "Hypernova x4" Ability { id: "26BF", source: "Nael deus Darnus" } duration 4.7 window 3,0.5
 1093.3 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
 1095.3 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
 
@@ -212,7 +348,7 @@ hideall "--sync--"
 1192.7 "Pepperoni" Ability { id: "26DD", source: "Bahamut Prime" }
 1194.2 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" }
 1196.7 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
-1199.8 "Hypernova x3" duration 3.2 #Ability { id: "26BF", source: "Nael deus Darnus" }
+1199.8 "Hypernova x3" Ability { id: "26BF", source: "Nael deus Darnus" } duration 3.2 window 3,0.5
 1201.3 "Thermionic Burst x8" duration 5 #Ability { id: "26B9", source: "Ragnarok" }
 
 1207.8 "--targetable--"
@@ -262,7 +398,7 @@ hideall "--sync--"
 ##### ADDS PHASE: NAEL + TWIN #####
 1503.6 "Bahamut's Favor" Ability { id: "26E8", source: "Bahamut Prime" } window 1500,3
 1505.1 "--targetable--"
-1513.1 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+1513.1 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
 1513.1 "Plummet" Ability { id: "26A8", source: "Twintania" }
 
 1516.2 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
@@ -318,7 +454,7 @@ hideall "--sync--"
 1822.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
 1822.2 "Ravensbeak" #Ability { id: "26B6", source: "Nael deus Darnus" }
 1826.2 "Plummet" Ability { id: "26A8", source: "Twintania" }
-1826.2 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+1826.2 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
 
 1835.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 1844.3 "Generate x3" Ability { id: "26AE", source: "Twintania" }
@@ -342,7 +478,7 @@ hideall "--sync--"
 1922.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
 1922.2 "Ravensbeak" #Ability { id: "26B6", source: "Nael deus Darnus" }
 1926.2 "Plummet" Ability { id: "26A8", source: "Twintania" }
-1926.2 "Bahamut's Claw x5" duration 2.8 #Ability { id: "26B5", source: "Nael deus Darnus" }
+1926.2 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
 
 1935.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 1944.3 "Generate x3" Ability { id: "26AE", source: "Twintania" }
