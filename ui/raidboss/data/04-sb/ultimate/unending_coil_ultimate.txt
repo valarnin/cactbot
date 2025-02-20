@@ -294,101 +294,101 @@ hideall "--sync--"
 ### QUICKMARCH
 1037.3 "Quickmarch Trio" Ability { id: "26E2", source: "Bahamut Prime" } window 30,10
 1039.3 "--untargetable--"
-#1045.3 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
-#1045.3 "Lunar Dive" Ability { id: "26C3", source: "Nael deus Darnus" }
-1045.3 "Twisting Dive" Ability { id: "26B2", source: "Twintania" }
-1049.3 "Spread" Ability { id: "26DC", source: "Bahamut Prime" }
-1050.3 "--targetable--"
-1051.3 "Pepperoni" Ability { id: "26DD", source: "Bahamut Prime" }
-1053.3 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
-1055.3 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
-1057.3 "Tempest Wing" Ability { id: "26D7", source: "Bahamut Prime" }
+#1045.6 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
+#1045.6 "Lunar Dive" Ability { id: "26C3", source: "Nael deus Darnus" }
+1045.6 "Twisting Dive" Ability { id: "26B2", source: "Twintania" }
+1049.6 "Spread" Ability { id: "26DC", source: "Bahamut Prime" }
+1050.6 "--targetable--"
+1051.6 "Pepperoni" Ability { id: "26DD", source: "Bahamut Prime" }
+1053.6 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
+1055.9 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
+1057.9 "Tempest Wing" Ability { id: "26D7", source: "Bahamut Prime" }
 
-1061.2 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
-1069.2 "Flatten" Ability { id: "26D5", source: "Bahamut Prime" }
+1062.0 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
+1070.0 "Flatten" Ability { id: "26D5", source: "Bahamut Prime" }
 
 ### BLACKFIRE
-1077.3 "Blackfire Trio" Ability { id: "26E3", source: "Bahamut Prime" } window 70,10
-1079.3 "--untargetable--"
-1081.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-1084.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
-1085.3 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
-1091.4 "Hypernova x4" Ability { id: "26BF", source: "Nael deus Darnus" } duration 4.7 window 3,0.5
-1093.3 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
-1095.3 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
+1078.1 "Blackfire Trio" Ability { id: "26E3", source: "Bahamut Prime" } window 70,10
+1080.1 "--untargetable--"
+1082.1 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
+1085.5 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
+1086.5 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
+1092.6 "Hypernova x4" Ability { id: "26BF", source: "Nael deus Darnus" } duration 4.7 window 3,0.5
+1094.5 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
+1096.5 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
 
-1095.3 "--targetable--"
-1101.3 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
-1110.3 "Flare Breath 1" #Ability { id: "26D4", source: "Bahamut Prime" }
-1112.3 "Flare Breath 2" #Ability { id: "26D4", source: "Bahamut Prime" }
-1114.3 "Flare Breath 3" #Ability { id: "26D4", source: "Bahamut Prime" }
+1096.5 "--targetable--"
+1102.8 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
+1111.8 "Flare Breath 1" #Ability { id: "26D4", source: "Bahamut Prime" }
+1113.8 "Flare Breath 2" #Ability { id: "26D4", source: "Bahamut Prime" }
+1115.8 "Flare Breath 3" #Ability { id: "26D4", source: "Bahamut Prime" }
 
 ### FELLRUIN
-1127.3 "Fellruin Trio" Ability { id: "26E4", source: "Bahamut Prime" } window 130,10
-1129.3 "--untargetable--"
-1131.9 "Dive Dynamo Combo" duration 8
-#1136.4 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
-#1139.4 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-1142.4 "Tempest Wing" Ability { id: "26D7", source: "Bahamut Prime" }
-1143.4 "Aetheric Profusion" Ability { id: "26B1", source: "Twintania" }
+1129.3 "Fellruin Trio" Ability { id: "26E4", source: "Bahamut Prime" } window 130,10
+1131.3 "--untargetable--"
+1133.9 "Dive Dynamo Combo" duration 8
+1138.7 "Lunar Dynamo/Raven Dive" Ability { id: ["26BC", "26BE"], source: "Nael deus Darnus" }
+1141.7 "Raven Dive/Lunar Dynamo" Ability { id: ["26BE", "26BC"], source: "Nael deus Darnus" }
+1144.7 "Tempest Wing" Ability { id: "26D7", source: "Bahamut Prime" }
+1145.7 "Aetheric Profusion" Ability { id: "26B1", source: "Twintania" }
 
-1145.4 "--targetable--"
-1146.4 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
-1151.4 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
-1156.7 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
-1165.7 "Flatten" Ability { id: "26D5", source: "Bahamut Prime" }
-1170.7 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
+1147.7 "--targetable--"
+1149.0 "Meteor Stream" Ability { id: "26C0", source: "Nael Geminus" }
+1153.8 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
+1159.1 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
+1168.1 "Flatten" Ability { id: "26D5", source: "Bahamut Prime" }
+1173.1 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
 
 #### HEAVENSFALL
-1178.7 "Heavensfall Trio" Ability { id: "26E5", source: "Bahamut Prime" } window 170,10
-1180.7 "--untargetable--"
-#1186.7 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
-1186.7 "Twisting Dive" Ability { id: "26B2", source: "Twintania" }
-1192.2 "Heavensfall" Ability { id: "26B7", source: "Nael deus Darnus" }
-1192.7 "Pepperoni" Ability { id: "26DD", source: "Bahamut Prime" }
-1194.2 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" }
-1196.7 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
-1199.8 "Hypernova x3" Ability { id: "26BF", source: "Nael deus Darnus" } duration 3.2 window 3,0.5
-1201.3 "Thermionic Burst x8" duration 5 #Ability { id: "26B9", source: "Ragnarok" }
+1181.1 "Heavensfall Trio" Ability { id: "26E5", source: "Bahamut Prime" } window 170,10
+1183.1 "--untargetable--"
+#1189.5 "Megaflare Dive" Ability { id: "26E1", source: "Bahamut Prime" }
+1189.5 "Twisting Dive" Ability { id: "26B2", source: "Twintania" }
+1195.0 "Heavensfall" Ability { id: "26B7", source: "Nael deus Darnus" }
+1195.5 "Pepperoni" Ability { id: "26DD", source: "Bahamut Prime" }
+1197.0 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" }
+1199.5 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
+1202.6 "Hypernova x3" Ability { id: "26BF", source: "Nael deus Darnus" } duration 3.2 window 3,0.5
+1204.1 "Thermionic Burst x8" duration 5 #Ability { id: "26B9", source: "Ragnarok" }
 
-1207.8 "--targetable--"
-1208.8 "Fireball" Ability { id: "26AC", source: "Twintania" }
-1213.8 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
-1222.8 "Flare Breath 1" #Ability { id: "26D4", source: "Bahamut Prime" }
-1224.8 "Flare Breath 2" #Ability { id: "26D4", source: "Bahamut Prime" }
-1226.8 "Flare Breath 3" #Ability { id: "26D4", source: "Bahamut Prime" }
+1210.6 "--targetable--"
+1211.8 "Fireball" Ability { id: "26AC", source: "Twintania" }
+1216.8 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
+1225.8 "Flare Breath 1" #Ability { id: "26D4", source: "Bahamut Prime" }
+1227.8 "Flare Breath 2" #Ability { id: "26D4", source: "Bahamut Prime" }
+1229.8 "Flare Breath 3" #Ability { id: "26D4", source: "Bahamut Prime" }
 
 ### TENSTRIKE
-1238.8 "Tenstrike Trio" Ability { id: "26E6", source: "Bahamut Prime" } window 200,10
-1240.8 "--untargetable--"
-1245.8 "Generate x3" Ability { id: "26AE", source: "Twintania" }
-1246.8 "Meteor Stream (dps)" duration 3 #Ability { id: "26C0", source: "Nael Geminus" }
-1249.8 "Generate x3" Ability { id: "26AE", source: "Twintania" }
-1250.8 "Meteor Stream (T/H)" duration 3 #Ability { id: "26C0", source: "Nael Geminus" }
-1259.7 "--targetable--"
-1259.7 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
-1264.7 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
+1242.3 "Tenstrike Trio" Ability { id: "26E6", source: "Bahamut Prime" } window 200,10
+1244.3 "--untargetable--"
+1249.6 "Generate x3" Ability { id: "26AE", source: "Twintania" }
+1250.6 "Meteor Stream (dps)" duration 3 #Ability { id: "26C0", source: "Nael Geminus" }
+1253.6 "Generate x3" Ability { id: "26AE", source: "Twintania" }
+1254.6 "Meteor Stream (T/H)" duration 3 #Ability { id: "26C0", source: "Nael Geminus" }
+1263.5 "--targetable--"
+1263.5 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
+1268.5 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
 
-1272.7 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
-1283.7 "Flatten" Ability { id: "26D5", source: "Bahamut Prime" }
-1286.7 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
+1276.5 "Gigaflare" Ability { id: "26D6", source: "Bahamut Prime" }
+1287.5 "Flatten" Ability { id: "26D5", source: "Bahamut Prime" }
+1290.5 "Flare Breath" Ability { id: "26D4", source: "Bahamut Prime" }
 
 ### GRAND OCTET
-1294.7 "Grand Octet" Ability { id: "26E7", source: "Bahamut Prime" } window 200,10
-1296.7 "--untargetable--"
-1302.7 "Nael Marker"
-1306.7 "Lunar Dive 1" Ability { id: "26C3", source: "Nael deus Darnus" }
-1313.7 "Cauterize 2" #Ability { id: "26CB", source: "Firehorn" }
-1315.9 "Cauterize 3" #Ability { id: "26CC", source: "Iceclaw" }
-1317.9 "Cauterize 4" #Ability { id: "26CF", source: "Fang Of Light" }
-1319.7 "Bahamut Marker"
-1319.9 "Cauterize 5" #Ability { id: "26CD", source: "Thunderwing" }
-1321.9 "Cauterize 6" #Ability { id: "26CE", source: "Tail Of Darkness" }
-1323.9 "Megaflare Dive 7" Ability { id: "26E1", source: "Bahamut Prime" }
-1328.7 "Twin Marker"
-1331.7 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
-1332.9 "Twisting Dive 8" Ability { id: "26B2", source: "Twintania" }
-1333.7 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
+1298.5 "Grand Octet" Ability { id: "26E7", source: "Bahamut Prime" } window 200,10
+1300.5 "--untargetable--"
+1306.5 "Nael Marker"
+1310.9 "Lunar Dive 1" Ability { id: "26C3", source: "Nael deus Darnus" }
+1317.9 "Cauterize 2" #Ability { id: "26CB", source: "Firehorn" }
+1320.1 "Cauterize 3" #Ability { id: "26CC", source: "Iceclaw" }
+1322.1 "Cauterize 4" #Ability { id: "26CF", source: "Fang Of Light" }
+1323.9 "Bahamut Marker"
+1324.1 "Cauterize 5" #Ability { id: "26CD", source: "Thunderwing" }
+1326.1 "Cauterize 6" #Ability { id: "26CE", source: "Tail Of Darkness" }
+1328.1 "Megaflare Dive 7" Ability { id: "26E1", source: "Bahamut Prime" }
+1332.9 "Twin Marker"
+1335.9 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
+1337.0 "Twisting Dive 8" Ability { id: "26B2", source: "Twintania" }
+1337.8 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
 
 # https://xivapi.com/InstanceContentTextData/18100
 # en: O Bahamut! We shall stand guard as you make ready your divine judgment!
