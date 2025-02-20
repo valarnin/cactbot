@@ -11,51 +11,49 @@ hideall "--sync--"
 # TODO: Twintania timeline has been updated to actually loop,
 # but the loops have not been verified against actual pulls.
 0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
-7.0 "Plummet" Ability { id: "26A8", source: "Twintania" } window 12,12
-13.1 "Twister" Ability { id: "26AA", source: "Twintania" }
-16.3 "Fireball" Ability { id: "26AC", source: "Twintania" }
-24.5 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
-27.6 "Plummet" Ability { id: "26A8", source: "Twintania" }
-32.8 "Twister" Ability { id: "26AA", source: "Twintania" }
-36.0 "Fireball" Ability { id: "26AC", source: "Twintania" }
-# TODO: presumably 44.2 is a loop back to 24.5.
-44.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" } forcejump 24.5
+6.5 "Plummet" Ability { id: "26A8", source: "Twintania" } window 6.5,0.5
+7.4 label "p1-first-loop"
+12.6 "Twister" Ability { id: "26AA", source: "Twintania" }
+15.8 "Fireball" Ability { id: "26AC", source: "Twintania" }
+23.9 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
+27.0 "Plummet" Ability { id: "26A8", source: "Twintania" } forcejump "p1-first-loop"
+# TODO: presumably the Twister at relative +5.2 is a loop back to the first Twister.
 
 ### Twintania P2: 75% -> 45%
 # TODO: Switch this Neurolink detection to a `SpawnObject` log line from OP if we ever add it.
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
 100.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 100,0
-108.5 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-117.0 "Generate" Ability { id: "26AE", source: "Twintania" }
-120.1 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-131.6 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
-138.6 "Generate" Ability { id: "26AE", source: "Twintania" }
-141.6 "Twister" Ability { id: "26AA", source: "Twintania" }
-147.6 "Plummet" Ability { id: "26A8", source: "Twintania" }
-# TODO: presumably 152.7 is a loop back to 108.5.
-152.7 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-158.2 "--sync--" StartsUsing { id: "26AE", source: "Twintania" } forcejump 114
+103.4 label "p1-second-loop"
+108.5 "Liquid Hell x5" Ability { id: "26AD", source: "Twintania" } duration 4.6 window 3,0.7
+117.3 "Generate" Ability { id: "26AE", source: "Twintania" }
+120.6 "Liquid Hell x5" Ability { id: "26AD", source: "Twintania" } duration 4.6 window 3,0.7
+132.3 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
+139.3 "Generate" Ability { id: "26AE", source: "Twintania" }
+142.3 "Twister" Ability { id: "26AA", source: "Twintania" }
+148.3 "Plummet" Ability { id: "26A8", source: "Twintania" } forcejump "p1-second-loop"
+# TODO: presumably the liquid hell at relative +5.1s is a loop back to the first liquid hell
 
 ### Twintania P3: 45% -> 0%
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
 200.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 95,0
-208.1 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-216.6 "Generate x2" Ability { id: "26AE", source: "Twintania" }
-219.7 "Targeted Fire x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-226.3 "Fireball" Ability { id: "26AC", source: "Twintania" } window 70,10
-235.3 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
-238.3 "Plummet" Ability { id: "26A8", source: "Twintania" }
-245.3 "Generate x2" Ability { id: "26AE", source: "Twintania" }
-248.3 "Twister" Ability { id: "26AA", source: "Twintania" }
-253.3 "Plummet" Ability { id: "26A8", source: "Twintania" }
+208.4 "Liquid Hell x5" Ability { id: "26AD", source: "Twintania" } duration 4.6 window 3,0.7
+214.2 label "p1-third-loop"
+217.2 "Generate x2" Ability { id: "26AE", source: "Twintania" }
+220.4 "Targeted Fire x5" Ability { id: "26AD", source: "Twintania" } duration 4.6 window 3,0.7
+227.4 "Fireball" Ability { id: "26AC", source: "Twintania" } window 70,10
+236.4 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
+239.4 "Plummet" Ability { id: "26A8", source: "Twintania" }
+246.4 "Generate x2" Ability { id: "26AE", source: "Twintania" }
+249.4 "Twister" Ability { id: "26AA", source: "Twintania" }
+254.4 "Plummet" Ability { id: "26A8", source: "Twintania" }
 
-255.5 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-264.0 "Generate x2" Ability { id: "26AE", source: "Twintania" }
-267.1 "Targeted Fire x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
-273.7 "Fireball" Ability { id: "26AC", source: "Twintania" } window 20,20 forcejump 124.6
+256.6 "Liquid Hell x5" Ability { id: "26AD", source: "Twintania" } duration 4.6 window 3,0.7
+# TODO: presumably the Liquid Hell above is a loop back to the first liquid hell.
+# To avoid some jank with forcejump on a duration timeline entry, loop on the Generate cast that's after it instead
+262.5 "--sync--" StartsUsing { id: "26AE", source: "Twintania" } forcejump "p1-third-loop"
 
 # Neurolink spawn via `SpawnObject` packet, ID of `1E88FF`
-400.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 195,0
+400.0 "--sync--" CombatantMemory { id: '40[0-9A-F]{6}', pair: [{ key: 'BNpcID', value: '1E88FF' }] } window 400,0
 
 ##### NAEL #####
 407.3 "Heavensfall" Ability { id: "26B8", source: "Ragnarok" } window 407.3,2
