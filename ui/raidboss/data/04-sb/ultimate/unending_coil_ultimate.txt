@@ -1,7 +1,7 @@
 ### Unending Coil of Bahamut (Ultimate)
 # http://clees.me/guides/ucob/
 # -ii 26A7 26B4 26D0 26C6 26C7 26DA 26D8 26AF 26F0 26F1
-# -p 26A8:7 26AD:108.5 26B8:407.3 26D1:1005.3 26E9:2300
+# -p 26A8:7 26AD:108.5 26B8:407.3 26D1:1005.3 26E8:1503.6 26E9:2300
 
 hideall "--Reset--"
 hideall "--sync--"
@@ -326,7 +326,6 @@ hideall "--sync--"
 ### FELLRUIN
 1129.3 "Fellruin Trio" Ability { id: "26E4", source: "Bahamut Prime" } window 130,10
 1131.3 "--untargetable--"
-1133.9 "Dive Dynamo Combo" duration 8
 1138.7 "Lunar Dynamo/Raven Dive" Ability { id: ["26BC", "26BE"], source: "Nael deus Darnus" }
 1141.7 "Raven Dive/Lunar Dynamo" Ability { id: ["26BE", "26BC"], source: "Nael deus Darnus" }
 1144.7 "Tempest Wing" Ability { id: "26D7", source: "Bahamut Prime" }
@@ -362,9 +361,9 @@ hideall "--sync--"
 1242.3 "Tenstrike Trio" Ability { id: "26E6", source: "Bahamut Prime" } window 200,10
 1244.3 "--untargetable--"
 1249.6 "Generate x3" Ability { id: "26AE", source: "Twintania" }
-1250.6 "Meteor Stream (dps)" duration 3 #Ability { id: "26C0", source: "Nael Geminus" }
+1250.6 "Meteor Stream (DPS)" duration 4 #Ability { id: "26C0", source: "Nael Geminus" }
 1253.6 "Generate x3" Ability { id: "26AE", source: "Twintania" }
-1254.6 "Meteor Stream (T/H)" duration 3 #Ability { id: "26C0", source: "Nael Geminus" }
+1254.6 "Meteor Stream (T/H)" duration 4 #Ability { id: "26C0", source: "Nael Geminus" }
 1263.5 "--targetable--"
 1263.5 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
 1268.5 "Earth Shaker" Ability { id: "26D9", source: "Bahamut Prime" }
@@ -388,8 +387,9 @@ hideall "--sync--"
 1332.9 "Twin Marker"
 1335.9 "Stack" Ability { id: "26DE", source: "Bahamut Prime" }
 1337.0 "Twisting Dive 8" Ability { id: "26B2", source: "Twintania" }
-1337.8 "Towers" Ability { id: "26DF", source: "Bahamut Prime" }
+1337.8 "Towers" Ability { id: "26DF", source: "Bahamut Prime" } forcejump "adds-phase-jump"
 
+1488.5 label "adds-phase-jump"
 # https://xivapi.com/InstanceContentTextData/18100
 # en: O Bahamut! We shall stand guard as you make ready your divine judgment!
 1500.0 "--sync--" BattleTalk2 { npcNameId: "0A34", instanceContentTextId: "46B4" } window 1500,0
@@ -399,7 +399,7 @@ hideall "--sync--"
 1503.6 "Bahamut's Favor" Ability { id: "26E8", source: "Bahamut Prime" } window 1500,3
 1505.1 "--targetable--"
 1513.1 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
-1513.1 "Plummet" Ability { id: "26A8", source: "Twintania" }
+1513.1 "Plummet" #Ability { id: "26A8", source: "Twintania" }
 
 1516.2 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
 1525.2 "Generate x3" Ability { id: "26AE", source: "Twintania" }
@@ -427,25 +427,25 @@ hideall "--sync--"
 1600.0 label "adds-phase-q1-1"
 1605.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
 1608.1 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
-1611.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-middle-chariot"
+1611.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-middle-chariot"
 
 # First triple Nael quote, second iteration, chariot -> dive -> beam
 1650.0 label "adds-phase-q1-2"
 1655.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
 1658.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-1661.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-middle-chariot"
+1661.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-middle-chariot"
 
 # First triple Nael quote, third iteration, dynamo -> dive -> beam
 1700.0 label "adds-phase-q1-3"
 1705.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
 1708.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-1711.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-middle-dynamo"
+1711.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-middle-dynamo"
 
 # First triple Nael quote, fourth iteration, dynamo -> chariot -> dive
 1750.0 label "adds-phase-q1-4"
 1755.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
 1758.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
-1761.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-middle-dynamo"
+1761.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-middle-dynamo"
 
 1800.0 label "adds-phase-middle-chariot"
 1803.1 "Twister" Ability { id: "26AA", source: "Twintania" }
@@ -453,7 +453,7 @@ hideall "--sync--"
 1814.1 "Megaflare" Ability { id: "26BA", source: "Nael deus Darnus" }
 1822.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
 1822.2 "Ravensbeak" #Ability { id: "26B6", source: "Nael deus Darnus" }
-1826.2 "Plummet" Ability { id: "26A8", source: "Twintania" }
+1826.2 "Plummet" #Ability { id: "26A8", source: "Twintania" }
 1826.2 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
 
 1835.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
@@ -477,7 +477,7 @@ hideall "--sync--"
 1914.1 "Megaflare" Ability { id: "26BA", source: "Nael deus Darnus" }
 1922.2 "Death Sentence" Ability { id: "26A9", source: "Twintania" }
 1922.2 "Ravensbeak" #Ability { id: "26B6", source: "Nael deus Darnus" }
-1926.2 "Plummet" Ability { id: "26A8", source: "Twintania" }
+1926.2 "Plummet" #Ability { id: "26A8", source: "Twintania" }
 1926.2 "Bahamut's Claw x5" Ability { id: "26B5", source: "Nael deus Darnus" } duration 3.2 window 0.5,0.5
 
 1935.3 "Liquid Hell x5" duration 4.5 #Ability { id: "26AD", source: "Twintania" }
@@ -499,25 +499,25 @@ hideall "--sync--"
 2000.0 label "adds-phase-q2-1"
 2005.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
 2008.1 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" }
-2011.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+2011.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-end"
 
 # Second triple Nael quote, second iteration, chariot -> dive -> beam
 2050.0 label "adds-phase-q2-2"
 2055.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
 2058.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-2061.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+2061.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-end"
 
 # Second triple Nael quote, third iteration, dynamo -> dive -> beam
 2100.0 label "adds-phase-q2-3"
 2105.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
 2108.1 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" }
-2111.2 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+2111.3 "Thermionic Beam" Ability { id: "26BD", source: "Nael deus Darnus" } forcejump "adds-phase-end"
 
 # Second triple Nael quote, fourth iteration, dynamo -> chariot -> dive
 2150.0 label "adds-phase-q2-4"
 2155.1 "Lunar Dynamo" Ability { id: "26BC", source: "Nael deus Darnus" }
 2158.1 "Iron Chariot" Ability { id: "26BB", source: "Nael deus Darnus" }
-2161.2 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-end"
+2161.3 "Raven Dive" Ability { id: "26BE", source: "Nael deus Darnus" } forcejump "adds-phase-end"
 
 2200.0 label "adds-phase-end"
 
