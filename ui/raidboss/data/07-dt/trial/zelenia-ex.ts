@@ -1,9 +1,36 @@
 import conditions from '../../../../../resources/conditions';
+import { UnreachableCode } from '../../../../../resources/not_reached';
 import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
+import { Directions } from '../../../../../resources/util';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
+
+// TODO:
+// Bloom 2
+// Bloom 3
+// Maybe more with Escelon 2?
+// Bloom 4
+// Escalon 3
+// Bloom 5
+// Bloom 6
+
+type Phase =
+  | 'phase1'
+  | 'escelon1'
+  | 'adds'
+  | 'phase2'
+  | 'bloom1'
+  | 'bloom2'
+  | 'bloom3'
+  | 'escelon2'
+  | 'bloom4'
+  | 'escelon3'
+  | 'bloom5'
+  | 'bloom6'
+  | 'bloom1Repeat'
+  | 'softEnrage';
 
 const bloomTileFlags = {
   red: '01000040',
@@ -23,11 +50,14 @@ type TileLocsType = (typeof tileLocs)[number];
 const tileInnerOuter = ['Inner', 'Outer'] as const;
 type TileInnerOuterType = (typeof tileInnerOuter)[number];
 
+const tileSlots = ['04', '05', '06', '07', '08', '09', '0A', '0B', '0C', '0D', '0E', '0F', '10', '11', '12', '13', '14'] as const;
+type TileSlotsType = (typeof tileSlots)[number];
+
 type MapEffectTile = `bloomTile${TileInnerOuterType}${TileLocsType}`;
 
 type MapEffectData = {
   [tile in MapEffectTile]: {
-    readonly location: string;
+    readonly location: TileSlotsType;
   } & typeof bloomTileFlags;
 };
 
@@ -113,14 +143,35 @@ const mapEffectData: MapEffectData = {
   },
 } as const;
 
-console.assert(mapEffectData);
+const mapEffectTiles: MapEffectTile[] = Object.keys(mapEffectData) as MapEffectTile[];
+
+const isTileLoc = (loc: string): loc is TileSlotsType => {
+  return tileSlots.includes(loc as TileSlotsType);
+};
+
+const getTileNameFromLocation = (loc: string): MapEffectTile => {
+  if (!isTileLoc(loc))
+    throw new UnreachableCode();
+
+  const entry = Object.entries(mapEffectData).find((entry) => entry[1].location === loc);
+
+  if (entry === undefined)
+    throw new UnreachableCode();
+
+  const [key] = entry;
+
+  if (key === undefined)
+    throw new UnreachableCode();
+
+  return key as MapEffectTile;
+};
 
 const headMarkerData = {
   // Thorns tether purple markers during Bloom 4
   'thorns': '000C',
   // Adds red headmarker showing you're tethered
   'addsTether': '0017',
-  // Escalon 2 stack marker
+  // Escelon 2 stack marker
   'fourPlayerStack': '005D',
   // Bloom 1 clockwise rotation indicator
   'clockwise': '00A7',
@@ -140,8 +191,32 @@ const headMarkerData = {
   'bloom4Stack': '0255',
 } as const;
 
+const defaultTileState = () => ({
+  bloomTileInnerNNE: 'unknown',
+  bloomTileInnerENE: 'unknown',
+  bloomTileInnerESE: 'unknown',
+  bloomTileInnerSSE: 'unknown',
+  bloomTileInnerSSW: 'unknown',
+  bloomTileInnerWSW: 'unknown',
+  bloomTileInnerWNW: 'unknown',
+  bloomTileInnerNNW: 'unknown',
+  bloomTileOuterNNE: 'unknown',
+  bloomTileOuterENE: 'unknown',
+  bloomTileOuterESE: 'unknown',
+  bloomTileOuterSSE: 'unknown',
+  bloomTileOuterSSW: 'unknown',
+  bloomTileOuterWSW: 'unknown',
+  bloomTileOuterWNW: 'unknown',
+  bloomTileOuterNNW: 'unknown',
+} as const);
+
 export interface Data extends RaidbossData {
-  escalonFallBaits: ('near' | 'far')[];
+  escelonFallBaits: ('near' | 'far')[];
+  phase: Phase;
+  tileState: {
+    [loc in MapEffectTile]: 'unknown' | 'red' | 'grey';
+  };
+  bloom1StartDir?: number;
 }
 
 const triggerSet: TriggerSet<Data> = {
@@ -149,427 +224,105 @@ const triggerSet: TriggerSet<Data> = {
   zoneId: ZoneId.RecollectionExtreme,
   timelineFile: 'zelenia-ex.txt',
   initData: () => ({
-    escalonFallBaits: [],
+    escelonFallBaits: [],
+    phase: 'phase1',
+    tileState: { ...defaultTileState() },
   }),
   triggers: [
     {
-      id: 'ZeleniaEx Thorned Catharsis',
-      type: 'StartsUsing',
-      netRegex: { id: 'A89E', source: 'Zelenia', capture: false },
-      response: Responses.aoe(),
-    },
-    {
-      id: 'ZeleniaEx Shock Spread',
-      type: 'HeadMarker',
-      netRegex: { id: headMarkerData.shockSpread, capture: true },
-      condition: conditions.targetIsYou(),
-      response: Responses.spread(),
-    },
-    {
-      id: 'ZeleniaEx Bloom 4 Stack',
-      type: 'HeadMarker',
-      netRegex: { id: headMarkerData.bloom4Stack, capture: false },
-      infoText: (_data, _matches, output) => output.stacks!(),
-      outputStrings: {
-        stacks: Outputs.stacks,
+      id: 'ZeleniaEx Tile Tracker',
+      type: 'MapEffect',
+      netRegex: { location: tileSlots, flags: [bloomTileFlags.red, bloomTileFlags.grey, bloomTileFlags.greyToRed], capture: true },
+      run: (data, matches) => {
+        let newState: 'unknown' | 'red' | 'grey' = 'unknown';
+
+        switch (matches.flags) {
+          case bloomTileFlags.red:
+          case bloomTileFlags.greyToRed:
+            newState = 'red';
+            break;
+          case bloomTileFlags.grey:
+            newState = 'grey';
+            break;
+        }
+        data.tileState[getTileNameFromLocation(matches.location)] = newState;
       },
     },
     {
-      id: 'ZeleniaEx Alexandrian Holy',
+      id: 'ZeleniaEx Phase Tracker',
       type: 'StartsUsing',
-      netRegex: { id: 'A8C0', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Specter of the Lost',
-      type: 'StartsUsing',
-      netRegex: { id: ['A89F', 'A8A0'], source: 'Zelenia', capture: false },
-      response: Responses.tankBuster(),
-    },
-    {
-      id: 'ZeleniaEx Stock Break',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8D5', source: 'Zelenia', capture: true },
-      response: Responses.stackMarkerOn(),
-    },
-    {
-      id: 'ZeleniaEx Blessed Barricade A8B5',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8B5', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Spearpoint Push A8B3',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8B3', source: 'Zelenia\'s Shade', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Spearpoint Push A8B4',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8B4', source: 'Zelenia\'s Shade', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Perfumed Quietus',
-      type: 'StartsUsing',
-      netRegex: { id: ['A8B7', 'A8CD'], source: 'Zelenia', capture: false },
-      response: Responses.aoe(),
-    },
-    {
-      id: 'ZeleniaEx Roseblood Bloom A8B9',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8B9', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Alexandrian Thunder II A8BE',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8BE', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Alexandrian Thunder II A8BF',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8BF', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Alexandrian Thunder III',
-      type: 'StartsUsing',
-      netRegex: { id: ['A8E3', 'A8E4', 'A8E6'], source: 'Zelenia', capture: false },
+      netRegex: { id: ['A8AD', 'A8B5', 'A8CD', 'A8B9', 'AA14', 'AA15', 'A8C1', 'AA16', 'A8E8', 'AA17', 'AA18'], capture: true },
       suppressSeconds: 5,
-      response: Responses.spread(),
-    },
-    {
-      id: 'ZeleniaEx Roseblood: 2nd Bloom AA14',
-      type: 'StartsUsing',
-      netRegex: { id: 'AA14', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
+      run: (data, matches) => {
+        switch (matches.id) {
+          case 'A8AD': // Escelons' Fall (happens 3 times, only check first for phase1)
+            if (data.phase === 'phase1')
+              data.phase = 'escelon1';
+            break;
+          case 'A8B5': // Blessed Barricade
+            data.phase = 'adds';
+            break;
+          case 'A8CD': // Perfumed Quietus
+            data.phase = 'phase2';
+            break;
+          case 'A8B9': // Roseblood Bloom (happens twice, check for bloom 6)
+            data.phase = 'bloom1';
+            break;
+          case 'AA14': // Roseblood: 2nd Bloom
+            data.phase = 'bloom2';
+            break;
+          case 'AA15': // Roseblood: 3rd Bloom
+            data.phase = 'bloom3';
+            break;
+          case 'A8C1': // Explosion (happens 2 times, bloom 3 => escelon 2, bloom 6 ignore)
+            if (data.phase === 'bloom3')
+              data.phase = 'escelon2';
+            break;
+          case 'AA16': // Roseblood: 4th Bloom
+            data.phase = 'bloom4';
+            break;
+          case 'A8E8': // Alexandrian Banish III
+            data.phase = 'escelon3';
+            break;
+          case 'AA17': // Roseblood: 5th Bloom
+            data.phase = 'bloom5';
+            break;
+          case 'AA18': // Roseblood: 6th Bloom
+            data.phase = 'bloom6';
+            break;
+        }
       },
     },
     {
-      id: 'ZeleniaEx Thunder Slash A8D0',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8D0', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Thunder Slash A9B8',
-      type: 'StartsUsing',
-      netRegex: { id: 'A9B8', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Thunder Slash A9B9',
-      type: 'StartsUsing',
-      netRegex: { id: 'A9B9', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Alexandrian Thunder IV',
-      type: 'StartsUsing',
-      netRegex: { id: ['A9BA', 'A9BB'], source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Roseblood: 3rd Bloom',
-      type: 'StartsUsing',
-      netRegex: { id: 'AA15', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Bud of Valor',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8B2', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Roseblood: 4th Bloom AA16',
-      type: 'StartsUsing',
-      netRegex: { id: 'AA16', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Encircling Thorns',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8C3', source: 'Zelenia', capture: true },
-      response: Responses.stackMarkerOn(),
-    },
-    {
-      id: 'ZeleniaEx Alexandrian Banish III',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8E8', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.stacks!(),
-      outputStrings: {
-        stacks: {
-          en: 'Stacks',
-          de: 'Sammeln',
-          fr: 'Package',
-          cn: '分摊',
-          ko: '쉐어',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Power Break A8B0',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8B0', source: 'Zelenia\'s Shade', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Power Break A8B1',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8B1', source: 'Zelenia\'s Shade', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Roseblood: 5th Bloom',
-      type: 'StartsUsing',
-      netRegex: { id: 'AA17', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Valorous Ascension A8C6',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8C6', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Valorous Ascension A8C7',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8C7', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Valorous Ascension A8CA',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8CA', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Roseblood: 6th Bloom AA18',
-      type: 'StartsUsing',
-      netRegex: { id: 'AA18', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Holy Hazard A8DF',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8DF', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Holy Hazard A8E2',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8E2', source: 'Zelenia', capture: false },
-      infoText: (_data, _matches, output) => output.text!(),
-      outputStrings: {
-        text: {
-          en: 'Custom Text',
-          de: 'Benutzerdefinierter Text',
-          fr: 'Texte personnalisé',
-          cn: '自定义文本',
-        },
-      },
-    },
-    {
-      id: 'ZeleniaEx Escalon Bait Collect',
+      id: 'ZeleniaEx Escelon Bait Collect',
       type: 'GainsEffect',
       // count: 2F6 = near, 2F7 = far
       netRegex: { effectId: 'B9A', count: ['2F6', '2F7'] },
       preRun: (data, matches) =>
-        data.escalonFallBaits.push(matches.count === '2F6' ? 'near' : 'far'),
-      suppressSeconds: (data) => data.escalonFallBaits.length > 1 ? 20 : 0,
+        data.escelonFallBaits.push(matches.count === '2F6' ? 'near' : 'far'),
+    },
+    {
+      id: 'ZeleniaEx Escelon Bait Cleanup',
+      type: 'GainsEffect',
+      // count: 2F6 = near, 2F7 = far
+      netRegex: { effectId: 'B9A', count: ['2F6', '2F7'] },
+      delaySeconds: 30,
+      suppressSeconds: 30,
+      run: (data) => data.escelonFallBaits = [],
+    },
+    {
+      id: 'ZeleniaEx Escelon Bait',
+      type: 'GainsEffect',
+      // count: 2F6 = near, 2F7 = far
+      netRegex: { effectId: 'B9A', count: ['2F6', '2F7'] },
+      durationSeconds: 19,
+      suppressSeconds: (data) => data.escelonFallBaits.length > 1 ? 20 : 0,
       infoText: (data, _matches, output) => {
-        const [bait1, bait2] = data.escalonFallBaits;
+        if (data.escelonFallBaits.length !== 2)
+          return;
+        const [bait1, bait2] = data.escelonFallBaits;
         if (bait1 === undefined || bait2 === undefined)
           return;
-
-        data.escalonFallBaits = [];
 
         if (bait1 === bait2) {
           return output.swapAfterFirst!({
@@ -592,6 +345,187 @@ const triggerSet: TriggerSet<Data> = {
         },
         swapAfterSecond: {
           en: '${first} bait first, Swap after second',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Thorned Catharsis',
+      type: 'StartsUsing',
+      netRegex: { id: 'A89E', source: 'Zelenia', capture: false },
+      response: Responses.aoe(),
+    },
+    {
+      id: 'ZeleniaEx Shock P1 Tower',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.shockSpread, capture: true },
+      condition: (data, matches) => conditions.targetIsYou()(data, matches) && data.phase === 'phase1',
+      infoText: (_data, _matches, output) => output.tower!(),
+      outputStrings: {
+        tower: {
+          en: 'Donut on you, get tower',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Shock Spread',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.shockSpread, capture: true },
+      condition: conditions.targetIsYou(),
+      response: Responses.spread(),
+    },
+    {
+      id: 'ZeleniaEx Shock Spread Move Reminder',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.shockSpread, capture: true },
+      condition: conditions.targetIsYou(),
+      delaySeconds: 7,
+      response: Responses.moveAway(),
+    },
+    {
+      id: 'ZeleniaEx Bloom 4 Stack',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.bloom4Stack, capture: false },
+      infoText: (_data, _matches, output) => output.stacks!(),
+      outputStrings: {
+        stacks: {
+          en: 'Support/DPS stacks',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Power Break',
+      type: 'StartsUsing',
+      netRegex: { id: ['A8B0', 'A8B1'], source: 'Zelenia\'s Shade', capture: false },
+      infoText: (_data, matches, output) => {
+        // A8B0 = cleaving right
+        // A8B1 = cleaving left
+        const isNorth = Directions.hdgTo4DirNum(parseFloat(matches.heading)) === 2;
+        let cleavingEast = matches.id === 'A8B0';
+        // flip cleave dir if north
+        if (isNorth)
+          cleavingEast = !cleavingEast;
+
+        if (cleavingEast)
+          return output.west!();
+        return output.east!();
+      },
+      outputStrings: {
+        west: Outputs.west,
+        east: Outputs.east,
+      },
+    },
+    {
+      id: 'ZeleniaEx Specter of the Lost',
+      type: 'StartsUsing',
+      netRegex: { id: 'A89F', source: 'Zelenia', capture: false },
+      response: (data, _matches, output) => {
+        // cactbot-builtin-response
+        output.responseOutputStrings = {
+          tetherBuster: Outputs.tetherBusters,
+          busterAvoid: Outputs.avoidTetherBusters,
+        };
+
+        if (data.role === 'tank')
+          return { alertText: output.tetherBuster!() };
+        return { infoText: output.busterAvoid!() };
+      },
+    },
+    {
+      id: 'ZeleniaEx Stock Break',
+      type: 'StartsUsing',
+      netRegex: { id: 'A8D5', source: 'Zelenia', capture: true },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'Stack x5',
+          de: 'Sammeln x5',
+          fr: 'Package x5',
+          ja: '頭割り x5',
+          cn: '5次分摊',
+          ko: '쉐어 5번',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Blessed Barricade',
+      type: 'StartsUsing',
+      netRegex: { id: 'A8B5', source: 'Zelenia', capture: false },
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'Supports west, DPS east',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Spearpoint Push A8B3',
+      type: 'StartsUsing',
+      netRegex: { id: ['A8B3', 'A8B4'], source: 'Zelenia\'s Shade', capture: false },
+      condition: conditions.targetIsYou(),
+      infoText: (_data, _matches, output) => output.text!(),
+      outputStrings: {
+        text: {
+          en: 'Point sword cleave out',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Perfumed Quietus',
+      type: 'StartsUsing',
+      netRegex: { id: 'A8CD', source: 'Zelenia', capture: false },
+      delaySeconds: 3.9,
+      response: Responses.bigAoe(),
+    },
+    {
+      id: 'ZeleniaEx Bloom 1 Rotation',
+      type: 'MapEffect',
+      netRegex: { location: tileSlots, flags: [bloomTileFlags.red, bloomTileFlags.grey, bloomTileFlags.greyToRed], capture: false },
+      condition: (data) => data.phase === 'bloom1',
+      delaySeconds: 0.5,
+      suppressSeconds: 100,
+      run: (data) => {
+        let dirIdx = 1;
+        let foundGrey = false;
+
+        // Find the 1st inner tile clockwise that's grey
+        for (const key of mapEffectTiles) {
+          if (!key.includes('Inner'))
+            continue;
+          if (foundGrey) {
+            if (data.tileState[key] === 'red') {
+              // Special edge case, NNW is safe
+              dirIdx = 15;
+            } else {
+              dirIdx += 2;
+            }
+            break;
+          }
+
+          if (data.tileState[key] === 'grey') {
+            foundGrey = true;
+            continue;
+          }
+
+          dirIdx += 2;
+        }
+
+        data.bloom1StartDir = dirIdx;
+      },
+    },
+    {
+      id: 'ZeleniaEx Shock P1 Tower',
+      type: 'HeadMarker',
+      netRegex: { id: [headMarkerData.clockwise, headMarkerData.counterclockwise], capture: true },
+      infoText: (data, matches, output) => output.text!({
+        dir: output[Directions.output16Dir[data.bloom1StartDir ?? -1] ?? 'unknown']!(),
+        rotate: matches.id === headMarkerData.clockwise ? output.clockwise!() : output.counterclockwise!(),
+      }),
+      outputStrings: {
+        ...Directions.outputStrings16Dir,
+        clockwise: Outputs.clockwise,
+        counterclockwise: Outputs.counterclockwise,
+        text: {
+          en: 'Start ${dir}, rotate ${rotate}',
         },
       },
     },

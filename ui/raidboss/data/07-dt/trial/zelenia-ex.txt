@@ -27,7 +27,7 @@ hideall "--sync--"
 31.8 "Explosion" #Ability { id: "A8DA", source: "Zelenia" }
 44.7 "Specter of the Lost" Ability { id: "A8A0", source: "Zelenia" }
 
-# Escalon 1
+# Escelon 1
 50.1 "--middle--" Ability { id: "A82E", source: "Zelenia" }
 64.2 "Escelons' Fall x4" Ability { id: "A8AD", source: "Zelenia" } duration 10
 83.4 "Stock Break x5" Ability { id: "A8D5", source: "Zelenia" } duration 4
@@ -42,7 +42,7 @@ hideall "--sync--"
 129.6 "Spearpoint Push" #Ability { id: "A8B4", source: "Zelenia's Shade" }
 129.7 "Explosion" #Ability { id: "A83C", source: "Zelenia" }
 141.6 "Spearpoint Push" #Ability { id: "A8B3", source: "Zelenia's Shade" }
-155.9 "Perfumed Quietus" Ability { id: "A8CD", source: "Zelenia" } window 155.9,5
+155.9 "Perfumed Quietus (enrage?)" Ability { id: "A8CD", source: "Zelenia" } window 155.9,5
 
 ## Phase 2
 166.9 "--middle--" Ability { id: "A82E", source: "Zelenia" }
@@ -81,7 +81,7 @@ hideall "--sync--"
 273.7 "Emblazon" Ability { id: "A820", source: "Zelenia" }
 278.0 "Explosion" Ability { id: "A8C1", source: "Zelenia" }
 
-# Escalon 2
+# Escelon 2
 286.2 "Thorned Catharsis" Ability { id: "A89E", source: "Zelenia" }
 293.4 "--middle--" Ability { id: "A82E", source: "Zelenia" }
 297.7 "Bud of Valor" Ability { id: "A8B2", source: "Zelenia" }
@@ -104,13 +104,13 @@ hideall "--sync--"
 377.9 "Alexandrian Banish III" Ability { id: "A8E8", source: "Zelenia" }
 378.8 "Alexandrian Banish III" Ability { id: "A8E9", source: "Zelenia" }
 
-# Escalon 3
+# Escelon 3
 390.1 "Thorned Catharsis" Ability { id: "A89E", source: "Zelenia" }
 397.3 "--middle--" Ability { id: "A82E", source: "Zelenia" }
 401.5 "Bud of Valor" Ability { id: "A8B2", source: "Zelenia" }
-414.5 "Power Break" Ability { id: "A8B0", source: "Zelenia's Shade" }
+414.5 "Power Break" Ability { id: ["A8B0", "A8B1"], source: "Zelenia's Shade" }
 417.5 "Escelons' Fall" Ability { id: "A8AD", source: "Zelenia" }
-429.5 "Power Break" Ability { id: "A8B0", source: "Zelenia's Shade" }
+429.5 "Power Break" Ability { id: ["A8B0", "A8B1"], source: "Zelenia's Shade" }
 436.9 "Stock Break" Ability { id: "A8D5", source: "Zelenia" }
 447.1 "--middle--" Ability { id: "A82E", source: "Zelenia" }
 
