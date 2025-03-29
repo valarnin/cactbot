@@ -142,8 +142,6 @@ hideall "--sync--"
 484.4 "Specter of the Lost" Ability { id: "A8A0", source: "Zelenia" }
 491.8 "--middle--" Ability { id: "A82E", source: "Zelenia" }
 
-# @TODO Holy Hazard needs cleanup here still
-
 ## Bloom 6
 495.6 "Roseblood: 6th Bloom" Ability { id: "AA18", source: "Zelenia" }
 496.6 "Queen's Crusade" Ability { id: "A8BA", source: "Zelenia" }
@@ -153,7 +151,6 @@ hideall "--sync--"
 515.7 "Emblazon (resolves)" Ability { id: "A820", source: "Zelenia" }
 518.3 "Holy Hazard (cast)" Ability { id: "A8DF", source: "Zelenia" }
 519.1 "Holy Hazard (snapshot)" Ability { id: "A8E2", source: "Zelenia" }
-521.5 "Holy Hazard (cast)" Ability { id: "A839", source: "Zelenia" }
 522.1 "Holy Hazard (snapshot)" Ability { id: "A8E2", source: "Zelenia" }
 522.1 "Explosion" Ability { id: "A8C1", source: "Zelenia" }
 529.6 "--middle--" Ability { id: "A82E", source: "Zelenia" }

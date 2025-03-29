@@ -10,7 +10,6 @@ import { TriggerSet } from '../../../../../types/trigger';
 // TODO:
 // Bloom 3 - Seems like strats for positioning could vary here, so only calling out roses vs towers for now
 // Maybe more with Escelon 2?
-// Bloom 6
 
 type Phase =
   | 'phase1'
@@ -63,7 +62,6 @@ const tileSlots = [
   '11',
   '12',
   '13',
-  '14',
 ] as const;
 type TileSlotsType = (typeof tileSlots)[number];
 
@@ -234,6 +232,7 @@ export interface Data extends RaidbossData {
   bloom4RoseDirNorth: boolean;
   bloom5FirstDirSafe: 'dirNE' | 'dirNW' | 'dirSE' | 'dirSW' | 'unknown';
   bloom5SecondDirSafe: 'dirNE' | 'dirNW' | 'dirSE' | 'dirSW' | 'unknown';
+  bloom6Rose: boolean;
 }
 
 const triggerSet: TriggerSet<Data> = {
@@ -247,6 +246,7 @@ const triggerSet: TriggerSet<Data> = {
     bloom4RoseDirNorth: false,
     bloom5FirstDirSafe: 'unknown',
     bloom5SecondDirSafe: 'unknown',
+    bloom6Rose: false,
   }),
   triggers: [
     {
@@ -713,8 +713,21 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       id: 'ZeleniaEx Bloom 5 Chakram Collector',
-      type: 'StartsUsing',
-      netRegex: { id: 'A8C3', capture: true },
+      type: 'ActorSetPos',
+      netRegex: { id: '40[0-9A-F]{6}', capture: true },
+      condition: (data, matches) => {
+        if (data.phase !== 'bloom5')
+          return false;
+
+        if (Math.abs(100 - parseFloat(matches.x)) < 2)
+          return false;
+
+        if (Math.abs(100 - parseFloat(matches.y)) < 2)
+          return false;
+
+        return true;
+      },
+      suppressSeconds: 9999,
       infoText: (data, matches, output) => {
         const neSwSafe = data.tileState.bloomTileOuterNNE === 'grey';
         const cleaveDir = Directions.hdgTo4DirNum(parseFloat(matches.heading));
@@ -777,6 +790,64 @@ const triggerSet: TriggerSet<Data> = {
         out: outputs.out,
         text: {
           en: '${inOutFirst} ${dirFirst} Clockwise => ${inOutSecond} ${dirSecond}',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 6 Rose Headmarker',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.roseFlower, capture: true },
+      condition: (data) => data.phase === 'bloom6',
+      suppressSeconds: 10,
+      infoText: (data, matches, output) => {
+        const targetIsDPS = data.party.isDPS(matches.target);
+        const youAreDPS = data.party.isDPS(data.me);
+        data.bloom6Rose = targetIsDPS === youAreDPS;
+
+        if (data.bloom6Rose)
+          return output.rose!();
+
+        return output.tower!();
+      },
+      outputStrings: {
+        rose: {
+          en: 'Rose Marker on YOU',
+        },
+        tower: {
+          en: 'Tower Soaks Later',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 6',
+      type: 'StartsUsing',
+      netRegex: { id: ['A8DF', 'A8E1'], capture: true },
+      condition: (data) => data.phase === 'bloom5',
+      durationSeconds: 11.4,
+      suppressSeconds: 30,
+      infoText: (data, matches, output) => {
+        const cleavingENEFirst = matches.id === 'A8E1';
+        const towerENEOut = data.tileState.bloomTileOuterENE === 'red';
+
+        const placeIn = cleavingENEFirst ? towerENEOut : !towerENEOut;
+
+        if (data.bloom6Rose) {
+          return output.rose!({
+            inOut: placeIn ? output.in!() : output.out!(),
+          });
+        }
+
+        return output.tower!();
+      },
+      outputStrings: {
+        ...Directions.outputStrings8Dir,
+        in: outputs.in,
+        out: outputs.out,
+        rose: {
+          en: 'Place rose ${inOut} => dodge cleaves',
+        },
+        tower: {
+          en: 'Dodge cleaves => soak tower',
         },
       },
     },
