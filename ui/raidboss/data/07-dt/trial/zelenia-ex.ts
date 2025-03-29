@@ -8,11 +8,10 @@ import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
 
 // TODO:
-// Bloom 2
-// Bloom 3
+// Bloom 3 - Seems like strats for positioning could vary here, so only calling out roses vs towers for now
 // Maybe more with Escelon 2?
 // Bloom 4
-// Escalon 3
+// Escelon 3
 // Bloom 5
 // Bloom 6
 
@@ -50,7 +49,25 @@ type TileLocsType = (typeof tileLocs)[number];
 const tileInnerOuter = ['Inner', 'Outer'] as const;
 type TileInnerOuterType = (typeof tileInnerOuter)[number];
 
-const tileSlots = ['04', '05', '06', '07', '08', '09', '0A', '0B', '0C', '0D', '0E', '0F', '10', '11', '12', '13', '14'] as const;
+const tileSlots = [
+  '04',
+  '05',
+  '06',
+  '07',
+  '08',
+  '09',
+  '0A',
+  '0B',
+  '0C',
+  '0D',
+  '0E',
+  '0F',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+] as const;
 type TileSlotsType = (typeof tileSlots)[number];
 
 type MapEffectTile = `bloomTile${TileInnerOuterType}${TileLocsType}`;
@@ -232,7 +249,11 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'ZeleniaEx Tile Tracker',
       type: 'MapEffect',
-      netRegex: { location: tileSlots, flags: [bloomTileFlags.red, bloomTileFlags.grey, bloomTileFlags.greyToRed], capture: true },
+      netRegex: {
+        location: tileSlots,
+        flags: [bloomTileFlags.red, bloomTileFlags.grey, bloomTileFlags.greyToRed],
+        capture: true,
+      },
       run: (data, matches) => {
         let newState: 'unknown' | 'red' | 'grey' = 'unknown';
 
@@ -251,7 +272,22 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'ZeleniaEx Phase Tracker',
       type: 'StartsUsing',
-      netRegex: { id: ['A8AD', 'A8B5', 'A8CD', 'A8B9', 'AA14', 'AA15', 'A8C1', 'AA16', 'A8E8', 'AA17', 'AA18'], capture: true },
+      netRegex: {
+        id: [
+          'A8AD',
+          'A8B5',
+          'A8CD',
+          'A8B9',
+          'AA14',
+          'AA15',
+          'A8C1',
+          'AA16',
+          'A8E8',
+          'AA17',
+          'AA18',
+        ],
+        capture: true,
+      },
       suppressSeconds: 5,
       run: (data, matches) => {
         switch (matches.id) {
@@ -305,7 +341,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'ZeleniaEx Escelon Bait Cleanup',
       type: 'GainsEffect',
       // count: 2F6 = near, 2F7 = far
-      netRegex: { effectId: 'B9A', count: ['2F6', '2F7'] },
+      netRegex: { effectId: 'B9A', count: ['2F6', '2F7'], capture: false },
       delaySeconds: 30,
       suppressSeconds: 30,
       run: (data) => data.escelonFallBaits = [],
@@ -314,7 +350,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'ZeleniaEx Escelon Bait',
       type: 'GainsEffect',
       // count: 2F6 = near, 2F7 = far
-      netRegex: { effectId: 'B9A', count: ['2F6', '2F7'] },
+      netRegex: { effectId: 'B9A', count: ['2F6', '2F7'], capture: false },
       durationSeconds: 19,
       suppressSeconds: (data) => data.escelonFallBaits.length > 1 ? 20 : 0,
       infoText: (data, _matches, output) => {
@@ -358,7 +394,8 @@ const triggerSet: TriggerSet<Data> = {
       id: 'ZeleniaEx Shock P1 Tower',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.shockSpread, capture: true },
-      condition: (data, matches) => conditions.targetIsYou()(data, matches) && data.phase === 'phase1',
+      condition: (data, matches) =>
+        conditions.targetIsYou()(data, matches) && data.phase === 'phase1',
       infoText: (_data, _matches, output) => output.tower!(),
       outputStrings: {
         tower: {
@@ -395,7 +432,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'ZeleniaEx Power Break',
       type: 'StartsUsing',
-      netRegex: { id: ['A8B0', 'A8B1'], source: 'Zelenia\'s Shade', capture: false },
+      netRegex: { id: ['A8B0', 'A8B1'], source: 'Zelenia\'s Shade', capture: true },
       infoText: (_data, matches, output) => {
         // A8B0 = cleaving right
         // A8B1 = cleaving left
@@ -433,7 +470,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'ZeleniaEx Stock Break',
       type: 'StartsUsing',
-      netRegex: { id: 'A8D5', source: 'Zelenia', capture: true },
+      netRegex: { id: 'A8D5', source: 'Zelenia', capture: false },
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -458,9 +495,9 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
-      id: 'ZeleniaEx Spearpoint Push A8B3',
+      id: 'ZeleniaEx Spearpoint Push',
       type: 'StartsUsing',
-      netRegex: { id: ['A8B3', 'A8B4'], source: 'Zelenia\'s Shade', capture: false },
+      netRegex: { id: ['A8B3', 'A8B4'], source: 'Zelenia\'s Shade', capture: true },
       condition: conditions.targetIsYou(),
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
@@ -477,9 +514,13 @@ const triggerSet: TriggerSet<Data> = {
       response: Responses.bigAoe(),
     },
     {
-      id: 'ZeleniaEx Bloom 1 Rotation',
+      id: 'ZeleniaEx Bloom 1 Rotation Collector',
       type: 'MapEffect',
-      netRegex: { location: tileSlots, flags: [bloomTileFlags.red, bloomTileFlags.grey, bloomTileFlags.greyToRed], capture: false },
+      netRegex: {
+        location: tileSlots,
+        flags: [bloomTileFlags.red, bloomTileFlags.grey, bloomTileFlags.greyToRed],
+        capture: false,
+      },
       condition: (data) => data.phase === 'bloom1',
       delaySeconds: 0.5,
       suppressSeconds: 100,
@@ -513,19 +554,81 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
-      id: 'ZeleniaEx Shock P1 Tower',
+      id: 'ZeleniaEx Bloom 1 Rotation',
       type: 'HeadMarker',
       netRegex: { id: [headMarkerData.clockwise, headMarkerData.counterclockwise], capture: true },
-      infoText: (data, matches, output) => output.text!({
-        dir: output[Directions.output16Dir[data.bloom1StartDir ?? -1] ?? 'unknown']!(),
-        rotate: matches.id === headMarkerData.clockwise ? output.clockwise!() : output.counterclockwise!(),
-      }),
+      infoText: (data, matches, output) =>
+        output.text!({
+          dir: output[Directions.output16Dir[data.bloom1StartDir ?? -1] ?? 'unknown']!(),
+          rotate: matches.id === headMarkerData.clockwise
+            ? output.clockwise!()
+            : output.counterclockwise!(),
+        }),
       outputStrings: {
         ...Directions.outputStrings16Dir,
         clockwise: Outputs.clockwise,
         counterclockwise: Outputs.counterclockwise,
         text: {
           en: 'Start ${dir}, rotate ${rotate}',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 2',
+      type: 'StartsUsing',
+      netRegex: { id: ['A9BA', 'A9BB'], capture: true },
+      condition: (data) => data.phase === 'bloom2',
+      durationSeconds: 11.4,
+      suppressSeconds: 30,
+      infoText: (data, matches, output) => {
+        // Only two possible floor patterns here. Thunder slash pattern is always the same.
+        const inSafeFirst = matches.id === 'A9BB';
+        const inOneTileSafeWest = data.tileState.bloomTileInnerWNW === 'red';
+
+        if (inSafeFirst) {
+          if (inOneTileSafeWest)
+            return output.inWest!();
+          return output.inEast!();
+        }
+        if (inOneTileSafeWest)
+          return output.outEast!();
+        return output.outWest!();
+      },
+      outputStrings: {
+        inWest: {
+          en: 'In WSW => Out WNW => Out WSW',
+        },
+        inEast: {
+          en: 'In ESE => Out ESE => Out ENE',
+        },
+        outWest: {
+          en: 'Out WSW => In WNW => In WSW',
+        },
+        outEast: {
+          en: 'Out ESE => In ESE => In ENE',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 3 Rose Headmarker',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.roseFlower, capture: true },
+      condition: (data) => data.phase === 'bloom3',
+      suppressSeconds: 10,
+      infoText: (data, matches, output) => {
+        const targetIsDPS = data.party.isDPS(matches.target);
+        const youAreDPS = data.party.isDPS(data.me);
+        if (targetIsDPS === youAreDPS)
+          return output.rose!();
+
+        return output.spread!();
+      },
+      outputStrings: {
+        rose: {
+          en: 'Rose Marker on YOU',
+        },
+        spread: {
+          en: 'Spread Marker on YOU',
         },
       },
     },
