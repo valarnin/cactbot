@@ -1,6 +1,6 @@
 import conditions from '../../../../../resources/conditions';
 import { UnreachableCode } from '../../../../../resources/not_reached';
-import Outputs from '../../../../../resources/outputs';
+import outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
 import { Directions } from '../../../../../resources/util';
 import ZoneId from '../../../../../resources/zone_id';
@@ -10,8 +10,6 @@ import { TriggerSet } from '../../../../../types/trigger';
 // TODO:
 // Bloom 3 - Seems like strats for positioning could vary here, so only calling out roses vs towers for now
 // Maybe more with Escelon 2?
-// Bloom 4
-// Escelon 3
 // Bloom 5
 // Bloom 6
 
@@ -228,6 +226,7 @@ const defaultTileState = () => ({
 } as const);
 
 export interface Data extends RaidbossData {
+  bloom4RoseDirNorth: boolean;
   escelonFallBaits: ('near' | 'far')[];
   phase: Phase;
   tileState: {
@@ -244,6 +243,7 @@ const triggerSet: TriggerSet<Data> = {
     escelonFallBaits: [],
     phase: 'phase1',
     tileState: { ...defaultTileState() },
+    bloom4RoseDirNorth: false,
   }),
   triggers: [
     {
@@ -393,7 +393,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'ZeleniaEx Shock P1 Tower',
       type: 'HeadMarker',
-      netRegex: { id: headMarkerData.shockSpread, capture: true },
+      netRegex: { id: headMarkerData.shockDonut, capture: true },
       condition: (data, matches) =>
         conditions.targetIsYou()(data, matches) && data.phase === 'phase1',
       infoText: (_data, _matches, output) => output.tower!(),
@@ -447,8 +447,8 @@ const triggerSet: TriggerSet<Data> = {
         return output.east!();
       },
       outputStrings: {
-        west: Outputs.west,
-        east: Outputs.east,
+        west: outputs.west,
+        east: outputs.east,
       },
     },
     {
@@ -458,8 +458,8 @@ const triggerSet: TriggerSet<Data> = {
       response: (data, _matches, output) => {
         // cactbot-builtin-response
         output.responseOutputStrings = {
-          tetherBuster: Outputs.tetherBusters,
-          busterAvoid: Outputs.avoidTetherBusters,
+          tetherBuster: outputs.tetherBusters,
+          busterAvoid: outputs.avoidTetherBusters,
         };
 
         if (data.role === 'tank')
@@ -566,8 +566,8 @@ const triggerSet: TriggerSet<Data> = {
         }),
       outputStrings: {
         ...Directions.outputStrings16Dir,
-        clockwise: Outputs.clockwise,
-        counterclockwise: Outputs.counterclockwise,
+        clockwise: outputs.clockwise,
+        counterclockwise: outputs.counterclockwise,
         text: {
           en: 'Start ${dir}, rotate ${rotate}',
         },
@@ -629,6 +629,82 @@ const triggerSet: TriggerSet<Data> = {
         },
         spread: {
           en: 'Spread Marker on YOU',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 4 Find Roses Dir',
+      type: 'MapEffect',
+      netRegex: {
+        location: tileSlots,
+        flags: [bloomTileFlags.red, bloomTileFlags.grey, bloomTileFlags.greyToRed],
+        capture: false,
+      },
+      condition: (data) => data.phase === 'bloom4',
+      delaySeconds: 0.5,
+      suppressSeconds: 100,
+      infoText: (data, _matches, output) => {
+        const rosesNorth = data.tileState.bloomTileOuterSSE === 'red' ||
+          data.tileState.bloomTileOuterSSW === 'red';
+        data.bloom4RoseDirNorth = rosesNorth;
+
+        if (rosesNorth)
+          return output.north!();
+
+        return output.south!();
+      },
+      outputStrings: {
+        north: {
+          en: 'Roses north, spreads south',
+        },
+        south: {
+          en: 'Roses south, spreads north',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 4 Rose Headmarker',
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.roseFlower, capture: true },
+      condition: (data) => data.phase === 'bloom4',
+      suppressSeconds: 10,
+      infoText: (data, matches, output) => {
+        const targetIsDPS = data.party.isDPS(matches.target);
+        const youAreDPS = data.party.isDPS(data.me);
+        const youAreRose = targetIsDPS === youAreDPS;
+
+        let north = data.bloom4RoseDirNorth;
+
+        if (!youAreRose)
+          north = !north;
+
+        const northSouth = north ? output.north!() : output.south!();
+
+        if (youAreRose)
+          return output.rose!({ northSouth: northSouth });
+
+        return output.spread!({ northSouth: northSouth });
+      },
+      outputStrings: {
+        unknown: outputs.unknown,
+        north: outputs.north,
+        south: outputs.south,
+        rose: {
+          en: 'Rose Marker on YOU, spread ${northSouth}',
+        },
+        spread: {
+          en: 'Spread Marker on YOU, spread ${northSouth}',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 4 Thorns',
+      type: 'StartsUsing',
+      netRegex: { id: 'A8C3', capture: false },
+      infoText: (_data, _matches, output) => output.thorns!(),
+      outputStrings: {
+        thorns: {
+          en: 'Stack for thorns => break tethers => stack in red tiles',
         },
       },
     },
