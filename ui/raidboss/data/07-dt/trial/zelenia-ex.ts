@@ -11,21 +11,18 @@ import { TriggerSet } from '../../../../../types/trigger';
 // Bloom 3 - Seems like strats for positioning could vary here, so only calling out roses vs towers for now
 // Maybe more with Escelon 2?
 
-type Phase =
-  | 'phase1'
-  | 'escelon1'
-  | 'adds'
-  | 'phase2'
-  | 'bloom1'
-  | 'bloom2'
-  | 'bloom3'
-  | 'escelon2'
-  | 'bloom4'
-  | 'escelon3'
-  | 'bloom5'
-  | 'bloom6'
-  | 'bloom1Repeat'
-  | 'softEnrage';
+const phases = {
+  A8B5: 'adds', // Blessed Barricade
+  A8CD: 'phase2', // Perfumed Quietus
+  A8B9: 'bloom1', // Roseblood Bloom
+  AA14: 'bloom2', // Roseblood: 2nd Bloom
+  AA15: 'bloom3', // Roseblood: 3rd Bloom
+  AA16: 'bloom4', // Roseblood: 4th Bloom
+  AA17: 'bloom5', // Roseblood: 5th Bloom
+  AA18: 'bloom6', // Roseblood: 6th Bloom
+} as const;
+
+type Phase = (typeof phases)[keyof typeof phases] | 'phase1' | 'unknown';
 
 const bloomTileFlags = {
   red: '01000040',
@@ -275,62 +272,9 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'ZeleniaEx Phase Tracker',
       type: 'StartsUsing',
-      netRegex: {
-        id: [
-          'A8AD',
-          'A8B5',
-          'A8CD',
-          'A8B9',
-          'AA14',
-          'AA15',
-          'A8C1',
-          'AA16',
-          'A8E8',
-          'AA17',
-          'AA18',
-        ],
-        capture: true,
-      },
+      netRegex: { id: Object.keys(phases), capture: true },
       suppressSeconds: 5,
-      run: (data, matches) => {
-        switch (matches.id) {
-          case 'A8AD': // Escelons' Fall (happens 3 times, only check first for phase1)
-            if (data.phase === 'phase1')
-              data.phase = 'escelon1';
-            break;
-          case 'A8B5': // Blessed Barricade
-            data.phase = 'adds';
-            break;
-          case 'A8CD': // Perfumed Quietus
-            data.phase = 'phase2';
-            break;
-          case 'A8B9': // Roseblood Bloom (happens twice, check for bloom 6)
-            data.phase = 'bloom1';
-            break;
-          case 'AA14': // Roseblood: 2nd Bloom
-            data.phase = 'bloom2';
-            break;
-          case 'AA15': // Roseblood: 3rd Bloom
-            data.phase = 'bloom3';
-            break;
-          case 'A8C1': // Explosion (happens 2 times, bloom 3 => escelon 2, bloom 6 ignore)
-            if (data.phase === 'bloom3')
-              data.phase = 'escelon2';
-            break;
-          case 'AA16': // Roseblood: 4th Bloom
-            data.phase = 'bloom4';
-            break;
-          case 'A8E8': // Alexandrian Banish III
-            data.phase = 'escelon3';
-            break;
-          case 'AA17': // Roseblood: 5th Bloom
-            data.phase = 'bloom5';
-            break;
-          case 'AA18': // Roseblood: 6th Bloom
-            data.phase = 'bloom6';
-            break;
-        }
-      },
+      run: (data, matches) => data.phase = phases[matches.id as keyof typeof phases] ?? 'unknown',
     },
     {
       id: 'ZeleniaEx Escelon Bait Collect',
