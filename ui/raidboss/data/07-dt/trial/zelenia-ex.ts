@@ -1,6 +1,6 @@
-import conditions from '../../../../../resources/conditions';
+import Conditions from '../../../../../resources/conditions';
 import { UnreachableCode } from '../../../../../resources/not_reached';
-import outputs from '../../../../../resources/outputs';
+import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
 import { Directions } from '../../../../../resources/util';
 import ZoneId from '../../../../../resources/zone_id';
@@ -342,7 +342,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.shockDonut, capture: true },
       condition: (data, matches) =>
-        conditions.targetIsYou()(data, matches) && data.phase === 'phase1',
+        Conditions.targetIsYou()(data, matches) && data.phase === 'phase1',
       infoText: (_data, _matches, output) => output.tower!(),
       outputStrings: {
         tower: {
@@ -354,14 +354,14 @@ const triggerSet: TriggerSet<Data> = {
       id: 'ZeleniaEx Shock Spread',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.shockSpread, capture: true },
-      condition: conditions.targetIsYou(),
+      condition: Conditions.targetIsYou(),
       response: Responses.spread(),
     },
     {
       id: 'ZeleniaEx Shock Spread Move Reminder',
       type: 'HeadMarker',
       netRegex: { id: headMarkerData.shockSpread, capture: true },
-      condition: conditions.targetIsYou(),
+      condition: Conditions.targetIsYou(),
       delaySeconds: 7,
       response: Responses.moveAway(),
     },
@@ -394,8 +394,8 @@ const triggerSet: TriggerSet<Data> = {
         return output.east!();
       },
       outputStrings: {
-        west: outputs.west,
-        east: outputs.east,
+        west: Outputs.west,
+        east: Outputs.east,
       },
     },
     {
@@ -405,8 +405,8 @@ const triggerSet: TriggerSet<Data> = {
       response: (data, _matches, output) => {
         // cactbot-builtin-response
         output.responseOutputStrings = {
-          tetherBuster: outputs.tetherBusters,
-          busterAvoid: outputs.avoidTetherBusters,
+          tetherBuster: Outputs.tetherBusters,
+          busterAvoid: Outputs.avoidTetherBusters,
         };
 
         if (data.role === 'tank')
@@ -445,7 +445,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'ZeleniaEx Spearpoint Push',
       type: 'StartsUsing',
       netRegex: { id: ['A8B3', 'A8B4'], source: 'Zelenia\'s Shade', capture: true },
-      condition: conditions.targetIsYou(),
+      condition: Conditions.targetIsYou(),
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -513,8 +513,8 @@ const triggerSet: TriggerSet<Data> = {
         }),
       outputStrings: {
         ...Directions.outputStrings16Dir,
-        clockwise: outputs.clockwise,
-        counterclockwise: outputs.counterclockwise,
+        clockwise: Outputs.clockwise,
+        counterclockwise: Outputs.counterclockwise,
         text: {
           en: 'Start ${dir}, rotate ${rotate}',
         },
@@ -633,9 +633,9 @@ const triggerSet: TriggerSet<Data> = {
         return output.spread!({ northSouth: northSouth });
       },
       outputStrings: {
-        unknown: outputs.unknown,
-        north: outputs.north,
-        south: outputs.south,
+        unknown: Outputs.unknown,
+        north: Outputs.north,
+        south: Outputs.south,
         rose: {
           en: 'Rose Marker on YOU, spread ${northSouth}',
         },
@@ -730,8 +730,8 @@ const triggerSet: TriggerSet<Data> = {
       },
       outputStrings: {
         ...Directions.outputStrings8Dir,
-        in: outputs.in,
-        out: outputs.out,
+        in: Outputs.in,
+        out: Outputs.out,
         text: {
           en: '${inOutFirst} ${dirFirst} Clockwise => ${inOutSecond} ${dirSecond}',
         },
@@ -785,8 +785,8 @@ const triggerSet: TriggerSet<Data> = {
       },
       outputStrings: {
         ...Directions.outputStrings8Dir,
-        in: outputs.in,
-        out: outputs.out,
+        in: Outputs.in,
+        out: Outputs.out,
         rose: {
           en: 'Place rose ${inOut} => dodge cleaves',
         },
