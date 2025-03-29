@@ -10,7 +10,6 @@ import { TriggerSet } from '../../../../../types/trigger';
 // TODO:
 // Bloom 3 - Seems like strats for positioning could vary here, so only calling out roses vs towers for now
 // Maybe more with Escelon 2?
-// Bloom 5
 // Bloom 6
 
 type Phase =
@@ -226,13 +225,15 @@ const defaultTileState = () => ({
 } as const);
 
 export interface Data extends RaidbossData {
-  bloom4RoseDirNorth: boolean;
-  escelonFallBaits: ('near' | 'far')[];
   phase: Phase;
   tileState: {
     [loc in MapEffectTile]: 'unknown' | 'red' | 'grey';
   };
+  escelonFallBaits: ('near' | 'far')[];
   bloom1StartDir?: number;
+  bloom4RoseDirNorth: boolean;
+  bloom5FirstDirSafe: 'dirNE' | 'dirNW' | 'dirSE' | 'dirSW' | 'unknown';
+  bloom5SecondDirSafe: 'dirNE' | 'dirNW' | 'dirSE' | 'dirSW' | 'unknown';
 }
 
 const triggerSet: TriggerSet<Data> = {
@@ -244,6 +245,8 @@ const triggerSet: TriggerSet<Data> = {
     phase: 'phase1',
     tileState: { ...defaultTileState() },
     bloom4RoseDirNorth: false,
+    bloom5FirstDirSafe: 'unknown',
+    bloom5SecondDirSafe: 'unknown',
   }),
   triggers: [
     {
@@ -705,6 +708,75 @@ const triggerSet: TriggerSet<Data> = {
       outputStrings: {
         thorns: {
           en: 'Stack for thorns => break tethers => stack in red tiles',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 5 Chakram Collector',
+      type: 'StartsUsing',
+      netRegex: { id: 'A8C3', capture: true },
+      infoText: (data, matches, output) => {
+        const neSwSafe = data.tileState.bloomTileOuterNNE === 'grey';
+        const cleaveDir = Directions.hdgTo4DirNum(parseFloat(matches.heading));
+        const x = parseFloat(matches.x);
+        const y = parseFloat(matches.y);
+        const isNorth = y < 100;
+        const isWest = x < 100;
+
+        // Consider east safe to start, reverse if needed
+        const safeDirs: ('dirNE' | 'dirSE' | 'dirSW' | 'dirNW')[] = neSwSafe
+          ? ['dirNE', 'dirSW']
+          : ['dirSE', 'dirNW'];
+
+        let firstCleave: ('dirNE' | 'dirSE' | 'dirSW' | 'dirNW')[] = ['dirNE', 'dirSE'];
+
+        if ([1, 3].includes(cleaveDir)) {
+          if (isNorth) {
+            firstCleave = ['dirNE', 'dirNW'];
+          } else {
+            firstCleave = ['dirSE', 'dirSW'];
+          }
+        } else if (isWest) {
+          firstCleave = ['dirNW', 'dirSW'];
+        }
+
+        data.bloom5FirstDirSafe = safeDirs.find((dir) => !firstCleave.includes(dir)) ?? 'unknown';
+        data.bloom5SecondDirSafe = safeDirs.find((dir) => firstCleave.includes(dir)) ?? 'unknown';
+
+        return output.start!({
+          startDir: output[data.bloom5FirstDirSafe]!(),
+        });
+      },
+      outputStrings: {
+        ...Directions.outputStrings8Dir,
+        start: {
+          en: 'Start ${startDir}',
+        },
+      },
+    },
+    {
+      id: 'ZeleniaEx Bloom 5 Movement',
+      type: 'StartsUsing',
+      netRegex: { id: ['A9BA', 'A9BB'], capture: true },
+      condition: (data) => data.phase === 'bloom5',
+      durationSeconds: 11.4,
+      suppressSeconds: 30,
+      infoText: (data, matches, output) => {
+        const inSafeFirst = matches.id === 'A9BB';
+
+        return output.text!({
+          inOutFirst: inSafeFirst ? output.in!() : output.out!(),
+          inOutSecond: inSafeFirst ? output.out!() : output.in!(),
+          dirFirst: output[data.bloom5FirstDirSafe]!(),
+          dirSecond: output[data.bloom5SecondDirSafe]!(),
+        });
+      },
+      outputStrings: {
+        ...Directions.outputStrings8Dir,
+        in: outputs.in,
+        out: outputs.out,
+        text: {
+          en: '${inOutFirst} ${dirFirst} Clockwise => ${inOutSecond} ${dirSecond}',
         },
       },
     },
