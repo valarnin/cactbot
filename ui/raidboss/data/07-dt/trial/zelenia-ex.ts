@@ -443,8 +443,8 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       id: 'ZeleniaEx Spearpoint Push',
-      type: 'StartsUsing',
-      netRegex: { id: ['A8B3', 'A8B4'], source: 'Zelenia\'s Shade', capture: true },
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.addsTether, capture: true },
       condition: Conditions.targetIsYou(),
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
@@ -568,14 +568,14 @@ const triggerSet: TriggerSet<Data> = {
         if (targetIsDPS === youAreDPS)
           return output.rose!();
 
-        return output.spread!();
+        return output.tower!();
       },
       outputStrings: {
         rose: {
           en: 'Rose Marker on YOU',
         },
-        spread: {
-          en: 'Spread Marker on YOU',
+        tower: {
+          en: 'Soak Tower',
         },
       },
     },
