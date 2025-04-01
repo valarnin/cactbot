@@ -76,8 +76,7 @@ hideall "--sync--"
 315.8 "Disco Infernal" Ability { id: "A6F9", source: "Dancing Green" }
 320.9 "Frogtourage" Ability { id: "A704", source: "Dancing Green" }
 335.2 "4-snap Twist" Ability { id: ["A6DC", "A6DE", "A6E1"], source: "Dancing Green" }
-335.4 "Moonburn" Ability { id: "A720", source: "Dancing Green" }
-335.4 "Moonburn" Ability { id: "A71F", source: "Dancing Green" }
+335.4 "Moonburn" Ability { id: ["A71F", "A720"], source: "Dancing Green" }
 336.3 "4-snap Twist" Ability { id: "A6E2", source: "Dancing Green" }
 336.7 "4-snap Twist" Ability { id: "A6E3", source: "Dancing Green" }
 337.1 "4-snap Twist" Ability { id: "A6E4", source: "Dancing Green" }
@@ -85,8 +84,7 @@ hideall "--sync--"
 348.5 "2-snap Twist" Ability { id: ["A4D5", "A6CC", "A6CD", "A6D0"], source: "Dancing Green" } window 5,5
 350.1 "2-snap Twist" Ability { id: "A6D1", source: "Dancing Green" }
 352.1 "2-snap Twist (opposite)" Ability { id: "A6D2", source: "Dancing Green" }
-359.1 "Moonburn" Ability { id: "A71F", source: "Dancing Green" }
-359.1 "Moonburn" Ability { id: "A720", source: "Dancing Green" }
+359.1 "Moonburn" Ability { id: ["A71F", "A720"], source: "Dancing Green" }
 368.8 "2-snap Twist" Ability { id: ["A4D5", "A6CC", "A6CD", "A6D0"], source: "Dancing Green" }
 370.4 "2-snap Twist" Ability { id: "A6D1", source: "Dancing Green" }
 372.4 "2-snap Twist (opposite)" Ability { id: "A6D2", source: "Dancing Green" }
@@ -116,8 +114,7 @@ hideall "--sync--"
 504.0 "Disco Infernal" Ability { id: "A6F9", source: "Dancing Green" }
 509.1 "Frogtourage" Ability { id: "A704", source: "Dancing Green" }
 523.3 "4-snap Twist" Ability { id: ["A6DC", "A6DE", "A6E1"], source: "Dancing Green" }
-523.7 "Moonburn" Ability { id: "A720", source: "Dancing Green" }
-523.7 "Moonburn" Ability { id: "A71F", source: "Dancing Green" }
+523.7 "Moonburn" Ability { id: ["A71F", "A720"], source: "Dancing Green" }
 524.4 "4-snap Twist" Ability { id: "A6E2", source: "Dancing Green" }
 524.8 "4-snap Twist" Ability { id: "A6E3", source: "Dancing Green" }
 525.2 "4-snap Twist" Ability { id: "A6E4", source: "Dancing Green" }
@@ -125,8 +122,7 @@ hideall "--sync--"
 536.6 "2-snap Twist" Ability { id: ["A4D5", "A6CC", "A6CD", "A6D0"], source: "Dancing Green" }
 538.2 "2-snap Twist" Ability { id: "A6D1", source: "Dancing Green" }
 540.2 "2-snap Twist (opposite)" Ability { id: "A6D2", source: "Dancing Green" }
-547.2 "Moonburn" Ability { id: "A71F", source: "Dancing Green" }
-547.2 "Moonburn" Ability { id: "A720", source: "Dancing Green" }
+547.2 "Moonburn" Ability { id: ["A71F", "A720"], source: "Dancing Green" }
 554.8 "Funky Floor" Ability { id: "A6F6", source: "Dancing Green" }
 558.8 "Funky Floor" Ability { id: "A6F6", source: "Dancing Green" }
 561.8 "--middle--" Ability { id: "A6C5", source: "Dancing Green" }
