@@ -284,7 +284,6 @@ const headMarkerData = {
   // Lightning spread marker
   'lightningSpread': '024D',
 } as const;
-console.assert(headMarkerData);
 
 const triggerSet: TriggerSet<Data> = {
   id: 'AacCruiserweightM2',
@@ -299,15 +298,15 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       id: 'R6N Pudding Party',
-      type: 'StartsUsing',
-      netRegex: { id: 'A66D', source: 'Sugar Riot', capture: true },
+      type: 'HeadMarker',
+      netRegex: { id: headMarkerData.stack, capture: true },
       response: Responses.stackMarkerOn(),
     },
     {
       id: 'R6N Color Riot',
       type: 'StartsUsing',
       netRegex: { id: 'A670', source: 'Sugar Riot', capture: true },
-      response: Responses.tankBuster(),
+      response: Responses.tankCleave(),
     },
     {
       id: 'R6N Mousse Touch-up',
