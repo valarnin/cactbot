@@ -246,14 +246,12 @@ const extractRawLinesFromLog = async (
   end = typeof end === 'string' ? end : TLFuncs.timeFromDate(end);
   let started = false;
   for await (const line of file) {
-    // This will fail on lines with 3-digit identifiers,
-    // but that's okay because those will never be start lines.
-    const lineTimeStamp = line.slice(14, 26);
-    if (start === lineTimeStamp && !started)
-      started = start === lineTimeStamp;
+    const lineTimestampSegment = line.split('|', 3)[1] ?? '';
+    if (!started && lineTimestampSegment.includes(start))
+      started = true;
     if (started)
       lines.push(line);
-    if (lineTimeStamp === end) {
+    if (lineTimestampSegment.includes(end)) {
       file.close();
       return lines;
     }
