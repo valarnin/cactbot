@@ -9,7 +9,13 @@ import { NetMatches } from '../../types/net_matches';
 
 import { LogUtilArgParse, TimelineArgs } from './arg_parser';
 import { printCollectedFights, printCollectedZones } from './encounter_printer';
-import { EncounterCollector, FightEncInfo, ignoredCombatants, TLFuncs } from './encounter_tools';
+import {
+  EncounterCollector,
+  FightEncInfo,
+  ignoredCombatants,
+  RsvData,
+  TLFuncs,
+} from './encounter_tools';
 import FFLogs from './fflogs';
 
 // TODO: Repeated abilities that need to be auto-commented may not get the comment marker
@@ -186,10 +192,11 @@ const parseNameToggleToEntry = (matches: NetMatches['NameToggle']): TimelineEntr
   return entry;
 };
 
-const parseAbilityToEntry = (matches: NetMatches['Ability']): TimelineEntry => {
+const parseAbilityToEntry = (matches: NetMatches['Ability'], rsvData: RsvData): TimelineEntry => {
   let abilityName = matches.ability;
   if (abilityName.toLowerCase().includes('unknown_'))
     abilityName = '--sync--';
+  abilityName = rsvData[abilityName] ?? abilityName;
   const entry: TimelineEntry = {
     time: matches.timestamp,
     combatant: matches.source,
@@ -237,7 +244,9 @@ const extractRawLinesFromLog = async (
   fileName: string,
   start: string | Date,
   end: string | Date,
-): Promise<string[]> => {
+): Promise<[string[], RsvData]> => {
+  const rsvData: RsvData = {};
+  const rsvNetRegex = NetRegexes.rsvData({ capture: true });
   const lines: string[] = [];
   const file = readline.createInterface({
     input: fs.createReadStream(fileName),
@@ -251,18 +260,23 @@ const extractRawLinesFromLog = async (
       started = true;
     if (started)
       lines.push(line);
+    const rsvMatches = rsvNetRegex.exec(line)?.groups;
+    if (rsvMatches !== undefined) {
+      rsvData[rsvMatches.key] = rsvMatches.value;
+    }
     if (lineTimestampSegment.includes(end)) {
       file.close();
-      return lines;
+      return [lines, rsvData];
     }
   }
   file.close();
-  return lines;
+  return [lines, rsvData];
 };
 
 const extractTLEntriesFromLog = (
   lines: string[],
   targetArray: string[] | null,
+  rsvData: RsvData,
 ): { 'entries': TimelineEntry[]; 'abilityTimes': { [abilityId: string]: number[] } } => {
   const entries: TimelineEntry[] = [];
   const abilityTimeMap: { [abilityId: string]: number[] } = {};
@@ -289,7 +303,7 @@ const extractTLEntriesFromLog = (
       // TODO: Handle this using the raid emulator's line parsing functionality.
       if (!ability.sourceId.startsWith('4'))
         continue;
-      const abilityEntry = parseAbilityToEntry(ability);
+      const abilityEntry = parseAbilityToEntry(ability, rsvData);
       entries.push(abilityEntry);
 
       // Store off exact times for each ability's usages for later sync commenting
@@ -627,6 +641,7 @@ const parseTimelineFromFile = async (
   args: ExtendedArgs,
   file: string,
   fight: FightEncInfo,
+  rsvData: RsvData,
 ) => {
   const startTime = fight.startTime;
   const endTime = fight.endTime;
@@ -642,7 +657,7 @@ const parseTimelineFromFile = async (
   if (fight.logLines !== undefined) {
     lines = fight.logLines;
   } else {
-    lines = await extractRawLinesFromLog(
+    [lines, rsvData] = await extractRawLinesFromLog(
       file,
       TLFuncs.timeFromDate(startTime),
       TLFuncs.timeFromDate(endTime),
@@ -651,6 +666,7 @@ const parseTimelineFromFile = async (
   const baseEntries = extractTLEntriesFromLog(
     lines,
     args?.include_targetable ?? null,
+    rsvData,
   );
   const assembled = assembleTimelineStrings(
     baseEntries.entries,
@@ -715,7 +731,7 @@ const makeTimeline = async () => {
         startTime: new Date(args.start),
         endTime: new Date(args.end),
       };
-      assembled = await parseTimelineFromFile(args, args.file, fight);
+      assembled = await parseTimelineFromFile(args, args.file, fight, {});
     }
 
     const store = typeof args.search_fights === 'number' && args.search_fights > 0;
@@ -737,7 +753,9 @@ const makeTimeline = async () => {
         process.exit(-2);
       }
       const fightHeader = assembleHeaderZoneInfoStrings(fight);
-      assembled = fightHeader.concat(await parseTimelineFromFile(args, args.file, fight));
+      assembled = fightHeader.concat(
+        await parseTimelineFromFile(args, args.file, fight, collector.rsvData),
+      );
     }
   }
   if (typeof args.output_file === 'string') {
