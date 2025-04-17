@@ -152,14 +152,14 @@ hideall "--sync--"
 # Frogtourage 2
 442.4 "--middle--" Ability { id: "A6C5", source: "Dancing Green" }
 447.5 "Frogtourage" Ability { id: "A75F", source: "Dancing Green" }
-454.6 "Do the Hustle" Ability { id: ["A775", "A776"], source: "Frogtourage" }
-458.7 "Do the Hustle" Ability { id: ["A775", "A776"], source: "Frogtourage" }
-462.7 "Do the Hustle" Ability { id: ["A724", "A725"], source: "Dancing Green" }
+454.6 "Do the Hustle (dancers)" Ability { id: ["A775", "A776"], source: "Frogtourage" }
+458.7 "Do the Hustle (dancers)" Ability { id: ["A775", "A776"], source: "Frogtourage" }
+462.7 "Do the Hustle (boss)" Ability { id: ["A724", "A725"], source: "Dancing Green" }
 479.3 "Moonburn"
 479.4 "Back-up Dance" Ability { id: "A778", source: "Dancing Green" }
 495.1 "Moonburn"
 495.2 "Back-up Dance" Ability { id: "A778", source: "Dancing Green" }
-504.5 "Do the Hustle" Ability { id: ["A724", "A725"], source: "Dancing Green" }
+504.5 "Do the Hustle (all)" Ability { id: ["A724", "A725"], source: "Dancing Green" }
 512.3 "Deep Cut" Ability { id: "A722", source: "Dancing Green" }
 
 # Disco Floor 2
