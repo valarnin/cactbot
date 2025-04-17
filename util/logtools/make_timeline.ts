@@ -599,6 +599,7 @@ const assembleHeaderArgStrings = (
   if (padHeaderArgs)
     assembled.push('');
   assembled.push('hideall "--Reset--"\nhideall "--sync--"\n');
+  assembled.push('0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0\n');
   return assembled;
 };
 
