@@ -273,6 +273,7 @@ hideall "--sync--"
 # 98B3 --sync--
 # 98B5 Fire
 # 9A32 Ensemble Assemble
+# 9A33 Minor Freak Out
 # 9A34 Minor Freak Out
 # 9A36 Minor Freak Out
 # 9BDD Let's Dance!
@@ -293,7 +294,12 @@ hideall "--sync--"
 # A393 Let's Dance! Remix
 # A394 Let's Dance! Remix
 # A395 Let's Dance! Remix
+# A4DB 2-snap Twist & Drop the Needle
 # A4DC 2-snap Twist & Drop the Needle
+# A4DD 3-snap Twist & Drop the Needle
+# A4DE 3-snap Twist & Drop the Needle
+# A4DF 4-snap Twist & Drop the Needle
+# A4E0 4-snap Twist & Drop the Needle
 # A4E1 Frogtourage Finale
 # A6C5 --sync--
 # A70A --sync--
@@ -309,13 +315,27 @@ hideall "--sync--"
 # A725 Do the Hustle
 # A728 2-snap Twist & Drop the Needle
 # A729 2-snap Twist & Drop the Needle
+# A72A 2-snap Twist & Drop the Needle
+# A72B 2-snap Twist & Drop the Needle
+# A72C 2-snap Twist & Drop the Needle
+# A72D 2-snap Twist & Drop the Needle
 # A72E 2-snap Twist & Drop the Needle
 # A72F 2-snap Twist & Drop the Needle
+# A730 3-snap Twist & Drop the Needle
+# A731 3-snap Twist & Drop the Needle
 # A732 3-snap Twist & Drop the Needle
+# A733 3-snap Twist & Drop the Needle
+# A734 3-snap Twist & Drop the Needle
+# A735 3-snap Twist & Drop the Needle
 # A736 3-snap Twist & Drop the Needle
 # A737 3-snap Twist & Drop the Needle
 # A738 3-snap Twist & Drop the Needle
+# A739 4-snap Twist & Drop the Needle
+# A73A 4-snap Twist & Drop the Needle
+# A73B 4-snap Twist & Drop the Needle
 # A73C 4-snap Twist & Drop the Needle
+# A73D 4-snap Twist & Drop the Needle
+# A73E 4-snap Twist & Drop the Needle
 # A73F 4-snap Twist & Drop the Needle
 # A740 4-snap Twist & Drop the Needle
 # A741 4-snap Twist & Drop the Needle
@@ -340,6 +360,7 @@ hideall "--sync--"
 # A766 Freak Out
 # A767 Freak Out
 # A768 Minor Freak Out
+# A769 Major Freak Out
 # A76A Let's Dance!
 # A76D Let's Dance!
 # A76E Let's Dance!
