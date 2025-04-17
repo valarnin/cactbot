@@ -471,6 +471,7 @@ const triggerSet: TriggerSet<Data> = {
   ],
   timelineReplace: [
     {
+      'missingTranslations': true,
       'locale': 'de',
       'replaceSync': {
         'Dancing Green': 'Springhis Khan',
@@ -479,6 +480,7 @@ const triggerSet: TriggerSet<Data> = {
       'replaceText': {},
     },
     {
+      'missingTranslations': true,
       'locale': 'fr',
       'replaceSync': {
         'Dancing Green': 'Dancing Green',
@@ -487,6 +489,7 @@ const triggerSet: TriggerSet<Data> = {
       'replaceText': {},
     },
     {
+      'missingTranslations': true,
       'locale': 'ja',
       'replaceSync': {
         'Dancing Green': 'ダンシング・グリーン',
@@ -509,13 +512,13 @@ const triggerSet: TriggerSet<Data> = {
         'Ensemble Assemble': 'ダンサーズ・アッセンブル',
         'Arcady Night Fever': 'アルカディア・ナイトフィーバー',
         'Get Down!': 'ゲットダウン！',
-        'Let\'s Dance': 'レッツダンス！',
+        'Let\'s Dance(?!!)': 'レッツダンス！',
         'Freak Out': '静音爆発',
         'Let\'s Pose': 'レッツポーズ！',
         'Ride the Waves': 'ウェーブ・オン・ウェーブ',
         'Quarter Beats': '4ビート',
         'Eighth Beats': '8ビート',
-        'Frogtourage': 'カモン！ フロッグダンサー',
+        'Frogtourage(?! )': 'カモン！ フロッグダンサー',
         'Moonburn': 'ムーンバーン',
         'Back-up Dance': 'ダンシングウェーブ',
         'Arcady Night Encore Starts': 'ナイトフィーバー・アンコール',
