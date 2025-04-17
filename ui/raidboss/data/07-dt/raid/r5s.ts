@@ -599,6 +599,15 @@ const triggerSet: TriggerSet<Data> = {
   ],
   timelineReplace: [
     {
+      locale: 'en',
+      replaceText: {
+        'Flip to A-side/Flip to B-side': 'Flip to A/B-side',
+        'Play A-side/Play B-side': 'Play A/B-side',
+        '2-snap Twist Drop the Needle/3-snap Twist Drop the Needle/4-snap Twist & Drop the Needle':
+          '2/3/4-snap Twist',
+      },
+    },
+    {
       'missingTranslations': true,
       'locale': 'de',
       'replaceSync': {
