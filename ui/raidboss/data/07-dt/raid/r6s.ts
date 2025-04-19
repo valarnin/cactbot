@@ -1,4 +1,5 @@
 import Conditions from '../../../../../resources/conditions';
+import { UnreachableCode } from '../../../../../resources/not_reached';
 import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
 import {
@@ -18,7 +19,6 @@ import { TriggerSet } from '../../../../../types/trigger';
 // - Live Painting - add wave # spawn call?
 // - Ore-rigato - Mu enrage
 // - Hangry Hiss - Gimme Cat enrage
-// - thunderstorm movement for rotate cw/ccw call?
 // - Mousse Drip - ranged baits into 4x pair stacks/puddle drops
 // - Moussacre - melee bait proteans
 // - tower soaks
@@ -28,6 +28,11 @@ export interface Data extends RaidbossData {
   lastDoubleStyle?: DoubleStyleEntry;
   tetherTracker: { [id: string]: NetMatches['Tether'] };
   colorRiotTint?: 'warm' | 'cool';
+  cloudId?: string;
+  cloudPos?: 'dirNE' | 'dirNW' | 'dirS';
+  cloudLastAngle?: number;
+  cloudNewAngle?: number;
+  cloudExplosionCount: number;
 }
 
 type DoubleStyleActors = 'bomb' | 'wing' | 'succ' | 'marl';
@@ -109,6 +114,7 @@ const triggerSet: TriggerSet<Data> = {
   initData: () => ({
     actorSetPosTracker: {},
     tetherTracker: {},
+    cloudExplosionCount: 0,
   }),
   triggers: [
     {
@@ -517,6 +523,138 @@ const triggerSet: TriggerSet<Data> = {
         cactus: {
           en: 'Danger Cactus ${dir}',
         },
+      },
+    },
+    {
+      id: 'R6S Tempest Piece Spawn Collector',
+      type: 'AddedCombatant',
+      netRegex: { npcNameId: '13827', capture: true },
+      condition: (data) => data.cloudId === undefined,
+      preRun: (data, matches) => {
+        data.cloudId = matches.id;
+        const cloudDir =
+          Directions.output8Dir[Directions.addedCombatantPosTo8Dir(matches, 100, 100)];
+        switch (cloudDir) {
+          case 'dirNE':
+          case 'dirNW':
+          case 'dirS':
+            data.cloudPos = cloudDir;
+            break;
+          default:
+            console.log(
+              `R6S Tempest Piece Spawn Collector - Invalid cloud spawn direction ${cloudDir}`,
+            );
+            return;
+        }
+        const cloudX = parseFloat(matches.x);
+        const cloudY = parseFloat(matches.y);
+        data.cloudLastAngle = Math.atan2(cloudX - 100, cloudY - 100);
+        // For the initial spawn, the actor moves in place which causes a false positive firing
+        // of the detection trigger. Avoid it by setting new angle to last angle
+        data.cloudNewAngle = data.cloudLastAngle;
+      },
+      infoText: (data, _matches, output) =>
+        output.spawn!({ dir: output[data.cloudPos ?? 'unknown']!() }),
+      outputStrings: {
+        ...Directions.outputStrings8Dir,
+        spawn: {
+          en: 'Cloud spawning ${dir}',
+        },
+      },
+    },
+    {
+      id: 'R6S Tempest Piece Rotation Detector',
+      type: 'ActorMove',
+      netRegex: { capture: true },
+      condition: (data, matches) => {
+        if (matches.id !== data.cloudId)
+          return false;
+        return data.cloudId !== undefined && data.cloudLastAngle !== undefined &&
+          data.cloudNewAngle === undefined && data.cloudExplosionCount < 5;
+      },
+      preRun: (data, matches) => {
+        const cloudX = parseFloat(matches.x);
+        const cloudY = parseFloat(matches.y);
+        data.cloudNewAngle = Math.atan2(cloudX - 100, cloudY - 100);
+      },
+      infoText: (data, _matches, output) => {
+        const lastAngle = data.cloudLastAngle;
+        const newAngle = data.cloudNewAngle;
+        if (lastAngle === undefined || newAngle === undefined)
+          throw new UnreachableCode();
+        const cwRotation = (Math.PI + newAngle) < (Math.PI + lastAngle);
+        if (data.cloudPos === 'dirNE') {
+          data.cloudPos = cwRotation ? 'dirS' : 'dirNW';
+        } else if (data.cloudPos === 'dirNW') {
+          data.cloudPos = cwRotation ? 'dirNE' : 'dirS';
+        } else {
+          data.cloudPos = cwRotation ? 'dirNW' : 'dirNE';
+        }
+        return output.text!({
+          rot: output[cwRotation ? 'cw' : 'ccw']!(),
+          dir: output[data.cloudPos ?? 'unknown']!(),
+        });
+      },
+      outputStrings: {
+        ...Directions.outputStrings8Dir,
+        cw: Outputs.clockwise,
+        ccw: Outputs.counterclockwise,
+        text: {
+          en: 'Cloud rotating ${rot} towards ${dir}',
+        },
+      },
+    },
+    {
+      id: 'R6S Tempest Piece Cleanup 1',
+      type: 'StartsUsing',
+      netRegex: { id: 'A69B', capture: true },
+      condition: (data) => {
+        return data.cloudId !== undefined && data.cloudLastAngle !== undefined &&
+          data.cloudNewAngle !== undefined;
+      },
+      run: (data, matches) => {
+        const cloudX = parseFloat(matches.x);
+        const cloudY = parseFloat(matches.y);
+        data.cloudLastAngle = Math.atan2(cloudX - 100, cloudY - 100);
+        delete data.cloudNewAngle;
+        data.cloudExplosionCount++;
+      },
+    },
+    {
+      id: 'R6S Tempest Piece DEBUG TRIGGER DELETE ME',
+      type: 'StartsUsing',
+      netRegex: { id: 'A69B', capture: true },
+      infoText: (_data, matches, output) => {
+        const cloudX = parseFloat(matches.x);
+        const cloudY = parseFloat(matches.y);
+        return output.text!({
+          dir: output[Directions.xyTo8DirOutput(cloudX, cloudY, 100, 100)]!(),
+        });
+      },
+      outputStrings: {
+        ...Directions.outputStrings8Dir,
+        text: {
+          en: 'Cloud exploding ${dir}',
+        },
+      },
+    },
+    {
+      id: 'R6S Tempest Piece Cleanup 2',
+      type: 'RemovedCombatant',
+      netRegex: { npcNameId: '13827', capture: true },
+      condition: (data, matches) => {
+        if (data.cloudId === undefined)
+          return false;
+        if (data.cloudId !== matches.id)
+          return false;
+
+        return true;
+      },
+      run: (data) => {
+        delete data.cloudId;
+        delete data.cloudPos;
+        delete data.cloudLastAngle;
+        delete data.cloudNewAngle;
       },
     },
   ],
