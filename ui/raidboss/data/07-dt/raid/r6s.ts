@@ -14,7 +14,7 @@ import { TriggerSet } from '../../../../../types/trigger';
 // TODOs:
 // - clean up timeline
 // - Crowd Brûlée - party stack (non-defamations)?
-// - safe corners for quicksand?
+// - safe corners for quicksand? (Latte / party fill strats?)
 // - Live Painting - add wave # spawn call?
 // - Ore-rigato - Mu enrage
 // - Hangry Hiss - Gimme Cat enrage
