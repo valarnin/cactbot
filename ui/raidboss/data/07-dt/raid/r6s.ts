@@ -21,7 +21,6 @@ import { TriggerSet } from '../../../../../types/trigger';
 // - Hangry Hiss - Gimme Cat enrage
 // - Mousse Drip - ranged baits into 4x pair stacks/puddle drops
 // - Moussacre - melee bait proteans
-// - tower soaks
 
 export interface Data extends RaidbossData {
   actorSetPosTracker: { [id: string]: NetMatches['ActorSetPos'] };
@@ -33,7 +32,44 @@ export interface Data extends RaidbossData {
   cloudLastAngle?: number;
   cloudNewAngle?: number;
   cloudExplosionCount: number;
+  firstTowersGone: boolean;
+  secondTowers: { [dir in DirectionOutput8]?: number };
 }
+
+// I lack the footage to confirm these, but they should be correct.
+// There are second set of 24 locations immediately before this which correspond to
+// the "meteor falling" animation
+const towerMapEffectMapping: { [loc: string]: DirectionOutput8 } = {
+  '49': 'dirNW',
+  '4A': 'dirNW',
+  '4B': 'dirNW',
+  '4C': 'dirNW',
+  '4D': 'dirNW',
+  '4E': 'dirNW',
+  '4F': 'dirNW',
+  '50': 'dirNW',
+  '51': 'dirNE',
+  '52': 'dirNE',
+  '53': 'dirNE',
+  '54': 'dirNE',
+  '55': 'dirNE',
+  '56': 'dirNE',
+  '57': 'dirNE',
+  '58': 'dirNE',
+  '59': 'dirS',
+  '5A': 'dirS',
+  '5B': 'dirS',
+  '5C': 'dirS',
+  '5D': 'dirS',
+  '5E': 'dirS',
+  '5F': 'dirS',
+  '60': 'dirS',
+};
+
+const towerFlags = {
+  show: '00020001',
+  hide: '00080004',
+} as const;
 
 type DoubleStyleActors = 'bomb' | 'wing' | 'succ' | 'marl';
 type DoubleStyleEntry = {
@@ -115,6 +151,8 @@ const triggerSet: TriggerSet<Data> = {
     actorSetPosTracker: {},
     tetherTracker: {},
     cloudExplosionCount: 0,
+    firstTowersGone: false,
+    secondTowers: {},
   }),
   triggers: [
     {
@@ -621,24 +659,6 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
-      id: 'R6S Tempest Piece DEBUG TRIGGER DELETE ME',
-      type: 'StartsUsing',
-      netRegex: { id: 'A69B', capture: true },
-      infoText: (_data, matches, output) => {
-        const cloudX = parseFloat(matches.x);
-        const cloudY = parseFloat(matches.y);
-        return output.text!({
-          dir: output[Directions.xyTo8DirOutput(cloudX, cloudY, 100, 100)]!(),
-        });
-      },
-      outputStrings: {
-        ...Directions.outputStrings8Dir,
-        text: {
-          en: 'Cloud exploding ${dir}',
-        },
-      },
-    },
-    {
       id: 'R6S Tempest Piece Cleanup 2',
       type: 'RemovedCombatant',
       netRegex: { npcNameId: '13827', capture: true },
@@ -655,6 +675,72 @@ const triggerSet: TriggerSet<Data> = {
         delete data.cloudPos;
         delete data.cloudLastAngle;
         delete data.cloudNewAngle;
+      },
+    },
+    {
+      id: 'R6S First Towers Detector',
+      type: 'MapEffect',
+      netRegex: {
+        location: Object.keys(towerMapEffectMapping),
+        flags: towerFlags.hide,
+        capture: false,
+      },
+      condition: (data) => data.firstTowersGone === false,
+      run: (data) => data.firstTowersGone = true,
+    },
+    {
+      id: 'R6S Second Towers Collector',
+      type: 'MapEffect',
+      netRegex: {
+        location: Object.keys(towerMapEffectMapping),
+        flags: towerFlags.show,
+        capture: true,
+      },
+      condition: (data) => data.firstTowersGone === true,
+      preRun: (data, matches) => {
+        const dir = towerMapEffectMapping[matches.location];
+        if (dir === undefined) {
+          console.log(
+            `R6S Second Towers Collector - Invalid location somehow, ${matches.location}`,
+          );
+          return;
+        }
+        if (dir !== 'dirNW' && dir !== 'dirNE' && dir !== 'dirS') {
+          console.log(
+            `R6S Second Towers Collector - Invalid location mapping somehow, ${matches.location}`,
+          );
+          return;
+        }
+        data.secondTowers[dir] = (data.secondTowers[dir] ?? 0) + 1;
+      },
+      infoText: (data, _matches, output) => {
+        const nwCount = data.secondTowers.dirNW ?? 0;
+        const neCount = data.secondTowers.dirNE ?? 0;
+        const sCount = data.secondTowers.dirS ?? 0;
+        if (nwCount + neCount + sCount < 8)
+          return;
+
+        if (sCount === 8)
+          return output.eightSouth!();
+        if (nwCount === 4)
+          return output.fourNW!();
+        if (neCount === 4)
+          return output.fourNE!();
+        return output.unknown!();
+      },
+      outputStrings: {
+        unknown: Outputs.unknown,
+        // These outputStrings values are written this way to allow users to replace them
+        // with "all south", "clockwise", "counterclockwise" to match the common strat
+        eightSouth: {
+          en: '8 Towers S',
+        },
+        fourNW: {
+          en: '4 Towers NW',
+        },
+        fourNE: {
+          en: '4 Towers NE',
+        },
       },
     },
   ],
