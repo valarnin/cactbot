@@ -515,7 +515,7 @@ const triggerSet: TriggerSet<Data> = {
         unknown: Outputs.unknown,
         ...Directions.outputStrings8Dir,
         cactus: {
-          en: 'Cactus ${dir}',
+          en: 'Danger Cactus ${dir}',
         },
       },
     },
