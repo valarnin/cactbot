@@ -96,7 +96,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'NecronEx Fear of Death Damage',
       type: 'StartsUsing',
-      netRegex: { id: 'AE06' },
+      netRegex: { id: 'AE06', capture: false },
       response: Responses.aoe(),
     },
     {
