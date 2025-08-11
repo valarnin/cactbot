@@ -11,7 +11,6 @@ import { TriggerSet } from '../../../../../types/trigger';
 // TODO:
 // Party adds phase stuff?
 // Individual adds phase mechs for non-healer?
-// P2 stuff
 
 export type ReapingSafeDir = 'out' | 'in' | 'mid' | 'sides';
 const reapingHeadmarkerMap: { [id: string]: ReapingSafeDir } = {
