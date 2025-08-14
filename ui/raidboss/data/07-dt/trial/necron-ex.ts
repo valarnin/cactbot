@@ -515,11 +515,20 @@ const triggerSet: TriggerSet<Data> = {
 
         // First 5 are part of the first set of mechs
         if (data.circleOfLivesCounter <= 5) {
-          if (data.circleOfLivesCounter !== 3)
-            return output[safe]!();
-          return output.delay!({
-            dir: output[safe]!(),
-          });
+          const handRow = data.loomingSpecterLocs[0];
+          const circleRow: LoomingSpecterDir = safe === 'middle'
+            ? 'middle'
+            : (pos.y < 99 ? 'north' : 'south');
+          // If this is the 2nd circle, and the hand is in line with the circle, warn to move quickly after the hit
+          if (data.circleOfLivesCounter === 2 && handRow === circleRow)
+            return output.dodge!({ dir: safe });
+
+          // If this is the 3rd circle, and the hand is in line with the circle, warn to wait for hand first
+          if (data.circleOfLivesCounter === 3 && handRow === circleRow)
+            return output.delay!({ dir: output[safe]!() });
+
+          // Otherwise, indicate safe spot
+          return output[safe]!();
         }
 
         // 6 and 8 are part of the second set, no hands going off during these
@@ -563,6 +572,9 @@ const triggerSet: TriggerSet<Data> = {
         lean: {
           en: '${dir}, lean ${to}',
         },
+        dodge: {
+          en: '${dir} => Dodge Hand',
+        },
       },
     },
     {
@@ -602,6 +614,15 @@ const triggerSet: TriggerSet<Data> = {
           en: 'Soak Next Tower',
         },
         tankBuster: Outputs.tankBuster,
+      },
+    },
+  ],
+  timelineReplace: [
+    {
+      'locale': 'en',
+      'replaceText': {
+        'Twofold Blight/Fourfold Blight': 'Twofold/Fourfold Blight',
+        'The Second Season/The Fourth Season': 'The Second/Fourth Season',
       },
     },
   ],
