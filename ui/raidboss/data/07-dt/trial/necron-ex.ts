@@ -521,7 +521,7 @@ const triggerSet: TriggerSet<Data> = {
             : (pos.y < 99 ? 'north' : 'south');
           // If this is the 2nd circle, and the hand is in line with the circle, warn to move quickly after the hit
           if (data.circleOfLivesCounter === 2 && handRow === circleRow)
-            return output.dodge!({ dir: safe });
+            return output.dodge!({ dir: output[safe]!() });
 
           // If this is the 3rd circle, and the hand is in line with the circle, warn to wait for hand first
           if (data.circleOfLivesCounter === 3 && handRow === circleRow)
