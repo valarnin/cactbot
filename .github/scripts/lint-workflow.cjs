@@ -12,6 +12,9 @@ const path = require('path');
 //   ...
 //     ...
 //
+// [permissions:]
+//   ...
+//
 // jobs:
 //   job1_name:
 //     ...
@@ -115,7 +118,9 @@ const parseFile = (file) => {
     if (loopState === 'on-block') {
       if (line.match(/^ {2}/)) // ignore any indented lines
         return;
-      else if (line === '') {
+      else if (line.match(/^permissions:/)) { // ignore the permissions segment
+        return;
+      } else if (line === '') {
         loopState = 'jobs';
         return;
       } else if (line.match(/^jobs:/)) {
