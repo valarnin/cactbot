@@ -12,9 +12,6 @@ const path = require('path');
 //   ...
 //     ...
 //
-// [permissions:]
-//   ...
-//
 // jobs:
 //   job1_name:
 //     ...
@@ -129,13 +126,6 @@ const parseFile = (file) => {
         fatalError = true;
         return;
       }
-    }
-
-    // @TODO: There's probably a better way to handle this.
-    if (line.match(/^permissions:/)) { // ignore the permissions segment
-      // Revert to "on-block" state
-      loopState = 'on-block';
-      return;
     }
 
     // Out of order, but needed here:
