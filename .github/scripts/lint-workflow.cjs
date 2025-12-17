@@ -118,9 +118,7 @@ const parseFile = (file) => {
     if (loopState === 'on-block') {
       if (line.match(/^ {2}/)) // ignore any indented lines
         return;
-      else if (line.match(/^permissions:/)) { // ignore the permissions segment
-        return;
-      } else if (line === '') {
+      else if (line === '') {
         loopState = 'jobs';
         return;
       } else if (line.match(/^jobs:/)) {
@@ -131,6 +129,13 @@ const parseFile = (file) => {
         fatalError = true;
         return;
       }
+    }
+
+    // @TODO: There's probably a better way to handle this.
+    if (line.match(/^permissions:/)) { // ignore the permissions segment
+      // Revert to "on-block" state
+      loopState = 'on-block';
+      return;
     }
 
     // Out of order, but needed here:
