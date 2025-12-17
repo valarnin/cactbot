@@ -7,6 +7,10 @@ on:
     paths:
       - 'package.json'
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   validate_tag:
     runs-on: ubuntu-latest
@@ -164,5 +168,3 @@ jobs:
 
       - run: npm publish
         working-directory: npm-package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
