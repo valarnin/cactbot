@@ -285,7 +285,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { moveType: ['0096', '00FA'] },
       condition: (data, matches) => matches.id === data.cleaveTrainId,
       run: (data, matches) => {
-        data.cleaveTrainSpeed = matches.unknown2 === '0096' ? 'slow' : 'fast';
+        data.cleaveTrainSpeed = matches.moveType === '0096' ? 'slow' : 'fast';
       },
     },
     {
