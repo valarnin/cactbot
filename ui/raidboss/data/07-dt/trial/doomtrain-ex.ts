@@ -55,10 +55,10 @@ export interface Data extends RaidbossData {
   hailMoveCount: number;
   hailRotationDir: 'CW' | 'CCW';
   phase: 'car1' | 'car2' | 'add' | 'car3' | 'car4' | 'car5' | 'car6';
-  cleaveTrainSpeed: 'slow' | 'fast';
+  addTrainSpeed: 'slow' | 'fast';
   addCleaveOnMe: boolean;
-  trainCleaveDir: number;
-  cleaveTrainId: string;
+  addCleaveDir: number;
+  addTrainId: string;
   storedKBMech?: 'pairs' | 'spread';
   turretDir: 'east' | 'west';
   car2MechCount: number;
@@ -72,10 +72,10 @@ const triggerSet: TriggerSet<Data> = {
   timelineFile: 'doomtrain-ex.txt',
   initData: () => ({
     actorPositions: {},
-    cleaveTrainId: '',
+    addTrainId: '',
     addCleaveOnMe: false,
-    trainCleaveDir: -1,
-    cleaveTrainSpeed: 'slow',
+    addCleaveDir: -1,
+    addTrainSpeed: 'slow',
     phase: 'car1',
     turretDir: 'east',
     car2MechCount: 0,
@@ -276,16 +276,16 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { moveType: ['0096', '00FA'] },
       suppressSeconds: 9999,
       run: (data, matches) => {
-        data.cleaveTrainId = matches.id;
+        data.addTrainId = matches.id;
       },
     },
     {
       id: 'DoomtrainEx Add Train Speed Collector',
       type: 'ActorMove',
       netRegex: { moveType: ['0096', '00FA'] },
-      condition: (data, matches) => matches.id === data.cleaveTrainId,
+      condition: (data, matches) => matches.id === data.addTrainId,
       run: (data, matches) => {
-        data.cleaveTrainSpeed = matches.moveType === '0096' ? 'slow' : 'fast';
+        data.addTrainSpeed = matches.moveType === '0096' ? 'slow' : 'fast';
       },
     },
     {
@@ -293,10 +293,10 @@ const triggerSet: TriggerSet<Data> = {
       type: 'HeadMarker',
       netRegex: { id: ['027D', '027E'], capture: true },
       infoText: (data, matches, output) => {
-        data.trainCleaveDir ??= 0;
+        data.addCleaveDir ??= 0;
         const addMech = matches.id === '027D' ? 'healerStacks' : 'spread';
         const mech = data.addCleaveOnMe ? output.cleave!() : output[addMech]!();
-        const dirNum = Directions.hdgTo16DirNum(data.trainCleaveDir);
+        const dirNum = Directions.hdgTo16DirNum(data.addCleaveDir);
         const dirTxt = dirNum !== undefined ? Directions.output16Dir[dirNum ?? -1] : 'unknown';
         const dir = output[dirTxt ?? 'unknown']!();
         return output.text!({
@@ -321,18 +321,18 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '019C', capture: false },
       suppressSeconds: 1,
       run: (data) => {
-        const actor = data.actorPositions[data.cleaveTrainId];
+        const actor = data.actorPositions[data.addTrainId];
         if (actor === undefined)
           return;
-        data.trainCleaveDir = Math.atan2(actor.x - arenas.add.x, actor.y - arenas.add.y);
-        if (data.cleaveTrainSpeed === 'slow') {
-          data.trainCleaveDir -= 2;
+        data.addCleaveDir = Math.atan2(actor.x - arenas.add.x, actor.y - arenas.add.y);
+        if (data.addTrainSpeed === 'slow') {
+          data.addCleaveDir -= 2;
         } else {
-          data.trainCleaveDir -= 3;
+          data.addCleaveDir -= 3;
         }
 
-        if (data.trainCleaveDir < -Math.PI) {
-          data.trainCleaveDir += Math.PI * 2;
+        if (data.addCleaveDir < -Math.PI) {
+          data.addCleaveDir += Math.PI * 2;
         }
       },
     },
@@ -441,7 +441,7 @@ const triggerSet: TriggerSet<Data> = {
           data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 2) % 4] ?? 'unknown';
         } else if (data.hailMoveCount === 3) {
           // Now we determine CW or CCW
-          const actor = data.actorPositions[data.cleaveTrainId];
+          const actor = data.actorPositions[data.addTrainId];
           if (actor === undefined)
             return;
 
