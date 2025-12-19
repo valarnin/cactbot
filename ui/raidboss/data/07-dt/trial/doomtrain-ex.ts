@@ -1,7 +1,11 @@
 import Conditions from '../../../../../resources/conditions';
 import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
-import { DirectionOutputCardinal, Directions } from '../../../../../resources/util';
+import {
+  DirectionOutput16,
+  DirectionOutputCardinal,
+  Directions,
+} from '../../../../../resources/util';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
@@ -57,8 +61,8 @@ export interface Data extends RaidbossData {
   phase: 'car1' | 'car2' | 'add' | 'car3' | 'car4' | 'car5' | 'car6';
   addTrainSpeed: 'slow' | 'fast';
   addCleaveOnMe: boolean;
-  addCleaveDir: number;
   addTrainId: string;
+  addTrainDir: DirectionOutput16;
   storedKBMech?: 'pairs' | 'spread';
   turretDir: 'east' | 'west';
   car2MechCount: number;
@@ -85,6 +89,7 @@ const triggerSet: TriggerSet<Data> = {
     hailActorId: '',
     hailRotationDir: 'CW',
     psychokinesisCount: 0,
+    addTrainDir: 'unknown',
   }),
   timelineTriggers: [
     {
@@ -283,9 +288,56 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Add Train Speed Collector',
       type: 'ActorMove',
       netRegex: { moveType: ['0096', '00FA'] },
-      condition: (data, matches) => matches.id === data.addTrainId,
+      condition: (data, matches) =>
+        matches.id === data.addTrainId && data.addTrainDir === 'unknown',
       run: (data, matches) => {
         data.addTrainSpeed = matches.moveType === '0096' ? 'slow' : 'fast';
+      },
+    },
+    {
+      id: 'DoomtrainEx Add Train Direction Predictor',
+      type: 'HeadMarker',
+      netRegex: { id: '027F', capture: true },
+      infoText: (data, matches, output) => {
+        const actor = data.actorPositions[data.addTrainId];
+        if (actor === undefined)
+          return;
+
+        let addCleaveDir = Math.atan2(actor.x - arenas.add.x, actor.y - arenas.add.y);
+
+        // Slow rotates 3.122 rads base
+        const slowMoveBase = 3.122;
+        // Plus 0.0005666 rads per millisecond of delay since ActorMove was last recorded
+        const slowMoveDelta = 0.0005666;
+
+        // Same info, but for fast movement
+        const fastMoveBase = 4.1697;
+        const fastMoveDelta = 0.00061112;
+
+        const deltaMs = new Date(matches.timestamp).getTime() - actor.time;
+
+        if (data.addTrainSpeed === 'slow') {
+          addCleaveDir -= slowMoveBase + (slowMoveDelta * deltaMs);
+        } else {
+          addCleaveDir -= fastMoveBase + (fastMoveDelta * deltaMs);
+        }
+
+        if (addCleaveDir < -Math.PI) {
+          addCleaveDir += Math.PI * 2;
+        }
+
+        const dirNum = Directions.hdgTo16DirNum(addCleaveDir);
+        data.addTrainDir = dirNum !== undefined
+          ? Directions.output16Dir[dirNum] ?? 'unknown'
+          : 'unknown';
+
+        return output.text!({ dir: output[data.addTrainDir]!() });
+      },
+      outputStrings: {
+        ...Directions.outputStrings16Dir,
+        text: {
+          en: 'Train cleaves from ${dir}',
+        },
       },
     },
     {
@@ -293,16 +345,16 @@ const triggerSet: TriggerSet<Data> = {
       type: 'HeadMarker',
       netRegex: { id: ['027D', '027E'], capture: true },
       infoText: (data, matches, output) => {
-        data.addCleaveDir ??= 0;
         const addMech = matches.id === '027D' ? 'healerStacks' : 'spread';
         const mech = data.addCleaveOnMe ? output.cleave!() : output[addMech]!();
-        const dirNum = Directions.hdgTo16DirNum(data.addCleaveDir);
-        const dirTxt = dirNum !== undefined ? Directions.output16Dir[dirNum ?? -1] : 'unknown';
-        const dir = output[dirTxt ?? 'unknown']!();
+        const dir = output[data.addTrainDir]!();
         return output.text!({
           dir: dir,
           mech: mech,
         });
+      },
+      run: (data) => {
+        data.addCleaveOnMe = false;
       },
       outputStrings: {
         healerStacks: Outputs.healerGroups,
@@ -313,27 +365,6 @@ const triggerSet: TriggerSet<Data> = {
         text: {
           en: 'Train ${dir}, ${mech}',
         },
-      },
-    },
-    {
-      id: 'DoomtrainEx Add Tank Cleave Location Prediction',
-      type: 'HeadMarker',
-      netRegex: { id: '019C', capture: false },
-      suppressSeconds: 1,
-      run: (data) => {
-        const actor = data.actorPositions[data.addTrainId];
-        if (actor === undefined)
-          return;
-        data.addCleaveDir = Math.atan2(actor.x - arenas.add.x, actor.y - arenas.add.y);
-        if (data.addTrainSpeed === 'slow') {
-          data.addCleaveDir -= 2;
-        } else {
-          data.addCleaveDir -= 3;
-        }
-
-        if (data.addCleaveDir < -Math.PI) {
-          data.addCleaveDir += Math.PI * 2;
-        }
       },
     },
     {
