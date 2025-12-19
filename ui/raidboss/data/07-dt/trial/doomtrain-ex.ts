@@ -254,16 +254,29 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: ['B266', 'B280'], capture: true },
       condition: (data) => data.phase === 'car2',
-      infoText: (data, matches, output) =>
-        output.text!({
+      infoText: (data, matches, output) => {
+        let mech1;
+        if (matches.id === 'B266') {
+          mech1 = output.express!({ knockback: output.knockback!() });
+        } else {
+          mech1 = output.windpipe!({ drawIn: output.drawIn!() });
+        }
+        return output.text!({
           turretDir: output[data.turretDir]!(),
-          mech1: output[matches.id === 'B266' ? 'knockback' : 'drawIn']!(),
+          mech1: mech1,
           mech2: output[data.storedKBMech ?? 'unknown']!(),
-        }),
+        });
+      },
       run: (data) => data.car2MechCount++,
       outputStrings: {
         text: {
-          en: 'LoS ${turretDir} => ${mech1} => Dodge Lasers => ${mech2}',
+          en: 'LoS ${turretDir} => ${mech1} => ${mech2}',
+        },
+        express: {
+          en: '${knockback} => Dodge Lasers',
+        },
+        windpipe: {
+          en: '${drawIn} => Away from Front',
         },
         unknown: Outputs.unknown,
         east: Outputs.east,
@@ -585,16 +598,34 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: ['B266', 'B280'], capture: true },
       condition: (data) => data.phase === 'car6',
       infoText: (data, matches, output) => {
+        let mech1;
+        if (matches.id === 'B266') {
+          mech1 = output.express!({ knockback: output.knockback!() });
+        } else {
+          mech1 = output.windpipe!({ drawIn: output.drawIn!() });
+        }
+        const mech3 = data.car6MechCount === 3
+          ? output.tbFollowup!({ mech3: output.tankbuster!() })
+          : '';
         return output.text!({
-          mech1: output[matches.id === 'B266' ? 'knockback' : 'drawIn']!(),
+          mech1: mech1,
           mech2: output[data.storedKBMech ?? 'unknown']!(),
-          mech3: output.tankbuster!(),
+          mech3: mech3,
         });
       },
       run: (data) => data.car6MechCount++,
       outputStrings: {
         text: {
-          en: '${mech1} => ${mech2} => ${mech3}',
+          en: '${mech1} => ${mech2}${mech3}',
+        },
+        express: {
+          en: '${knockback} => Dodge Lasers',
+        },
+        windpipe: {
+          en: '${drawIn} => Away from Front',
+        },
+        tbFollowup: {
+          en: ' => ${mech3}',
         },
         unknown: Outputs.unknown,
         knockback: Outputs.knockback,
