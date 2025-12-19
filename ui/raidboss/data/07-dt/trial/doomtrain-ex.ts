@@ -57,7 +57,6 @@ export interface Data extends RaidbossData {
   hailLastPos: DirectionOutputCardinal;
   hailActorId: string;
   hailMoveCount: number;
-  hailRotationDir: 'CW' | 'CCW';
   phase: 'car1' | 'car2' | 'add' | 'car3' | 'car4' | 'car5' | 'car6';
   addTrainSpeed: 'slow' | 'fast';
   addCleaveOnMe: boolean;
@@ -87,7 +86,6 @@ const triggerSet: TriggerSet<Data> = {
     hailLastPos: 'dirN',
     hailMoveCount: -1,
     hailActorId: '',
-    hailRotationDir: 'CW',
     psychokinesisCount: 0,
     addTrainDir: 'unknown',
   }),
@@ -491,14 +489,27 @@ const triggerSet: TriggerSet<Data> = {
 
           const arena = data.phase === 'car4' ? 4 : 6;
 
-          const oldAngle = Math.PI - ((oldIdx / 4) * (Math.PI * 2));
-          const newAngle = Math.atan2(actor.x - arenas[arena].x, actor.y - arenas[arena].y);
+          const oldAngle = (Math.PI * 2) + (Math.PI - ((oldIdx / 4) * (Math.PI * 2)));
+          const newAngle = (Math.PI * 2) +
+            (Math.atan2(actor.x - arenas[arena].x, actor.y - arenas[arena].y));
 
-          if (oldAngle < newAngle)
-            data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 3) % 4] ?? 'unknown';
-          else
-            data.hailLastPos = Directions.outputCardinalDir[Math.abs((oldIdx - 3) % 4)] ??
-              'unknown';
+          if (oldAngle < newAngle) {
+            // Probably CCW, but check for wrap around
+            if ((newAngle - oldAngle) > Math.PI) {
+              // CW instead
+              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 3) % 4] ?? 'unknown';
+            } else {
+              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 1) % 4] ?? 'unknown';
+            }
+          } else {
+            // Probably CW, but check for wrap around
+            if ((oldAngle - newAngle) > Math.PI) {
+              // CCW instead
+              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 1) % 4] ?? 'unknown';
+            } else {
+              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 3) % 4] ?? 'unknown';
+            }
+          }
         }
 
         const idx = (Directions.outputCardinalDir.indexOf(data.hailLastPos) + 2) % 4;
