@@ -211,6 +211,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: ['B266', 'B280'], capture: true },
       condition: (data) => data.phase === 'car1',
+      durationSeconds: 11.1,
       infoText: (data, matches, output) =>
         output.text!({
           mech1: output[matches.id === 'B266' ? 'knockback' : 'drawIn']!(),
@@ -241,6 +242,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: ['B271', 'B272', 'B273', 'B276'], capture: false },
       condition: (data) => data.phase === 'car2' && data.car2MechCount === 1,
+      durationSeconds: 9.2,
       infoText: (data, _matches, output) => output.text!({ turretDir: output[data.turretDir]!() }),
       run: (data) => data.car2MechCount++,
       outputStrings: {
@@ -256,6 +258,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: ['B266', 'B280'], capture: true },
       condition: (data) => data.phase === 'car2',
+      durationSeconds: 11.1,
       infoText: (data, matches, output) => {
         let mech1;
         if (matches.id === 'B266') {
@@ -359,6 +362,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Add Mechanics',
       type: 'HeadMarker',
       netRegex: { id: ['027D', '027E'], capture: true },
+      durationSeconds: 6.5,
       infoText: (data, matches, output) => {
         const addMech = matches.id === '027D' ? 'healerStacks' : 'spread';
         const mech = data.addCleaveOnMe ? output.cleave!() : output[addMech]!();
@@ -406,6 +410,9 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Derailment Siege Car3',
       type: 'StartsUsing',
       netRegex: { id: 'B250', capture: false },
+      // Technically platform destroy hits 15.1s after
+      // but if you're not in the teleporter by that point you're dead anyways.
+      durationSeconds: 15,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -418,6 +425,8 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Derailment Siege Car4',
       type: 'StartsUsing',
       netRegex: { id: 'B284', capture: false },
+      // Technically 17.2s
+      durationSeconds: 17.1,
       infoText: (_data, _matches, output) => output.text!(),
       run: (data) => data.hailActorId = '',
       outputStrings: {
@@ -430,6 +439,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Headlight',
       type: 'StartsUsing',
       netRegex: { id: 'B27A', capture: false },
+      durationSeconds: 9.6,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -441,6 +451,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Thunderous Breath',
       type: 'StartsUsing',
       netRegex: { id: 'B277', capture: false },
+      durationSeconds: 9.6,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -495,6 +506,13 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { capture: true },
       condition: (data, matches) => data.hailActorId === matches.id && data.hailNeedMotion,
       preRun: (data) => data.hailNeedMotion = false,
+      durationSeconds: (data) => {
+        if (data.hailMoveCount === 2)
+          return 7.5;
+        if (data.hailMoveCount === 3)
+          return 10.5;
+        return 13.5;
+      },
       suppressSeconds: 14,
       infoText: (data, _matches, output) => {
         // Easy cases first
@@ -549,6 +567,8 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Derailment Siege Car5',
       type: 'StartsUsing',
       netRegex: { id: 'B285', capture: false },
+      // Technically 17.6s
+      durationSeconds: 17.5,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -561,6 +581,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: 'B264', capture: false },
       preRun: (data) => data.psychokinesisCount++,
+      durationSeconds: 7,
       infoText: (data, _matches, output) => {
         if (data.psychokinesisCount !== 2) {
           return output.spreadIntoBait!();
@@ -581,6 +602,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Derailment Siege Car6',
       type: 'StartsUsing',
       netRegex: { id: 'B286', capture: false },
+      durationSeconds: 11,
       infoText: (_data, _matches, output) => output.text!(),
       outputStrings: {
         text: {
@@ -593,6 +615,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: ['B271', 'B272', 'B273', 'B276'], capture: false },
       condition: (data) => data.phase === 'car6',
+      durationSeconds: 6.7,
       suppressSeconds: 1,
       infoText: (data, _matches, output) => {
         if (data.car6MechCount >= 1) {
@@ -620,6 +643,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: ['B266', 'B280'], capture: true },
       condition: (data) => data.phase === 'car6',
+      durationSeconds: 11.1,
       infoText: (data, matches, output) => {
         let mech1;
         if (matches.id === 'B266') {
