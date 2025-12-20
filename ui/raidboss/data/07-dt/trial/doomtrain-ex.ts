@@ -10,12 +10,6 @@ import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
 
-// @TODO:
-
-// Could get a slightly more accurate prediction for add phase train stop location
-// by adding additional rotation based on delta time between the mechanic headmarker
-// and the tank headmarkers
-
 // Train cars are 20y x 30y
 // Boss is 10y north of edge
 const arenas = {
@@ -51,6 +45,14 @@ const arenas = {
     y: 350,
   },
 } as const;
+
+const normalizeDelta = (a: number): number => {
+  const TAU = Math.PI * 2;
+  a = (a + Math.PI) % TAU;
+  if (a < 0)
+    a += TAU;
+  return a - Math.PI;
+};
 
 export interface Data extends RaidbossData {
   hailNeedMotion: boolean;
@@ -450,7 +452,10 @@ const triggerSet: TriggerSet<Data> = {
       id: 'DoomtrainEx Arcane Revelation',
       type: 'StartsUsing',
       netRegex: { id: 'B9A7', capture: false },
-      run: (data) => data.hailActorId = 'need',
+      run: (data) => {
+        data.hailActorId = 'need';
+        data.hailLastPos = 'dirN';
+      },
     },
     // For Hail of Thunder ground AoE, B25[89A] determine 2/3/4 movements.
     {
@@ -490,41 +495,31 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { capture: true },
       condition: (data, matches) => data.hailActorId === matches.id && data.hailNeedMotion,
       preRun: (data) => data.hailNeedMotion = false,
+      suppressSeconds: 14,
       infoText: (data, _matches, output) => {
         // Easy cases first
         // data.hailMoveCount === 4, no-op
         const oldIdx = Directions.outputCardinalDir.indexOf(data.hailLastPos);
+
         if (data.hailMoveCount === 2) {
           data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 2) % 4] ?? 'unknown';
         } else if (data.hailMoveCount === 3) {
           // Now we determine CW or CCW
-          const actor = data.actorPositions[data.addTrainId];
-          if (actor === undefined)
+          const actor = data.actorPositions[data.hailActorId];
+          if (actor === undefined) {
+            console.error('No actor position for hail of thunder calc');
             return;
-
+          }
           const arena = data.phase === 'car4' ? 4 : 6;
 
-          const oldAngle = (Math.PI * 2) + (Math.PI - ((oldIdx / 4) * (Math.PI * 2)));
-          const newAngle = (Math.PI * 2) +
-            (Math.atan2(actor.x - arenas[arena].x, actor.y - arenas[arena].y));
+          const oldAngle = Math.PI - (oldIdx / 4) * (Math.PI * 2);
+          const newAngle = Math.atan2(actor.x - arenas[arena].x, actor.y - arenas[arena].y);
 
-          if (oldAngle < newAngle) {
-            // Probably CCW, but check for wrap around
-            if ((newAngle - oldAngle) > Math.PI) {
-              // CW instead
-              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 3) % 4] ?? 'unknown';
-            } else {
-              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 1) % 4] ?? 'unknown';
-            }
-          } else {
-            // Probably CW, but check for wrap around
-            if ((oldAngle - newAngle) > Math.PI) {
-              // CCW instead
-              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 1) % 4] ?? 'unknown';
-            } else {
-              data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 3) % 4] ?? 'unknown';
-            }
-          }
+          const delta = normalizeDelta(newAngle - oldAngle);
+          if (delta > 0)
+            data.hailLastPos = Directions.outputCardinalDir[(oldIdx + 1) % 4] ?? 'unknown';
+          else
+            data.hailLastPos = Directions.outputCardinalDir[(oldIdx - 1 + 4) % 4] ?? 'unknown';
         }
 
         const idx = (Directions.outputCardinalDir.indexOf(data.hailLastPos) + 2) % 4;
@@ -533,10 +528,12 @@ const triggerSet: TriggerSet<Data> = {
         });
       },
       outputStrings: {
-        ...Directions.outputStrings8Dir,
-        text: {
-          en: '${dir} => Stacks',
-        },
+        dirN: Outputs.front,
+        dirE: Outputs.right,
+        dirS: Outputs.back,
+        dirW: Outputs.left,
+        unknown: Outputs.unknown,
+        text: { en: '${dir} Safe + Stacks' },
       },
     },
     {
