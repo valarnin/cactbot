@@ -53,6 +53,7 @@ const arenas = {
 } as const;
 
 export interface Data extends RaidbossData {
+  hailNeedMotion: boolean;
   psychokinesisCount: number;
   hailLastPos: DirectionOutputCardinal;
   hailActorId: string;
@@ -88,6 +89,7 @@ const triggerSet: TriggerSet<Data> = {
     hailActorId: '',
     psychokinesisCount: 0,
     addTrainDir: 'unknown',
+    hailNeedMotion: true,
   }),
   timelineTriggers: [
     {
@@ -366,6 +368,7 @@ const triggerSet: TriggerSet<Data> = {
       },
       run: (data) => {
         data.addCleaveOnMe = false;
+        data.addTrainDir = 'unknown';
       },
       outputStrings: {
         healerStacks: Outputs.healerGroups,
@@ -414,6 +417,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsing',
       netRegex: { id: 'B284', capture: false },
       infoText: (_data, _matches, output) => output.text!(),
+      run: (data) => data.hailActorId = '',
       outputStrings: {
         text: {
           en: 'Tower x4 => Next Platform',
@@ -464,17 +468,28 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       id: 'DoomtrainEx Hail of Thunder Actor Finder',
-      type: 'SpawnNpcExtra',
-      netRegex: { capture: true },
+      type: 'CombatantMemory',
+      netRegex: {
+        change: 'Add',
+        id: '4[0-9A-F]{7}',
+        pair: [{ key: 'BNpcID', value: '4A36' }],
+        capture: true,
+      },
       condition: (data) => data.hailActorId === 'need',
       run: (data, matches) => data.hailActorId = matches.id,
+    },
+    {
+      id: 'DoomtrainEx Hail of Thunder Stacks',
+      type: 'Ability',
+      netRegex: { id: 'B292', capture: false },
+      run: (data) => data.hailNeedMotion = true,
     },
     {
       id: 'DoomtrainEx Hail of Thunder Motion Detector',
       type: 'ActorMove',
       netRegex: { capture: true },
-      condition: (data, matches) => data.hailActorId === matches.id,
-      suppressSeconds: 14,
+      condition: (data, matches) => data.hailActorId === matches.id && data.hailNeedMotion,
+      preRun: (data) => data.hailNeedMotion = false,
       infoText: (data, _matches, output) => {
         // Easy cases first
         // data.hailMoveCount === 4, no-op
