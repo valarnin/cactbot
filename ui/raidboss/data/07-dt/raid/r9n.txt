@@ -51,6 +51,9 @@ hideall "--sync--"
 118.6 "Half Moon" Ability { id: ["B352", "B353", "B354", "B355", "B356", "B357", "B358", "B359"], source: "Vamp Fatale" }
 121.7 "--sync--" StartsUsing { id: "B338", source: "Coffinmaker" } window 2,2 forcejump "coffinmaker-loop"
 
+# Theoretically there's an enrage here, maybe after 3-5 repeats, but I don't have any logs to get exact details for how many
+# Saw it happen in a clip compilation at some point.
+
 294.1 "--sync--" StartsUsing { id: "B333", source: "Vamp Fatale" } window 200,20
 300.0 "Sadistic Screech" Ability { id: "B334", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 
