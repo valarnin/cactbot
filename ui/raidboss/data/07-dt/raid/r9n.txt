@@ -20,7 +20,7 @@ hideall "--sync--"
 45.5 "Blast Beat" Ability { id: "B34D", source: "Vampette Fatale" }
 49.9 "Hardcore" Ability { id: "B35B", source: "Vamp Fatale" }
 55.1 "--middle--" Ability { id: "B332", source: "Vamp Fatale" }
-64.1 "Sadistic Screech" Ability { id: "B334", source: "Vamp Fatale" }
+64.1 "Sadistic Screech" Ability { id: "B334", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 
 # Coffinmaker mini-phase
 # B332 (jump) manually removed from this part since boss is untargetable
@@ -43,22 +43,22 @@ hideall "--sync--"
 106.1 "Dead Wake" Ability { id: "B335", source: "Coffinmaker" }
 108.1 "Penetrating Pitch" Ability { id: "B365", source: "Vamp Fatale" }
 
-112.1 label "coffinmaker-loop"
-
+110.7 label "coffinmaker-loop"
 115.2 "Coffinfiller" #Ability { id: "B338", source: "Coffinmaker" }
 115.2 "Half Moon" Ability { id: ["B352", "B353", "B354", "B355", "B356", "B357", "B358", "B359"], source: "Vamp Fatale" }
 
 118.6 "Coffinfiller" #Ability { id: "B338", source: "Coffinmaker" }
-118.6 "Half Moon" Ability { id: ["B352", "B353", "B354", "B355", "B356", "B357", "B358", "B359"], source: "Vamp Fatale" } forcejump "coffinmaker-loop"
+118.6 "Half Moon" Ability { id: ["B352", "B353", "B354", "B355", "B356", "B357", "B358", "B359"], source: "Vamp Fatale" }
+121.7 "--sync--" StartsUsing { id: "B338", source: "Coffinmaker" } window 2,2 forcejump "coffinmaker-loop"
 
 294.1 "--sync--" StartsUsing { id: "B333", source: "Vamp Fatale" } window 200,20
-300.0 "Sadistic Screech" Ability { id: "B334", source: ["Coffinmaker", "Vamp Fatale"] }
+300.0 "Sadistic Screech" Ability { id: "B334", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 
 # Back to normal arena
 305.2 "--middle--" Ability { id: "B332", source: "Vamp Fatale" }
-314.3 "Crowd Kill" Ability { id: "B33F", source: "Vamp Fatale" }
+314.3 "Crowd Kill" Ability { id: "B33F", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 324.0 "--middle--" Ability { id: "B332", source: "Vamp Fatale" }
-333.3 "Finale Fatale" Ability { id: "B342", source: "Vamp Fatale" }
+333.3 "Finale Fatale" Ability { id: "B342", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 
 # Circular arena
 339.3 "Pulping Pulse" Ability { id: "B346", source: "Vamp Fatale" }
@@ -74,22 +74,22 @@ hideall "--sync--"
 378.7 "Brutal Rain x4" duration 3
 386.5 "Pulping Pulse" Ability { id: "B346", source: "Vamp Fatale" }
 390.5 "Pulping Pulse" Ability { id: "B346", source: "Vamp Fatale" }
-392.6 "Insatiable Thirst" Ability { id: "B345", source: "Vamp Fatale" }
+392.6 "Insatiable Thirst" Ability { id: "B345", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 396.7 "--middle--" Ability { id: "B332", source: "Vamp Fatale" }
 
 # Flail/Chakram/Buzzsaw phase
-405.7 "Sadistic Screech" Ability { id: "B334", source: "Vamp Fatale" }
+405.7 "Sadistic Screech" Ability { id: "B334", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 418.9 "Plummet" Ability { id: "B33B", source: "Fatal Flail" }
 419.8 "--Flail targetable--"
 427.9 "Killer Voice" Ability { id: "B361", source: "Vamp Fatale" }
 437.0 "Plummet" Ability { id: "B33B", source: "Fatal Flail" }
 437.9 "--Flail targetable--"
 448.0 "Killer Voice" Ability { id: "B361", source: "Vamp Fatale" }
-463.0 "Sadistic Screech" Ability { id: "B334", source: "Vamp Fatale" }
+463.0 "Sadistic Screech" Ability { id: "B334", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 
 # Back to default arena
 468.3 "--middle--" Ability { id: "B332", source: "Vamp Fatale" }
-477.3 "Crowd Kill" Ability { id: "B33F", source: "Vamp Fatale" }
+477.3 "Crowd Kill" Ability { id: "B33F", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 
 483.0 label "loop"
 483.0 "--middle--" Ability { id: "B332", source: "Vamp Fatale" }
@@ -116,7 +116,7 @@ hideall "--sync--"
 553.2 "Brutal Rain x5" duration 4
 562.2 "Pulping Pulse" Ability { id: "B346", source: "Vamp Fatale" }
 566.2 "Pulping Pulse" Ability { id: "B346", source: "Vamp Fatale" }
-568.3 "Insatiable Thirst" Ability { id: "B345", source: "Vamp Fatale" }
+568.3 "Insatiable Thirst" Ability { id: "B345", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 
 # Back to normal
 577.3 "Hardcore" Ability { id: "B35C", source: "Vamp Fatale" }
@@ -138,7 +138,7 @@ hideall "--sync--"
 652.3 "Brutal Rain x5" duration 4
 661.0 "Pulping Pulse" Ability { id: "B346", source: "Vamp Fatale" }
 665.0 "Pulping Pulse" Ability { id: "B346", source: "Vamp Fatale" }
-667.2 "Insatiable Thirst" Ability { id: "B345", source: "Vamp Fatale" }
+667.2 "Insatiable Thirst" Ability { id: "B345", source: ["Coffinmaker", "Vamp Fatale", "Fatal Flail"] }
 669.2 "--middle--" Ability { id: "B332", source: "Vamp Fatale" } forcejump "loop"
 
 # IGNORED ABILITIES
