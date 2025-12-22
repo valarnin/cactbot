@@ -1,7 +1,7 @@
 import Conditions from '../../../../../resources/conditions';
 import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
-import { Directions } from '../../../../../resources/util';
+import { DirectionOutput16, Directions } from '../../../../../resources/util';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { NetMatches } from '../../../../../types/net_matches';
@@ -9,6 +9,12 @@ import { TriggerSet } from '../../../../../types/trigger';
 
 export interface Data extends RaidbossData {
   flailPositions: NetMatches['StartsUsingExtra'][];
+  actorPositions: { [id: string]: { x: number; y: number; heading: number } };
+  bats: {
+    inner: DirectionOutput16[];
+    middle: DirectionOutput16[];
+    outer: DirectionOutput16[];
+  };
 }
 
 const mapEffectData = {
@@ -207,8 +213,32 @@ const triggerSet: TriggerSet<Data> = {
   timelineFile: 'r9n.txt',
   initData: () => ({
     flailPositions: [],
+    actorPositions: {},
+    bats: { inner: [], middle: [], outer: [] },
   }),
   triggers: [
+    {
+      id: 'R9N ActorSetPos Tracker',
+      type: 'ActorSetPos',
+      netRegex: { id: '4[0-9A-Fa-f]{7}', capture: true },
+      run: (data, matches) =>
+        data.actorPositions[matches.id] = {
+          x: parseFloat(matches.x),
+          y: parseFloat(matches.y),
+          heading: parseFloat(matches.heading),
+        },
+    },
+    {
+      id: 'R9N ActorMove Tracker',
+      type: 'ActorMove',
+      netRegex: { id: '4[0-9A-Fa-f]{7}', capture: true },
+      run: (data, matches) =>
+        data.actorPositions[matches.id] = {
+          x: parseFloat(matches.x),
+          y: parseFloat(matches.y),
+          heading: parseFloat(matches.heading),
+        },
+    },
     {
       id: 'R9N Headmarker Party Multi Stack',
       type: 'HeadMarker',
@@ -281,19 +311,119 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: 'B34A', source: 'Vamp Fatale', capture: false },
       response: Responses.getOut(),
     },
-    // @TODO: Detect positions, call out better? Seems to be:
-    // opposite sides
-    // triangle shape
-    // pentagon shape
     {
-      id: 'R9N Blast Beat',
-      type: 'StartsUsing',
-      netRegex: { id: 'B34D', source: 'Vampette Fatale', capture: false },
+      id: 'R9N Bat Tracker',
+      type: 'ActorControlExtra',
+      netRegex: { id: '4[0-9A-Fa-f]{7}', category: '0197', param1: '11D1', capture: true },
+      run: (data, matches) => {
+        const moveRads = {
+          'inner': 1.5128,
+          'middle': 1.5513,
+          'outer': 1.5608,
+        } as const;
+        const actor = data.actorPositions[matches.id];
+        if (actor === undefined)
+          return;
+        const dist = Math.hypot(actor.x - center.x, actor.y - center.y);
+        const dLen = dist < 16 ? (dist < 8 ? 'inner' : 'middle') : 'outer';
+
+        const angle = Math.atan2(actor.x - center.x, actor.y - center.y);
+        let angleCW = angle - (Math.PI / 2);
+        if (angleCW < -Math.PI)
+          angleCW += Math.PI * 2;
+        let angleDiff = Math.abs(angleCW - actor.heading);
+        if (angleDiff > Math.PI * 1.75)
+          angleDiff = Math.abs(angleDiff - (Math.PI * 2));
+
+        const cw = angleDiff < (Math.PI / 2) ? 'cw' : 'ccw';
+        const adjustRads = moveRads[dLen];
+        let endAngle = angle + (adjustRads * ((cw === 'cw') ? -1 : 1));
+        if (endAngle < -Math.PI)
+          endAngle += Math.PI * 2;
+        else if (endAngle > Math.PI)
+          endAngle -= Math.PI * 2;
+
+        data.bats[dLen].push(
+          Directions.output16Dir[Directions.hdgTo16DirNum(endAngle)] ?? 'unknown',
+        );
+      },
+    },
+    {
+      id: 'R9N Blast Beat Inner',
+      type: 'ActorControlExtra',
+      netRegex: { id: '4[0-9A-Fa-f]{7}', category: '0197', param1: '11D1', capture: false },
+      delaySeconds: 4.1,
+      durationSeconds: 5.5,
       suppressSeconds: 1,
-      infoText: (_data, _matches, output) => output.away!(),
+      infoText: (data, _matches, output) => {
+        const [dir1, dir2] = data.bats.inner;
+
+        return output.away!({
+          dir1: output[dir1 ?? 'unknown']!(),
+          dir2: output[dir2 ?? 'unknown']!(),
+        });
+      },
+      run: (data, _matches) => {
+        data.bats.inner = [];
+      },
       outputStrings: {
+        ...Directions.outputStrings16Dir,
         away: {
-          en: 'Away from bats',
+          en: 'Away from bats ${dir1}/${dir2}',
+        },
+      },
+    },
+    {
+      id: 'R9N Blast Beat Middle',
+      type: 'ActorControlExtra',
+      netRegex: { id: '4[0-9A-Fa-f]{7}', category: '0197', param1: '11D1', capture: false },
+      delaySeconds: 9.7,
+      durationSeconds: 3.4,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        const [dir1, dir2, dir3] = data.bats.middle;
+
+        return output.away!({
+          dir1: output[dir1 ?? 'unknown']!(),
+          dir2: output[dir2 ?? 'unknown']!(),
+          dir3: output[dir3 ?? 'unknown']!(),
+        });
+      },
+      run: (data, _matches) => {
+        data.bats.middle = [];
+      },
+      outputStrings: {
+        ...Directions.outputStrings16Dir,
+        away: {
+          en: 'Away from bats ${dir1}/${dir2}/${dir3}',
+        },
+      },
+    },
+    {
+      id: 'R9N Blast Beat Outer',
+      type: 'ActorControlExtra',
+      netRegex: { id: '4[0-9A-Fa-f]{7}', category: '0197', param1: '11D1', capture: false },
+      delaySeconds: 13.2,
+      durationSeconds: 3.4,
+      suppressSeconds: 1,
+      infoText: (data, _matches, output) => {
+        const [dir1, dir2, dir3, dir4, dir5] = data.bats.outer;
+
+        return output.away!({
+          dir1: output[dir1 ?? 'unknown']!(),
+          dir2: output[dir2 ?? 'unknown']!(),
+          dir3: output[dir3 ?? 'unknown']!(),
+          dir4: output[dir4 ?? 'unknown']!(),
+          dir5: output[dir5 ?? 'unknown']!(),
+        });
+      },
+      run: (data, _matches) => {
+        data.bats.outer = [];
+      },
+      outputStrings: {
+        ...Directions.outputStrings16Dir,
+        away: {
+          en: 'Away from bats ${dir1}/${dir2}/${dir3}/${dir4}/${dir5}',
         },
       },
     },
