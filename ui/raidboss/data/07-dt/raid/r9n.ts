@@ -406,25 +406,9 @@ const triggerSet: TriggerSet<Data> = {
       delaySeconds: 13.2,
       durationSeconds: 3.4,
       suppressSeconds: 1,
-      infoText: (data, _matches, output) => {
-        const [dir1, dir2, dir3, dir4, dir5] = data.bats.outer;
-
-        return output.away!({
-          dir1: output[dir1 ?? 'unknown']!(),
-          dir2: output[dir2 ?? 'unknown']!(),
-          dir3: output[dir3 ?? 'unknown']!(),
-          dir4: output[dir4 ?? 'unknown']!(),
-          dir5: output[dir5 ?? 'unknown']!(),
-        });
-      },
+      response: Responses.goMiddle(),
       run: (data, _matches) => {
         data.bats.outer = [];
-      },
-      outputStrings: {
-        ...Directions.outputStrings16Dir,
-        away: {
-          en: 'Away from bats ${dir1}/${dir2}/${dir3}/${dir4}/${dir5}',
-        },
       },
     },
     {
