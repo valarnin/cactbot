@@ -228,7 +228,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'StartsUsingExtra',
       netRegex: { id: 'B46D', capture: true },
       alertText: (_data, matches, output) => {
-        if (parseFloat(matches.x) < 100)
+        if (parseFloat(matches.x) < center.x)
           return output.west!();
         return output.east!();
       },
@@ -402,7 +402,7 @@ const triggerSet: TriggerSet<Data> = {
       id: 'R12N Mindless Flesh',
       type: 'StartsUsing',
       netRegex: {
-        id: ['BBD8', 'BBD9', 'BBDA', 'BBDB', 'BBDC', 'BBDD', 'BBDE', 'BBDF'],
+        id: ['BBD8', 'BBD9', 'BBDA', 'BBDB', 'BBDC', 'BBDD', 'BBDE'],
         source: 'Lindwurm',
         capture: false,
       },
@@ -420,6 +420,20 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: 'BCF3', source: 'Lindwurm', capture: false },
       suppressSeconds: 1,
       response: Responses.spread(),
+    },
+    {
+      id: 'R12N Mindless Flesh Huge',
+      type: 'StartsUsingExtra',
+      netRegex: { id: 'BBDF', capture: true },
+      infoText: (_data, matches, output) => {
+        if (parseFloat(matches.x) < center.x)
+          return output.west!();
+        return output.east!();
+      },
+      outputStrings: {
+        west: Outputs.getLeftAndWest,
+        east: Outputs.getRightAndEast,
+      },
     },
   ],
 };
