@@ -14,6 +14,7 @@ hideall "--p1-enrage-sync--"
 0.0 "--Reset--" ActorControl { command: "4000000F" } window 0,100000 jump 0
 
 0.0 "--sync--" InCombat { inGameCombat: "1" } window 0,1
+6.7 "--sync--" StartsUsing { id: "B494", source: "Lindwurm" } window 6.7,10
 11.4 "The Fixer" Ability { id: "B494", source: "Lindwurm" }
 19.2 "Bloodshed" Ability { id: ["B465", "B466"], source: "Lindwurm" }
 27.3 "Serpentine Scourge" Ability { id: "B9BB", source: "Lindwurm" }
