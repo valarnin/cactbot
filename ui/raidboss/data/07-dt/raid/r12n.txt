@@ -1,7 +1,11 @@
 ### AAC HEAVYWEIGHT (M4)
 # ZoneId: 1326
 
-# -ii B491 B467 B468
+# -ii B467 B468 B469 B46A B46B B46E B472 B477 B47C B491 B492 B536 B53C B768 B9BD B9C0 BBE0
+# -it "Lindwurm"
+# -p BBD5:998.2
+# The phase above won't always work, it depends on what state the boss was in when it died
+# (none|left|right|both) arms transformed, each produces a different ability to de-transform
 
 hideall "--Reset--"
 hideall "--sync--"
@@ -95,6 +99,7 @@ hideall "--p1-enrage-sync--"
 
 # Phase two, this sync is the announcer "The battle is decided! Victory goes to the champion!" text
 1000.0 "--sync--" ActorControl { command: "80000027", data0: "10", data1: "02", data2: "330A" } window 1000,0
+1020.2 "--targetable--"
 1026.3 label "p2-loop"
 1026.3 "Mindless Flesh x5" Ability { id: ["BBD8", "BBD9"], source: "Lindwurm" } duration 7.2
 1032.5 "Dramatic Lysis" Ability { id: "BCF3", source: "Lindwurm" }
