@@ -53,13 +53,15 @@ hideall "--p1-enrage-sync--"
 211.1 "Fourth-Wall Fusion" Ability { id: "B484", source: "Lindwurm" }
 219.7 "Burst" Ability { id: "B46F", source: "Lindwurm" }
 
-# TODO: Cone cast here (Hemorrhagic Projection) doesn't match with VOD???
 226.8 "Bloodshed" Ability { id: ["B465", "B466"], source: "Lindwurm" }
+# Cone cast here (Hemorrhagic Projection) is an invisible late instant cast
+# Does not align with the visual indicator since the visual is a 0x808 status effect on players
+# not an actual cast
 227.1 "Hemorrhagic Projection" Ability { id: "B485", source: "Lindwurm" }
 235.0 "Serpentine Scourge" Ability { id: "B9BB", source: "Lindwurm" }
 242.5 "Splattershed" Ability { id: "B9C5", source: "Lindwurm" }
 244.2 "--sync--" Ability { id: "B490", source: "Lindwurm" }
-253.8 "--p1-enrage-sync--" StartsUsing { id: "B492" } window 159.8,0 jump "p1-enrage-loop"
+253.0 "--p1-enrage-sync--" StartsUsing { id: "B492" } window 159.0,0 jump "p1-enrage-loop"
 258.8 "Visceral Burst" Ability { id: "B493", source: "Lindwurm" }
 
 # Cruel Coil 2
