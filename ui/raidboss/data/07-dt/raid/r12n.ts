@@ -480,13 +480,6 @@ const triggerSet: TriggerSet<Data> = {
       },
     },
     {
-      id: 'R12N Dramatic Lysis',
-      type: 'StartsUsing',
-      netRegex: { id: 'BCF3', source: 'Lindwurm', capture: false },
-      suppressSeconds: 1,
-      response: Responses.spread(),
-    },
-    {
       id: 'R12N Mindless Flesh Huge',
       type: 'StartsUsingExtra',
       netRegex: { id: 'BBDF', capture: true },
