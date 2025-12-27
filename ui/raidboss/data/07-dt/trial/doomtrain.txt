@@ -55,28 +55,25 @@ hideall "--sync--"
 193.3 "--untargetable--"
 
 # Intermission
-# I don't have any pulls that hit intermission enrage, but the bar charges 1.66%
-# per second on average. Last parameter of the following lines is progress out of 10000:
-# 33|2025-12-26T10:15:40.7710000-05:00|80034E8A|8000000C|59|A6|
-# 33|2025-12-26T10:15:41.7370000-05:00|80034E8A|8000000C|59|14D|
-# Enrage is extrapolated from there based on timings from extreme
-# For reference, extreme bar increases 1.33% per second on average.
+# Duration and syncing are weird here because of the random length
+# of pauses between mechanics. Seems to be up to +-3s of drift.
 200.3 "--targetable--"
+205.6 "--sync--" StartsUsing { id: "B24A", source: "Aether" } window 5,5
 211.3 "Aether Surge" Ability { id: "B24A", source: "Aether" }
 213.0 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
+216.2 "--sync--" StartsUsing { id: "B24A", source: "Aether" } window 5,5
 221.9 "Aether Surge" Ability { id: "B24A", source: "Aether" }
 223.6 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
+225.5 "--sync--" StartsUsing { id: "B24A", source: "Aether" } window 5,5
 231.2 "Aether Surge" Ability { id: "B24A", source: "Aether" }
 232.9 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
-240.5 "Aether Surge" Ability { id: "B24A", source: "Aether" }
-242.2 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
-249.8 "Aether Surge" Ability { id: "B24A", source: "Aether" }
-251.5 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
-259.1 "Aether Surge" Ability { id: "B24A", source: "Aether" }
-260.8 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
-268.4 "Aether Surge" Ability { id: "B24A", source: "Aether" }
-270.1 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
-272.9 "--untargetable--" NameToggle { name: "Aether" } window 12,12 forcejump "intermission-enrage"
+238.8 "--sync--" StartsUsing { id: "B24A", source: "Aether" } window 5,5
+244.5 "Aether Surge" Ability { id: "B24A", source: "Aether" }
+246.1 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
+249.8 "--sync--" StartsUsing { id: "B24A", source: "Aether" } window 5,5
+255.5 "Aether Surge" Ability { id: "B24A", source: "Aether" }
+257.2 "Aetherial Ray" Ability { id: "B248", source: "Ghost Train" }
+261.0 "--untargetable--" NameToggle { name: "Aether" } window 12,12 forcejump "intermission-enrage"
 
 # Sync to invisible cast that starts phase change animation
 500.0 "--sync--" Ability { id: "B24C", source: "Doomtrain" } window 500.0,0
@@ -86,9 +83,7 @@ hideall "--sync--"
 515.4 "--targetable--"
 533.2 "Shockwave" Ability { id: "B24F", source: "Doomtrain" }
 540.5 "Arcane Revelation" Ability { id: "B9A7", source: "Doomtrain" }
-# back/south safe?
 554.6 "Hail of Thunder" Ability { id: "B25B", source: "Doomtrain" }
-# front/north safe?
 568.7 "Hail of Thunder" Ability { id: "B25B", source: "Doomtrain" }
 578.8 "Derailment Siege x3" duration 1.4 #Ability { id: "B252", source: "Doomtrain" }
 591.7 "Derail" Ability { id: "B256", source: "Doomtrain" }
@@ -97,11 +92,12 @@ hideall "--sync--"
 596.8 "--sync--" Ability { id: "B257", source: "Doomtrain" }
 603.5 label "car5-loop"
 604.9 "Arcane Revelation" Ability { id: "B9A7", source: "Doomtrain" }
-# back/south safe?
-622.0 "Hail of Thunder" Ability { id: "B25B", source: "Doomtrain" }
-# right/east safe?
-633.0 "Hail of Thunder" Ability { id: "B25B", source: "Doomtrain" }
-640.0 "Turret Crossing" Ability { id: "B23C", source: "Doomtrain" }
+# Annoyingly, the timing of the `Hail of Thunder` snapshots can vary by up to 3s each direction
+# depending on if the AoE moves 2, 3, or 4 times. The timing below is for 3 => 2 moves which
+# seems to be the most common pattern, but I have seen it inverted.
+622.0 "Hail of Thunder" Ability { id: "B25B", source: "Doomtrain" } window 5,5
+633.0 "Hail of Thunder" Ability { id: "B25B", source: "Doomtrain" } window 5,5
+640.0 "Turret Crossing" Ability { id: "B23C", source: "Doomtrain" } window 5,5
 648.0 "Head-on Emission" Ability { id: "B244", source: "Doomtrain" }
 649.0 "Headlight" Ability { id: "B245", source: "Doomtrain" }
 652.2 "Electray" Ability { id: "B23D", source: "Kinematic Turret" }

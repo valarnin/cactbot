@@ -214,6 +214,7 @@ const triggerSet: TriggerSet<Data> = {
       netRegex: { id: '0282', data0: '1[0-9A-F]{7}', capture: true },
       condition: (data, matches) => data.me === data.party?.idToName_?.[matches.data0],
       durationSeconds: 7.6,
+      countdownSeconds: 7.6,
       alertText: (data, matches, output) => {
         const actor = data.actorPositions[data.addTrainId];
         if (actor === undefined)
@@ -298,6 +299,18 @@ const triggerSet: TriggerSet<Data> = {
         data.hailMoveCount = 4;
       },
     },
+    {
+      id: 'Doomtrain Hail of Thunder First',
+      type: 'Ability',
+      netRegex: { id: 'B258', capture: false },
+      durationSeconds: 8,
+      countdownSeconds: 8,
+      suppressSeconds: 9999,
+      infoText: (_data, _matches, output) => output.south!(),
+      outputStrings: {
+        south: Outputs.south,
+      },
+    },
     // For Hail of Thunder ground AoE, B25[89A] determine 2/3/4 movements.
     {
       id: 'Doomtrain Hail of Thunder Move Count Collector',
@@ -327,7 +340,7 @@ const triggerSet: TriggerSet<Data> = {
     {
       id: 'Doomtrain Hail of Thunder Reset',
       type: 'StartsUsing',
-      netRegex: { id: 'B292', capture: false },
+      netRegex: { id: 'B25B', capture: false },
       delaySeconds: 1,
       run: (data) => data.hailNeedMotion = true,
     },
@@ -338,6 +351,13 @@ const triggerSet: TriggerSet<Data> = {
       condition: (data, matches) => data.hailActorId === matches.id && data.hailNeedMotion,
       preRun: (data) => data.hailNeedMotion = false,
       durationSeconds: (data) => {
+        if (data.hailMoveCount === 2)
+          return 7.5;
+        if (data.hailMoveCount === 3)
+          return 10.5;
+        return 13.5;
+      },
+      countdownSeconds: (data) => {
         if (data.hailMoveCount === 2)
           return 7.5;
         if (data.hailMoveCount === 3)
@@ -397,7 +417,7 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       id: 'Doomtrain Unlimited Express',
-      type: 'Ability',
+      type: 'StartsUsing',
       netRegex: { id: 'B237', capture: false },
       delaySeconds: 2.7,
       response: Responses.aoe(),
