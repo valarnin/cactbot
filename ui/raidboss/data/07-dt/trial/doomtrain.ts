@@ -418,6 +418,8 @@ const triggerSet: TriggerSet<Data> = {
   timelineReplace: [
     {
       'locale': 'de',
+      // Note: Translations originally copied from Extreme
+      // please re-review before removing `missingTranslations` key
       'missingTranslations': true,
       'replaceSync': {
         'Aether': 'Äthersphäre',
@@ -444,6 +446,8 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       'locale': 'fr',
+      // Note: Translations originally copied from Extreme
+      // please re-review before removing `missingTranslations` key
       'missingTranslations': true,
       'replaceSync': {
         'Aether': 'sphère éthérée',
@@ -470,6 +474,8 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       'locale': 'ja',
+      // Note: Translations originally copied from Extreme
+      // please re-review before removing `missingTranslations` key
       'missingTranslations': true,
       'replaceSync': {
         'Aether': 'エーテルスフィア',
@@ -496,6 +502,8 @@ const triggerSet: TriggerSet<Data> = {
     },
     {
       'locale': 'cn',
+      // Note: Translations originally copied from Extreme
+      // please re-review before removing `missingTranslations` key
       'missingTranslations': true,
       'replaceSync': {
         'Aether': '以太晶球',
