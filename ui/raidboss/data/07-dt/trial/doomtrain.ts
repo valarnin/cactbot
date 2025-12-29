@@ -180,7 +180,7 @@ const triggerSet: TriggerSet<Data> = {
       type: 'HeadMarker',
       netRegex: { id: '0157', capture: true },
       condition: Conditions.targetIsYou(),
-      response: Responses.tankBuster(),
+      response: Responses.tankCleave(),
     },
     {
       id: 'Doomtrain Turret Side',
