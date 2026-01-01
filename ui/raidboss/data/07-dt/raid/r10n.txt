@@ -1,7 +1,7 @@
 ### AAC HEAVYWEIGHT (M2)
 # ZoneId: 1322
 
-# -ii B57C B57D B583 B58A B58B B57B B57F B586 B588 B58E B59E B5A2 B5A8 B5AA B894 B896 BDFD BDFE
+# -ii B57B B57C B57D B57F B583 B586 B588 B58A B58B B58E B59E B5A2 B5A7 B5A8 B5AA B894 B896 BDFD BDFE
 # -it "Red Hot" "Deep Blue"
 
 hideall "--Reset--"
@@ -82,17 +82,13 @@ hideall "--sync--"
 248.7 "Epic Brotherhood" Ability { id: "B57A", source: "Red Hot" }
 255.8 "Firesnaking/Watersnaking" Ability { id: "B57E", source: "Red Hot" }
 258.0 "--middle--" Ability { id: "B578", source: "Red Hot" }
-266.7 "Insane Air" Ability { id: "B893", source: "Red Hot" }
-268.6 "Blasting Snap/Plunging Snap" Ability { id: "B5A7", source: "Red Hot" }
+266.7 "Insane Air" Ability { id: ["B893", "B895"], source: "Red Hot" }
 269.7 "Blasting Snap/Plunging Snap" Ability { id: "B5A9" }
-274.0 "Insane Air" Ability { id: "B895", source: "Red Hot" }
-275.9 "Blasting Snap/Plunging Snap" Ability { id: "B5A7", source: "Red Hot" }
+274.0 "Insane Air" Ability { id: ["B893", "B895"], source: "Red Hot" }
 277.0 "Blasting Snap/Plunging Snap" Ability { id: "B5A9" }
-281.3 "Insane Air" Ability { id: "B895", source: "Red Hot" }
-283.2 "Blasting Snap/Plunging Snap" Ability { id: "B5A7", source: "Red Hot" }
+281.3 "Insane Air" Ability { id: ["B893", "B895"], source: "Red Hot" }
 284.3 "Blasting Snap/Plunging Snap" Ability { id: "B5A9" }
-288.6 "Insane Air" Ability { id: "B895", source: "Red Hot" }
-290.5 "Blasting Snap/Plunging Snap" Ability { id: "B5A7", source: "Red Hot" }
+288.6 "Insane Air" Ability { id: ["B893", "B895"], source: "Red Hot" }
 291.6 "Blasting Snap/Plunging Snap" Ability { id: "B5A9" }
 292.0 "--sync--" Ability { id: "B57D", source: "Deep Blue" }
 
@@ -174,19 +170,20 @@ hideall "--sync--"
 
 
 # IGNORED ABILITIES
+# B57B Epic Brotherhood: HP sync ability, cast by both bosses, ignore the higher ID
 # B57C --sync--: VFX of Red Hot jumping off surfboard
 # B57D --sync--: VFX of Deep Blue jumping off surfboard
-# B583 Divers' Dare: Fire clear, cast by both bosses, ignore Blue's ID
-# B58A Hot Aerial: Boss castbar
-# B58B Hot Aerial: Tower VFX
-# B57B Epic Brotherhood: HP sync ability, cast by both bosses, ignore the higher ID
 # B57F Watersnaking: Cast at the same time as Firesnaking, ignore the higher ID and combine them
+# B583 Divers' Dare: Fire clear, cast by both bosses, ignore Blue's ID
 # B586 Alley-oop Inferno: Cast bar, not actual snapshot
 # B588 Pyrotation: Castbar, not actual snapshot
+# B58A Hot Aerial: Boss castbar
+# B58B Hot Aerial: Tower VFX
 # B58E Cutback Blaze: Cast bar, not actual snapshot
 # B59E Alley-oop Maelstrom: Cast bar, not actual cones
 # B5A2 Xtreme Spectacular: Extra phase transition castbar
-# B5A8 Plunging Snap: Cast at the same time as B5A7, ignore the higher ID and combine them
+# B5A7 Blasting Snap: VFX
+# B5A8 Plunging Snap: VFX
 # B5AA Plunging Snap: Cast at the same time as B5A9, ignore the higher ID and combine them
 # B894 Insane Air: Duplicate cast from Blue, initial cast
 # B896 Insane Air: Duplicate cast from Blue, followup cast

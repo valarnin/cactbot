@@ -1,7 +1,11 @@
 import Conditions from '../../../../../resources/conditions';
 import Outputs from '../../../../../resources/outputs';
 import { Responses } from '../../../../../resources/responses';
-import { DirectionOutputCardinal, Directions } from '../../../../../resources/util';
+import {
+  DirectionOutput8,
+  DirectionOutputCardinal,
+  Directions,
+} from '../../../../../resources/util';
 import ZoneId from '../../../../../resources/zone_id';
 import { RaidbossData } from '../../../../../types/data';
 import { TriggerSet } from '../../../../../types/trigger';
@@ -10,6 +14,7 @@ export interface Data extends RaidbossData {
   waveDir: DirectionOutputCardinal;
   actorPositions: { [id: string]: { x: number; y: number; heading: number } };
   snakingCount: number;
+  snakeMid?: 'fire' | 'water';
 }
 
 const mapEffectData = {
@@ -113,6 +118,85 @@ const mapEffectData = {
   },
 } as const;
 console.assert(mapEffectData);
+
+// For snaking, two patterns for MapEffect have been observed.
+// Only MapEffect and StartsUsingExtra for the `Insane Air` cast seem to be relevant here.
+// Fire ends at middle:
+/*
+water starting nw, facing south, moving to north (90 ccw) | fire starting se, facing east, moving to south (180 ccw)
+00020001|06
+00020001|07
+00020001|0F
+02000100|15
+
+water starting n, facing west, moving to ne (180 ccw) | fire starting s, facing w, moving to sw (0)
+00200010|06
+00200010|07
+00080004|0F
+00020001|10
+02000100|14
+00080004|15
+
+water starting ne, facing north, moving to east (180 ccw) | fire starting sw, facing east, moving to west (90 ccw)
+00800040|06
+00800040|07
+00080004|10
+02000100|11
+00020001|13
+00080004|14
+
+water starting east, facing south, moving to southeast (0) | fire starting west, facing south, moving to middle (90 ccw)
+02000100|06
+02000100|07
+00080004|11
+02000100|12
+00080004|13
+00020001|16
+
+clear all
+04000004|06
+04000004|07
+00080004|16
+00080004|12
+*/
+// Water ends middle:
+/*
+water starting nw, facing west, moving to north (180 ccw) | fire starting se, facing north, moving to south (90 ccw)
+00020001|08
+00020001|09
+00020001|0F
+02000100|15
+
+water starting north, facing east, moving to ne (0) | fire starting south, facing east, moving to sw (180 ccw)
+00200010|08
+00200010|09
+00080004|0F
+00020001|10
+02000100|14
+00080004|15
+
+water starting ne, facing w, moving to e (90 ccw) | fire starting sw, facing s, moving w (180 ccw)
+00800040|08
+00800040|09
+00080004|10
+02000100|11
+00020001|13
+00080004|14
+
+water starting e, facing n, moving to middle (90 ccw) | fire starting w, facing n, moving nw (0)
+02000100|08
+02000100|09
+02000100|0E
+00080004|11
+00020001|12
+00080004|13
+
+clear
+04000004|08
+04000004|09
+00080004|0E
+00080004|12
+*/
 
 const headMarkerData = {
   // Vfx Path: m0676trg_tw_d0t1p
@@ -430,6 +514,15 @@ const triggerSet: TriggerSet<Data> = {
       run: (data) => data.snakingCount++,
     },
     {
+      id: 'R10N Snaking Pattern Collector',
+      type: 'MapEffect',
+      netRegex: { location: ['06', '08'], flags: '00020001', capture: true },
+      suppressSeconds: 9999,
+      run: (data, matches) => {
+        data.snakeMid = matches.location === '06' ? 'fire' : 'water';
+      },
+    },
+    {
       id: 'R10N Snaking Bait',
       type: 'HeadMarker',
       netRegex: { id: snakingHMs.both, capture: true },
@@ -443,7 +536,10 @@ const triggerSet: TriggerSet<Data> = {
         if (elem === 'fire')
           dirNum += 4;
 
-        const dir = Directions.output8Dir[dirNum] ?? 'unknown';
+        let dir: DirectionOutput8 | 'middle' = Directions.output8Dir[dirNum] ?? 'unknown';
+
+        if (elem === data.snakeMid && data.snakingCount === 3)
+          dir = 'middle';
 
         return output.text!({
           elem: output[elem]!(),
@@ -452,7 +548,7 @@ const triggerSet: TriggerSet<Data> = {
       },
       outputStrings: {
         text: {
-          en: 'Bait ${elem} cone ${dir}',
+          en: 'Bait ${elem} cone from ${dir}',
         },
         ...Directions.outputStrings8Dir,
         water: {
@@ -460,6 +556,9 @@ const triggerSet: TriggerSet<Data> = {
         },
         fire: {
           en: 'Fire',
+        },
+        middle: {
+          en: 'Middle',
         },
       },
     },
