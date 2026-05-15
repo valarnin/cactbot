@@ -40,7 +40,7 @@ jobs:
             changelist: "${{ steps.script.outputs.changelist }}"
 
       - name: Create PR
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 'update netlog_defs filters'
           title: 'resources: Update netlog_defs filters (auto-generated)'
