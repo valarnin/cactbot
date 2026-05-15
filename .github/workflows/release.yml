@@ -146,7 +146,7 @@ jobs:
           echo "release_draft=$release_draft" >> $env:GITHUB_OUTPUT
 
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         with:
           name: ${{ steps.set_attributes.outputs.release_name }}
           tag: v${{ needs.validate_tag.outputs.version }}
