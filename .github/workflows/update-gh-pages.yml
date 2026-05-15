@@ -2,7 +2,13 @@ name: Update gh-pages
 
 on:
   push:
-    branches: [main]
+    # branches: [main]
+    # @TODO: This is temporary
+    branches:
+      - update-actions-202605
+    paths:
+      # @TODO: This is temporary
+      - '.github/**/*'
 
 jobs:
   check-gh-pages:
@@ -32,7 +38,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

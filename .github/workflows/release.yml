@@ -7,6 +7,8 @@ on:
       # @TODO: This is temporary
       - update-actions-202605
     paths:
+      # @TODO: This is temporary
+      - '.github/**/*'
       - 'package.json'
   workflow_dispatch:
 
@@ -19,7 +21,7 @@ jobs:
       do_release: ${{ steps.check_tag.outputs.do_release }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -47,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -67,7 +69,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -162,7 +164,7 @@ jobs:
     if: ${{ github.repository == 'OverlayPlugin/cactbot' }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - uses: ./.github/actions/setup-js-env
 

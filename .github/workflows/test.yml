@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - main
+      # @TODO: This is temporary
+      - update-actions-202605
     paths:
+      # @TODO: This is temporary
+      - '.github/**/*'
       - '**/*.js'
       - '**/*.ts'
       - '**/*.py'
@@ -26,7 +30,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: ./.github/actions/setup-js-env
 
