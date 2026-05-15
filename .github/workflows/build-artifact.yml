@@ -80,7 +80,7 @@ jobs:
         run: ./util/publish.sh
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cactbot-${{ env.artifact_sha }}
           path: publish/cactbot-release/
