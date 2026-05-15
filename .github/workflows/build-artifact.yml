@@ -61,7 +61,7 @@ jobs:
           npm run fetch-deps
 
       - name: Set up msbuild
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@v3
 
       - name: Add Custom Problem Matcher
         run: |
