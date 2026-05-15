@@ -27,7 +27,7 @@ jobs:
 
       - name: Get Project Version
         id: get_version
-        uses: 'euberdeveloper/ga-project-version@main'
+        run: echo "version=$(npm pkg get version | tr -d '\"')" >> $GITHUB_OUTPUT
 
       - name: Check Tag Exists
         id: check_tag
