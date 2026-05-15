@@ -122,9 +122,10 @@ jobs:
 
       - name: Fetch Release Attributes
         id: fetch_attributes
-        uses: zoexx/github-action-json-file-properties@release
-        with:
-          file_path: "package.json"
+        shell: bash
+        run: |
+          echo "releaseSummary=$(npm pkg get releaseSummary | tr -d '\"')" >> $GITHUB_OUTPUT
+          echo "releaseInDraft=$(npm pkg get releaseInDraft | tr -d '\"')" >> $GITHUB_OUTPUT
 
       - name: Set Release Attributes
         id: set_attributes
